@@ -91,9 +91,9 @@ window.addEventListener('load', function load() {
             minute = date.getMinutes(),
             angle;
         ctx.textBaseline = 'middle';
-        ctx.textAlign = 'center'
-        ctx.fillStyle = '#ddd';
-        ctx.font = radius * 0.12 + 'px Astro';
+        ctx.textAlign    = 'center'
+        ctx.fillStyle    = '#ddd';
+        ctx.font         = radius * 0.12 + 'px Astro';
         // 12 signs
         for (var i = 1; i < 13; i++) {
             angle = i * Math.PI / 6;
