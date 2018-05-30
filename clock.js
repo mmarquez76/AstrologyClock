@@ -123,7 +123,7 @@ window.addEventListener('load', function load() {
         ctx.font = radius * 0.04 + 'px arial';
         for (var i = 1; i < 61; i++) {
             angle = i * Math.PI / 30;
-            ctx.fillStyle = (i === minute) ? '#999' : '#ddd';
+            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#999' : '#ddd';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.95);
             ctx.rotate(-angle);
@@ -132,7 +132,6 @@ window.addEventListener('load', function load() {
             ctx.translate(0, radius * 0.95);
             ctx.rotate(-angle);
         }
-
     }
 
     function drawTime(date, sign) {
@@ -164,7 +163,7 @@ window.addEventListener('load', function load() {
 
     function drawHand(ctx, pos, length, width) {
         ctx.lineWidth = width;
-        ctx.lineCap = 'round';
+        ctx.lineCap   = 'round';
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.rotate(pos);
