@@ -5,20 +5,27 @@ window.addEventListener('load', function load() {
     var canvas = document.createElement('canvas'),
         ctx    = canvas.getContext('2d'),
         signs  = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
-        radius;
+        radius, date, sign;
 
     document.body.appendChild(canvas);
     window.addEventListener('resize', resize);
 
     resize();
-    setInterval(drawClock, 60);
+
+    (function drawFrame() {
+        requestAnimationFrame(drawFrame);
+        date = new Date();
+        sign = getSign(date);
+        drawFace();
+        drawNumerals(date, sign);
+        drawTime(date, sign);
+    })();
 
     function resize() {
         radius = getCircleRadius(20);
         ctx.canvas.width  = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
         ctx.translate(canvas.width / 2, canvas.height / 2);
-        drawClock();
     }
 
      function getCircleRadius(padding) {
@@ -28,14 +35,6 @@ window.addEventListener('load', function load() {
             return Math.round((window.innerHeight / 2) - padding);
         }
      }
-
-    function drawClock() {
-        var date = new Date(),
-            sign = getSign(date);
-        drawFace();
-        drawNumerals(date, sign);
-        drawTime(date, sign);
-    }
 
     function drawFace() {
         var angle;
