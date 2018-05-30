@@ -157,7 +157,7 @@ window.addEventListener('load', function load() {
         ctx.strokeStyle = '#bbb';
         drawHand(ctx, minute, radius * 0.9, radius * 0.003);
         // second
-        second = ((second + 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
+        second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
         ctx.strokeStyle = '#aaa';
         drawHand(ctx, second, radius, radius * 0.002);
     }
