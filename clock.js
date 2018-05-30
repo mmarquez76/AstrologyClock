@@ -1,5 +1,4 @@
 window.addEventListener('load', function load() {
-
     window.removeEventListener('load', load, false);
 
     var canvas = document.createElement('canvas'),
@@ -9,7 +8,6 @@ window.addEventListener('load', function load() {
 
     document.body.appendChild(canvas);
     window.addEventListener('resize', resize);
-
     resize();
 
     (function drawFrame() {
@@ -28,24 +26,23 @@ window.addEventListener('load', function load() {
         ctx.translate(canvas.width / 2, canvas.height / 2);
     }
 
-     function getCircleRadius(padding) {
+    function getCircleRadius(padding) {
         if (window.innerWidth < window.innerHeight) {
             return Math.round((window.innerWidth / 2) - padding);
         } else {
             return Math.round((window.innerHeight / 2) - padding);
         }
-     }
+    }
 
     function drawFace() {
         var angle;
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle   = '#fff';
+        ctx.strokeStyle = '#eee';
+        ctx.lineWidth   = 1.5;
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = '#fff';
         ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#eee';
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
