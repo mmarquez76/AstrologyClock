@@ -106,7 +106,7 @@ window.addEventListener('load', function load() {
         ctx.font = radius * 0.12 + 'px Astro';
         for (var i = 1; i < 25; i++) {
             angle = i * Math.PI / 12;
-            ctx.fillStyle = (i === hour) ? '#999' : '#ddd';
+            ctx.fillStyle = (i === ((hour === 0) ? 24 : hour)) ? '#999' : '#ddd';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.8);
             ctx.rotate(-angle);
