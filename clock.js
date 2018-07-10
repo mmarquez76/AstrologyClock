@@ -64,9 +64,9 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (var i = 0; i < 12; i++) {
             ctx.rotate(i * Math.PI / 6);
-            ctx.moveTo(radius * .38, 0);
+            ctx.moveTo(radius * .39, 0);
             ctx.rotate(1.0471975511965976);
-            ctx.lineTo(-radius * .38, 0);
+            ctx.lineTo(-radius * .39, 0);
             ctx.stroke();
             ctx.rotate(-(i * Math.PI / 6));
             ctx.rotate(-1.0471975511965976);
