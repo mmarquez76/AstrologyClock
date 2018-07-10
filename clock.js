@@ -36,13 +36,26 @@ window.addEventListener('load', function load() {
 
     function drawFace() {
         var angle;
-        ctx.fillStyle   = '#fff';
-        ctx.strokeStyle = '#eee';
-        ctx.lineWidth   = 1.5;
+        // Clear Canvas
+        ctx.fillStyle = '#fff';
+        ctx.lineWidth = 1.5;
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
+        // Stellated Dodecahedron
+        ctx.strokeStyle = '#fbfbfb';
+        ctx.beginPath();
+        for (var i = 0; i < 12; i++) {
+            ctx.rotate(i * Math.PI / 6);
+            ctx.moveTo(radius * .39, 0);
+            ctx.rotate(1.0471975511965976);
+            ctx.lineTo(-radius * .39, 0);
+            ctx.stroke();
+            ctx.rotate(-(i * Math.PI / 6));
+            ctx.rotate(-1.0471975511965976);
+        }
+        // Rings
+        ctx.strokeStyle = '#eee';
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-        ctx.fill();
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
@@ -54,6 +67,7 @@ window.addEventListener('load', function load() {
         ctx.arc(0, 0, radius * .9, 0, 2 * Math.PI);
         ctx.stroke();
         // Indices for Signs
+        ctx.beginPath();
         for (var i = 0; i < 12; i++) {
             angle = (i + .5) * Math.PI / 6;
             ctx.rotate(angle);
@@ -63,6 +77,7 @@ window.addEventListener('load', function load() {
             ctx.rotate(-angle);
         }
         // Indices for Hours
+        ctx.beginPath();
         for (var i = 0; i < 24; i++) {
             angle = (i + .5) * Math.PI / 12;
             ctx.rotate(angle);
@@ -72,6 +87,7 @@ window.addEventListener('load', function load() {
             ctx.rotate(-angle);
         }
         // Indices for Minutes / Seconds
+        ctx.beginPath();
         for (var i = 0; i < 60; i++) {
             angle = (i + .5) * Math.PI / 30;
             ctx.rotate(angle);
