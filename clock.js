@@ -43,7 +43,7 @@ window.addEventListener('load', function load() {
         var angle;
         // Clear Canvas
         ctx.fillStyle = '#fff';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
         // Inner Stellated Dodecahedron Rings
         ctx.fillStyle = '#f3f3f3';
@@ -73,6 +73,7 @@ window.addEventListener('load', function load() {
         }
         // Rings
         ctx.strokeStyle = '#eee';
+        ctx.lineWidth   = 1.5;
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
         ctx.stroke();
