@@ -46,7 +46,7 @@ window.addEventListener('load', function load() {
         ctx.lineWidth = 1.5;
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
         // Inner Stellated Dodecahedron Rings
-        ctx.fillStyle = '#f7f7f7';
+        ctx.fillStyle = '#f3f3f3';
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
         ctx.fill();
