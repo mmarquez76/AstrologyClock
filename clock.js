@@ -41,7 +41,7 @@ window.addEventListener('load', function load() {
         ctx.lineWidth = 1.5;
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
         // Stellated Dodecahedron
-        ctx.strokeStyle = '#fbfbfb';
+        ctx.strokeStyle = '#fafafa';
         ctx.beginPath();
         for (var i = 0; i < 12; i++) {
             ctx.rotate(i * Math.PI / 6);
