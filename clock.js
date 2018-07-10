@@ -17,7 +17,7 @@ window.addEventListener('load', function load() {
         drawFace();
         drawNumerals(date, sign);
         drawTime(date, sign);
-        // Tiny Circle
+        // Center Dot
         ctx.fillStyle = '#ccc';
         ctx.beginPath();
         ctx.arc(0, 0, radius * .01, 0, 2 * Math.PI);
@@ -46,12 +46,12 @@ window.addEventListener('load', function load() {
         // Clear Canvas
         ctx.fillStyle = '#fff';
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
-        // Inner Circle Fill
+        // Stellated Dodecahedron Inner Circle Fill
         ctx.fillStyle = '#f3f3f3';
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
         ctx.fill();
-        // Inner Stellated Dodecahedron Rings
+        // Stellated Dodecahedron Inner Rings
         ctx.beginPath();
         ctx.arc(0, 0, radius * .12, 0, 2 * Math.PI);
         ctx.stroke();
@@ -123,8 +123,9 @@ window.addEventListener('load', function load() {
         ctx.textBaseline = 'middle';
         ctx.textAlign    = 'center';
         ctx.fillStyle    = '#ddd';
-        ctx.font         = radius * 0.12 + 'px Astro';
-        // 12 signs
+        // 12 Signs
+        ctx.font = radius * 0.12 + 'px Astro';
+        ctx.beginPath();
         for (var i = 1; i < 13; i++) {
             angle = i * Math.PI / 6;
             ctx.fillStyle = (i === Math.floor(sign)) ? '#999' : '#ddd';
@@ -136,8 +137,9 @@ window.addEventListener('load', function load() {
             ctx.translate(0, radius * 0.55);
             ctx.rotate(-angle);
         }
-        // 24 hours
-        ctx.font = radius * 0.12 + 'px Astro';
+        // 24 Hours
+        ctx.font = radius * 0.1 + 'px Astro';
+        ctx.beginPath();
         for (var i = 1; i < 25; i++) {
             angle = i * Math.PI / 12;
             ctx.fillStyle = (i === ((hour === 0) ? 24 : hour)) ? '#999' : '#ddd';
@@ -149,8 +151,9 @@ window.addEventListener('load', function load() {
             ctx.translate(0, radius * 0.8);
             ctx.rotate(-angle);
         }
-        // 60 minutes / seconds
+        // 60 Minutes / Seconds
         ctx.font = radius * 0.04 + 'px arial';
+        ctx.beginPath();
         for (var i = 1; i < 61; i++) {
             angle = i * Math.PI / 30;
             ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#999' : '#ddd';
@@ -169,23 +172,23 @@ window.addEventListener('load', function load() {
             minute   = date.getMinutes(),
             second   = date.getSeconds(),
             millisec = date.getMilliseconds();
-        // sign
+        // Sign
         sign = ((sign - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#ddd';
-        drawHand(ctx, sign, radius * 0.4, radius * 0.005);
-        // hour
+        ctx.strokeStyle = '#c3c3c3';
+        drawHand(ctx, sign, radius * 0.4, radius * 0.004);
+        // Hour
         hour = ((hour - 0.5) * Math.PI / 12) +
                (minute * Math.PI / (12 * 60)) +
                (second * Math.PI / (720 * 60));
-        ctx.strokeStyle = '#ccc';
-        drawHand(ctx, hour, radius * 0.7, radius * 0.004);
-        // minute
+        ctx.strokeStyle = '#bbb';
+        drawHand(ctx, hour, radius * 0.7, radius * 0.0035);
+        // Minute
         minute = ((minute - 0.5) * Math.PI / 30) +
                  (second * Math.PI / (30 * 60)) +
                  (millisec * Math.PI / (30 * 60000));
-        ctx.strokeStyle = '#bbb';
+        ctx.strokeStyle = '#b3b3b3';
         drawHand(ctx, minute, radius * 0.9, radius * 0.003);
-        // second
+        // Second
         second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
         ctx.strokeStyle = '#aaa';
         drawHand(ctx, second, radius, radius * 0.002);
