@@ -40,14 +40,19 @@ window.addEventListener('load', function load() {
         ctx.fillStyle = '#fff';
         ctx.lineWidth = 1.5;
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
+        // Circle
+        ctx.fillStyle = '#f7f7f7';
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
+        ctx.fill();
         // Stellated Dodecahedron
-        ctx.strokeStyle = '#fafafa';
+        ctx.strokeStyle = '#fff';
         ctx.beginPath();
         for (var i = 0; i < 12; i++) {
             ctx.rotate(i * Math.PI / 6);
-            ctx.moveTo(radius * .39, 0);
+            ctx.moveTo(radius * .36, 0);
             ctx.rotate(1.0471975511965976);
-            ctx.lineTo(-radius * .39, 0);
+            ctx.lineTo(-radius * .36, 0);
             ctx.stroke();
             ctx.rotate(-(i * Math.PI / 6));
             ctx.rotate(-1.0471975511965976);
