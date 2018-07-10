@@ -57,7 +57,7 @@ window.addEventListener('load', function load() {
         for (var i = 0; i < 12; i++) {
             angle = (i + .5) * Math.PI / 6;
             ctx.rotate(angle);
-            ctx.moveTo(radius * .4, 0)
+            ctx.moveTo(radius * .4, 0);
             ctx.lineTo(radius * .7, 0);
             ctx.stroke();
             ctx.rotate(-angle);
@@ -66,7 +66,7 @@ window.addEventListener('load', function load() {
         for (var i = 0; i < 24; i++) {
             angle = (i + .5) * Math.PI / 12;
             ctx.rotate(angle);
-            ctx.moveTo(radius * .7, 0)
+            ctx.moveTo(radius * .7, 0);
             ctx.lineTo(radius * .9, 0);
             ctx.stroke();
             ctx.rotate(-angle);
@@ -75,7 +75,7 @@ window.addEventListener('load', function load() {
         for (var i = 0; i < 60; i++) {
             angle = (i + .5) * Math.PI / 30;
             ctx.rotate(angle);
-            ctx.moveTo(radius * .9, 0)
+            ctx.moveTo(radius * .9, 0);
             ctx.lineTo(radius, 0);
             ctx.stroke();
             ctx.rotate(-angle);
@@ -87,7 +87,7 @@ window.addEventListener('load', function load() {
             minute = date.getMinutes(),
             angle;
         ctx.textBaseline = 'middle';
-        ctx.textAlign    = 'center'
+        ctx.textAlign    = 'center';
         ctx.fillStyle    = '#ddd';
         ctx.font         = radius * 0.12 + 'px Astro';
         // 12 signs
