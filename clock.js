@@ -41,21 +41,19 @@ window.addEventListener('load', function load() {
 
     function drawFace() {
         var angle;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth   = 3;
         // Clear Canvas
         ctx.fillStyle = '#fff';
-        ctx.lineWidth = 2.5;
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
-        // Inner Stellated Dodecahedron Rings
+        // Inner Circle Fill
         ctx.fillStyle = '#f3f3f3';
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
         ctx.fill();
-        ctx.strokeStyle = '#fff';
+        // Inner Stellated Dodecahedron Rings
         ctx.beginPath();
-        ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(0, 0, radius * .1, 0, 2 * Math.PI);
+        ctx.arc(0, 0, radius * .12, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.beginPath();
         ctx.arc(0, 0, radius * .05, 0, 2 * Math.PI);
@@ -64,9 +62,9 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (var i = 0; i < 12; i++) {
             ctx.rotate(i * Math.PI / 6);
-            ctx.moveTo(radius * .39, 0);
+            ctx.moveTo(radius * .38, 0);
             ctx.rotate(1.0471975511965976);
-            ctx.lineTo(-radius * .39, 0);
+            ctx.lineTo(-radius * .38, 0);
             ctx.stroke();
             ctx.rotate(-(i * Math.PI / 6));
             ctx.rotate(-1.0471975511965976);
