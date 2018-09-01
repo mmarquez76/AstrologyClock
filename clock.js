@@ -173,23 +173,23 @@ window.addEventListener('load', function load() {
             second   = date.getSeconds(),
             millisec = date.getMilliseconds(),
             drawSign;
-        // Sign
+        // Draw sign hand
         drawSign = ((sign - .5) * Math.PI / 6);
         ctx.strokeStyle = '#c3c3c3';
         drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        // Hour
+        // Draw hour hand
         hour = ((hour - 0.5) * Math.PI / 12) +
                (minute * Math.PI / (12 * 60)) +
                (second * Math.PI / (720 * 60));
         ctx.strokeStyle = '#bbb';
         drawHand(ctx, hour, radius * 0.7, radius * 0.0035);
-        // Minute
+        // Draw minute hand
         minute = ((minute - 0.5) * Math.PI / 30) +
                  (second * Math.PI / (30 * 60)) +
                  (millisec * Math.PI / (30 * 60000));
         ctx.strokeStyle = '#b3b3b3';
         drawHand(ctx, minute, radius * 0.9, radius * 0.003);
-        // Second
+        // Draw second hand
         second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
         ctx.strokeStyle = '#aaa';
         drawHand(ctx, second, radius, radius * 0.002);
@@ -207,11 +207,11 @@ window.addEventListener('load', function load() {
     }
 
     function getSign(date) {
-        let month = date.getMonth();
         if (day != date.getDate()) {
-            day = date.getDate();
+            day       = date.getDate();
+            let month = date.getMonth();
             switch (month) {
-                case 0: // Jan
+                case 0: // January
                     if (day <= 19) {
                         // Capricon
                         // Dec 22 - Jan 19
@@ -224,7 +224,7 @@ window.addEventListener('load', function load() {
                         sign = 11 + ((day - 20) / 29);
                     }
                     break;
-                case 1: // Feb
+                case 1: // February
                     if (day <= 18) {
                         // Aquarius
                         // Jan 20 - Feb 18
@@ -237,7 +237,7 @@ window.addEventListener('load', function load() {
                         sign = 12 + ((day - 19) / (isLeapYear(date.getYear()) ? 29 : 30));
                     }
                     break;
-                case 2:  // Mar
+                case 2:  // March
                     if (day <= 20) {
                         // Pisces
                         // Feb 19 - Mar 20
@@ -251,7 +251,7 @@ window.addEventListener('load', function load() {
                         sign = 1 + ((day - 21) / 29);
                     }
                     break;
-                case 3: // Apr
+                case 3: // April
                     if (day <= 19) {
                         // Aries
                         // Mar 21 - Apr 19
@@ -277,7 +277,7 @@ window.addEventListener('load', function load() {
                         sign = 3 + ((day - 21) / 30);
                     }
                     break;
-                case 5: // Jun
+                case 5: // June
                     if (day <= 20) {
                         // Gemini
                         // May 21 - Jun 20
@@ -290,7 +290,7 @@ window.addEventListener('load', function load() {
                         sign = 4 + ((day - 21) / 31);
                     }
                     break;
-                case 6: // Jul
+                case 6: // July
                     if (day <= 22) {
                         // Cancer
                         // Jun 21 - Jul 22
@@ -303,7 +303,7 @@ window.addEventListener('load', function load() {
                         sign = 5 + ((day - 23) / 29);
                     }
                     break;
-                case 7:  // Aug
+                case 7:  // August
                     if (day <= 22) {
                         // Leo
                         // Jul 23 - Aug 22
@@ -316,7 +316,7 @@ window.addEventListener('load', function load() {
                         sign = 6 + ((day - 23) / 30);
                     }
                     break;
-                case 8: // Sep
+                case 8: // September
                     if (day <= 22) {
                         // Virgo
                         // Aug 23 - Sep 22
@@ -329,7 +329,7 @@ window.addEventListener('load', function load() {
                         sign = 7 + ((day - 23) / 30);
                     }
                     break;
-                case 9: // Oct
+                case 9: // October
                     if (day <= 22) {
                         // Libra
                         // Sep 23 - Oct 22
@@ -342,7 +342,7 @@ window.addEventListener('load', function load() {
                         sign = 8 + ((day - 23) / 29);
                     }
                     break;
-                case 10: // Nov
+                case 10: // November
                     if (day <= 21) {
                         // Scorpio
                         // Oct 23 - Nov 21
@@ -355,7 +355,7 @@ window.addEventListener('load', function load() {
                         sign = 9 + ((day - 22) / 29);
                     }
                     break;
-                case 11: // Dec
+                case 11: // December
                     if (day <= 21) {
                         // Sagittarius
                         // Nov 22 - Dec 21
