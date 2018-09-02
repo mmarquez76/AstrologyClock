@@ -15,8 +15,8 @@ window.addEventListener('load', function load() {
         date = new Date();
         getSign(date);
         drawFace();
-        drawNumerals(date, sign);
-        drawTime(date, sign);
+        drawNumerals(date);
+        drawTime(date);
         // Center Dot
         ctx.fillStyle = '#ccc';
         ctx.beginPath();
@@ -116,7 +116,7 @@ window.addEventListener('load', function load() {
         }
     }
 
-    function drawNumerals(date, sign) {
+    function drawNumerals(date) {
         let hour   = date.getHours(),
             minute = date.getMinutes(),
             angle;
@@ -167,7 +167,7 @@ window.addEventListener('load', function load() {
         }
     }
 
-    function drawTime(date, sign) {
+    function drawTime(date) {
         let hour     = date.getHours(),
             minute   = date.getMinutes(),
             second   = date.getSeconds(),
