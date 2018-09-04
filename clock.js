@@ -13,10 +13,10 @@ window.addEventListener('load', function load() {
     (function drawFrame() {
         requestAnimationFrame(drawFrame);
         date = new Date();
-        getSign(date);
+        getSign();
         drawFace();
-        drawNumerals(date);
-        drawTime(date);
+        drawNumerals();
+        drawTime();
         // Center Dot
         ctx.fillStyle = '#ccc';
         ctx.beginPath();
@@ -116,7 +116,7 @@ window.addEventListener('load', function load() {
         }
     }
 
-    function drawNumerals(date) {
+    function drawNumerals() {
         let hour   = date.getHours(),
             minute = date.getMinutes(),
             angle;
@@ -167,7 +167,7 @@ window.addEventListener('load', function load() {
         }
     }
 
-    function drawTime(date) {
+    function drawTime() {
         let hour     = date.getHours(),
             minute   = date.getMinutes(),
             second   = date.getSeconds(),
@@ -206,7 +206,7 @@ window.addEventListener('load', function load() {
         ctx.rotate(-pos);
     }
 
-    function getSign(date) {
+    function getSign() {
         if (day != date.getDate()) {
             day       = date.getDate();
             let month = date.getMonth();
