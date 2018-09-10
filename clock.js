@@ -42,7 +42,7 @@ window.addEventListener('load', function load() {
     function drawFace() {
         let angle;
         ctx.strokeStyle = '#fff';
-        ctx.lineWidth   = 3;
+        ctx.lineWidth   = radius * .008;
         // Clear Canvas
         ctx.fillStyle = '#fff';
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
@@ -62,9 +62,9 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 0; i < 12; i++) {
             ctx.rotate(i * Math.PI / 6);
-            ctx.moveTo(radius * .38, 0);
+            ctx.moveTo(radius * .36, 0);
             ctx.rotate(1.0471975511965976);
-            ctx.lineTo(-radius * .38, 0);
+            ctx.lineTo(-radius * .36, 0);
             ctx.stroke();
             ctx.rotate(-(i * Math.PI / 6));
             ctx.rotate(-1.0471975511965976);
