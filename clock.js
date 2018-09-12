@@ -17,7 +17,7 @@ window.addEventListener('load', function load() {
         drawFace();
         drawNumerals();
         drawTime();
-        // Center Dot
+        // Draw center dot
         ctx.fillStyle = '#ccc';
         ctx.beginPath();
         ctx.arc(0, 0, radius * .01, 0, 2 * Math.PI);
@@ -41,24 +41,28 @@ window.addEventListener('load', function load() {
 
     function drawFace() {
         let angle;
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth   = radius * .008;
-        // Clear Canvas
+        // Clear canvas
         ctx.fillStyle = '#fff';
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
-        // Stellated Dodecahedron Inner Circle Fill
+        // Stellated dodecahedron inner circle fill
         ctx.fillStyle = '#f3f3f3';
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
         ctx.fill();
-        // Stellated Dodecahedron Inner Rings
+        // Stellated dodecahedron inner rings; Eye of the Sahara
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth   = radius * .016;
         ctx.beginPath();
-        ctx.arc(0, 0, radius * .12, 0, 2 * Math.PI);
+        ctx.arc(0, 0, radius * .14, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(0, 0, radius * .05, 0, 2 * Math.PI);
+        ctx.arc(0, 0, radius * .093, 0, 2 * Math.PI);
         ctx.stroke();
-        // Stellated Dodecahedron
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * .047, 0, 2 * Math.PI);
+        ctx.stroke();
+        // Stellated dodecahedron
+        ctx.lineWidth = radius * .008;
         ctx.beginPath();
         for (let i = 0; i < 12; i++) {
             ctx.rotate(i * Math.PI / 6);
@@ -84,7 +88,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         ctx.arc(0, 0, radius * .9, 0, 2 * Math.PI);
         ctx.stroke();
-        // Indices for Signs
+        // Indices for signs
         ctx.beginPath();
         for (let i = 0; i < 12; i++) {
             angle = (i + .5) * Math.PI / 6;
@@ -94,7 +98,7 @@ window.addEventListener('load', function load() {
             ctx.stroke();
             ctx.rotate(-angle);
         }
-        // Indices for Hours
+        // Indices for hours
         ctx.beginPath();
         for (let i = 0; i < 24; i++) {
             angle = (i + .5) * Math.PI / 12;
@@ -104,7 +108,7 @@ window.addEventListener('load', function load() {
             ctx.stroke();
             ctx.rotate(-angle);
         }
-        // Indices for Minutes / Seconds
+        // Indices for minutes / seconds
         ctx.beginPath();
         for (let i = 0; i < 60; i++) {
             angle = (i + .5) * Math.PI / 30;
@@ -123,7 +127,7 @@ window.addEventListener('load', function load() {
         ctx.textBaseline = 'middle';
         ctx.textAlign    = 'center';
         ctx.fillStyle    = '#ddd';
-        // 12 Signs
+        // 12 signs
         ctx.font = radius * 0.12 + 'px Astro';
         ctx.beginPath();
         for (let i = 1; i < 13; i++) {
@@ -137,7 +141,7 @@ window.addEventListener('load', function load() {
             ctx.translate(0, radius * 0.55);
             ctx.rotate(-angle);
         }
-        // 24 Hours
+        // 24 hours
         ctx.font = radius * 0.1 + 'px Astro';
         ctx.beginPath();
         for (let i = 1; i < 25; i++) {
@@ -151,7 +155,7 @@ window.addEventListener('load', function load() {
             ctx.translate(0, radius * 0.8);
             ctx.rotate(-angle);
         }
-        // 60 Minutes / Seconds
+        // 60 minutes / seconds
         ctx.font = radius * 0.04 + 'px arial';
         ctx.beginPath();
         for (let i = 1; i < 61; i++) {
