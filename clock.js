@@ -220,7 +220,7 @@ window.addEventListener('load', function load() {
                         // Capricon
                         // Dec 22 - Jan 19
                         // 9 (Dec) + 19 (Jan) = 28
-                        sign = 10 + ((day + 9) / 28);
+                        sign = 10 + ((day + 8) / 28);
                     } else {
                         // Aquarius
                         // Jan 20 - Feb 18
@@ -233,7 +233,7 @@ window.addEventListener('load', function load() {
                         // Aquarius
                         // Jan 20 - Feb 18
                         // 11 (Jan) + 18 (Feb) = 29
-                        sign = 11 + ((day + 11) / 29);
+                        sign = 11 + ((day + 10) / 29);
                     } else {
                         // Pisces
                         // Feb 19 - Mar 20
@@ -247,7 +247,7 @@ window.addEventListener('load', function load() {
                         // Feb 19 - Mar 20
                         // 9/10 (Feb) + 20 (Mar) = 29/30
                         let leapYear = isLeapYear(date.getYear());
-                        sign = 12 + ((day + (leapYear ? 9 : 10)) / (leapYear ? 29 : 30));
+                        sign = 12 + ((day + (leapYear ? 8 : 9)) / (leapYear ? 29 : 30));
                     } else {
                         // Aries
                         // Mar 21 - Apr 19
@@ -260,7 +260,7 @@ window.addEventListener('load', function load() {
                         // Aries
                         // Mar 21 - Apr 19
                         // 10 (Mar) + 19 (Apr) = 29
-                        sign = 1 + ((day + 10) / 29);
+                        sign = 1 + ((day + 9) / 29);
                     } else {
                         // Taurus
                         // Apr 20 - May 20
@@ -273,7 +273,7 @@ window.addEventListener('load', function load() {
                         // Taurus
                         // Apr 20 - May 20
                         // 10 (Apr) + 20 (May) = 30
-                        sign = 2 + ((day + 10) / 30);
+                        sign = 2 + ((day + 9) / 30);
                     } else {
                         // Gemini
                         // May 21 - Jun 20
@@ -286,7 +286,7 @@ window.addEventListener('load', function load() {
                         // Gemini
                         // May 21 - Jun 20
                         // 10 (May) + 20 (Jun) = 30
-                        sign = 3 + ((day + 10) / 30);
+                        sign = 3 + ((day + 9) / 30);
                     } else {
                         // Cancer
                         // Jun 21 - Jul 22
@@ -299,7 +299,7 @@ window.addEventListener('load', function load() {
                         // Cancer
                         // Jun 21 - Jul 22
                         // 9 (Jun) + 22 (Jul) = 31
-                        sign = 4 + ((day + 9) / 31);
+                        sign = 4 + ((day + 8) / 31);
                     } else {
                         // Leo
                         // Jul 23 - Aug 22
@@ -312,7 +312,7 @@ window.addEventListener('load', function load() {
                         // Leo
                         // Jul 23 - Aug 22
                         // 7 (Jul) + 22 (Aug) = 29
-                        sign = 5 + ((day + 7) / 29);
+                        sign = 5 + ((day + 6) / 29);
                     } else {
                         // Virgo
                         // Aug 23 - Sep 22
@@ -325,7 +325,7 @@ window.addEventListener('load', function load() {
                         // Virgo
                         // Aug 23 - Sep 22
                         // 8 (Aug) + 22 (Sep) = 30
-                        sign = 6 + ((day + 8) / 30);
+                        sign = 6 + ((day + 7) / 30);
                     } else {
                         // Libra
                         // Sep 23 - Oct 22
@@ -338,7 +338,7 @@ window.addEventListener('load', function load() {
                         // Libra
                         // Sep 23 - Oct 22
                         // 8 (Sep) + 22 (Oct) = 30
-                        sign = 7 + ((day + 8) / 30);
+                        sign = 7 + ((day + 7) / 30);
                     } else {
                         // Scorpio
                         // Oct 23 - Nov 21
@@ -351,7 +351,7 @@ window.addEventListener('load', function load() {
                         // Scorpio
                         // Oct 23 - Nov 21
                         // 8 (Oct) + 21 (Nov) = 29
-                        sign = 8 + ((day + 8) / 29);
+                        sign = 8 + ((day + 7) / 29);
                     } else {
                         // Sagittarius
                         // Nov 22 - Dec 21
@@ -364,7 +364,7 @@ window.addEventListener('load', function load() {
                         // Sagittarius
                         // Nov 22 - Dec 21
                         // 8 (Nov) + 21 (Dec) = 29
-                        sign = 9 + ((day + 8) / 29);
+                        sign = 9 + ((day + 7) / 29);
                     } else {
                         // Capicorn
                         // Dec 22 - Jan 19
