@@ -18,9 +18,9 @@ window.addEventListener('load', function load() {
         drawNumerals();
         drawTime();
         // Draw center dot
-        ctx.fillStyle = '#ccc';
+        ctx.fillStyle = '#bbb';
         ctx.beginPath();
-        ctx.arc(0, 0, radius * .01, 0, 2 * Math.PI);
+        ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
         ctx.fill();
     })();
 
@@ -40,12 +40,16 @@ window.addEventListener('load', function load() {
     }
 
     function drawFace() {
-        let angle;
+        let angle,
+            gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4);
         // Clear canvas
         ctx.fillStyle = '#fff';
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
         // Stellated dodecahedron inner circle fill
-        ctx.fillStyle = '#f3f3f3';
+        // ctx.fillStyle = '#f3f3f3';
+        gradient.addColorStop(0, '#ddd');
+        gradient.addColorStop(.7, '#f3f3f3');
+        ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
         ctx.fill();
@@ -75,7 +79,7 @@ window.addEventListener('load', function load() {
         }
         // Rings
         ctx.strokeStyle = '#eee';
-        ctx.lineWidth   = 1.5;
+        ctx.lineWidth   = radius * .005;
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
         ctx.stroke();
@@ -132,7 +136,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 13; i++) {
             angle = i * Math.PI / 6;
-            ctx.fillStyle = (i === Math.floor(sign)) ? '#999' : '#ddd';
+            ctx.fillStyle = (i === Math.floor(sign)) ? '#555' : '#ccc';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.55);
             ctx.rotate(-angle);
@@ -146,7 +150,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 25; i++) {
             angle = i * Math.PI / 12;
-            ctx.fillStyle = (i === ((hour === 0) ? 24 : hour)) ? '#999' : '#ddd';
+            ctx.fillStyle = (i === ((hour === 0) ? 24 : hour)) ? '#555' : '#ccc';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.8);
             ctx.rotate(-angle);
@@ -160,7 +164,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 61; i++) {
             angle = i * Math.PI / 30;
-            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#999' : '#ddd';
+            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#555' : '#ccc';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.95);
             ctx.rotate(-angle);
