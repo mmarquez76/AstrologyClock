@@ -46,7 +46,6 @@ window.addEventListener('load', function load() {
         ctx.fillStyle = '#fff';
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
         // Stellated dodecahedron inner circle fill
-        // ctx.fillStyle = '#f3f3f3';
         gradient.addColorStop(0, '#ddd');
         gradient.addColorStop(.7, '#f3f3f3');
         ctx.fillStyle = gradient;
@@ -125,8 +124,9 @@ window.addEventListener('load', function load() {
     }
 
     function drawNumerals() {
-        let hour   = date.getHours(),
-            minute = date.getMinutes(),
+        let currentSign = Math.floor(sign),
+            hour        = date.getHours(),
+            minute      = date.getMinutes(),
             angle;
         ctx.textBaseline = 'middle';
         ctx.textAlign    = 'center';
@@ -136,7 +136,13 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 13; i++) {
             angle = i * Math.PI / 6;
-            ctx.fillStyle = (i === Math.floor(sign)) ? '#555' : '#ccc';
+            if (i == currentSign) {
+                ctx.fillStyle = '#555';
+            } else if (currentSign % 2 == i % 2) {
+                ctx.fillStyle = '#aaa';
+            } else {
+                ctx.fillStyle = '#ccc';
+            }
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.55);
             ctx.rotate(-angle);
