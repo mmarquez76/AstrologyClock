@@ -141,7 +141,7 @@ window.addEventListener('load', function load() {
             } else if (currentSign % 2 == i % 2) {
                 ctx.fillStyle = '#aaa';
             } else {
-                ctx.fillStyle = '#ccc';
+                ctx.fillStyle = '#ddd';
             }
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.55);
