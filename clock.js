@@ -18,7 +18,7 @@ window.addEventListener('load', function load() {
         drawNumerals();
         drawTime();
         // Draw center dot
-        ctx.fillStyle = '#bbb';
+        ctx.fillStyle = '#555';
         ctx.beginPath();
         ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
         ctx.fill();
@@ -77,7 +77,7 @@ window.addEventListener('load', function load() {
             ctx.rotate(-1.0471975511965976);
         }
         // Rings
-        ctx.strokeStyle = '#eee';
+        ctx.strokeStyle = '#ccc';
         ctx.lineWidth = radius * .005;
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
@@ -137,11 +137,11 @@ window.addEventListener('load', function load() {
         for (let i = 1; i < 13; i++) {
             angle = i * Math.PI / 6;
             if (i == currentSign) {
-                ctx.fillStyle = '#555';
+                ctx.fillStyle = '#333';
             } else if (currentSign % 2 == i % 2) {
-                ctx.fillStyle = '#aaa';
+                ctx.fillStyle = '#777';
             } else {
-                ctx.fillStyle = '#ddd';
+                ctx.fillStyle = '#aaa';
             }
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.55);
@@ -156,7 +156,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 13; i++) {
             angle = (i + .5) * Math.PI / 6;
-            ctx.fillStyle = (i === ((hour === 0) ? 12 : hour % 12)) ? '#555' : '#ccc';
+            ctx.fillStyle = (i === ((hour === 0) ? 12 : hour % 12)) ? '#333' : '#777';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.8);
             ctx.rotate(-angle);
@@ -170,7 +170,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 61; i++) {
             angle = i * Math.PI / 30;
-            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#555' : '#ccc';
+            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#333' : '#777';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.95);
             ctx.rotate(-angle);
@@ -189,23 +189,23 @@ window.addEventListener('load', function load() {
             drawSign;
         // Draw sign hand
         drawSign = ((sign - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#c3c3c3';
+        ctx.strokeStyle = '#555';
         drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
             (minute * Math.PI / (6 * 60)) +
             (second * Math.PI / (360 * 60));
-        ctx.strokeStyle = '#bbb';
+        ctx.strokeStyle = '#555';
         drawHand(ctx, hour, radius * 0.7, radius * 0.0035);
         // Draw minute hand
         minute = ((minute - 0.5) * Math.PI / 30) +
             (second * Math.PI / (30 * 60)) +
             (millisec * Math.PI / (30 * 60000));
-        ctx.strokeStyle = '#b3b3b3';
+        ctx.strokeStyle = '#555';
         drawHand(ctx, minute, radius * 0.9, radius * 0.003);
         // Draw second hand
         second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
-        ctx.strokeStyle = '#aaa';
+        ctx.strokeStyle = '#555';
         drawHand(ctx, second, radius, radius * 0.002);
     }
 
