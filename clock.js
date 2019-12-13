@@ -4,7 +4,8 @@ window.addEventListener('load', function load() {
     var canvas = document.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         signs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
-        radius, date, day, sign;
+        planets = ['Q', 'R', 'S', 'T', 'U'],
+        radius, date, sign, signSun, signMerc, signVenus, signMars, signMoon, minutes;
 
     document.body.appendChild(canvas);
     window.addEventListener('resize', resize);
@@ -13,7 +14,7 @@ window.addEventListener('load', function load() {
     (function drawFrame() {
         requestAnimationFrame(drawFrame);
         date = new Date();
-        getSign();
+        getSigns();
         drawFace();
         drawNumerals();
         drawTime();
@@ -124,7 +125,7 @@ window.addEventListener('load', function load() {
     }
 
     function drawNumerals() {
-        let currentSign = Math.floor(sign),
+        let currentSign = Math.floor(signSun),
             hour = date.getHours(),
             minute = date.getMinutes(),
             angle;
@@ -187,10 +188,26 @@ window.addEventListener('load', function load() {
             second = date.getSeconds(),
             millisec = date.getMilliseconds(),
             drawSign;
-        // Draw sign hand
-        drawSign = ((sign - .5) * Math.PI / 6);
+        // Draw sun sign hand
+        drawSign = ((signSun - .5) * Math.PI / 6);
         ctx.strokeStyle = '#555';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "Q");
+        // Draw moon sign hand
+        drawSign = ((signMoon - .5) * Math.PI / 6);
+        ctx.strokeStyle = '#555';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "R");
+        // Draw mercury sign hand
+        drawSign = ((signMerc - .5) * Math.PI / 6);
+        ctx.strokeStyle = '#555';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "S");
+        // Draw venus sign hand
+        drawSign = ((signVenus - .5) * Math.PI / 6);
+        ctx.strokeStyle = '#555';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "T");
+        // Draw mars sign hand
+        drawSign = ((signMars - .5) * Math.PI / 6);
+        ctx.strokeStyle = '#555';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "U");
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
             (minute * Math.PI / (6 * 60)) +
@@ -209,7 +226,7 @@ window.addEventListener('load', function load() {
         drawHand(ctx, second, radius, radius * 0.002);
     }
 
-    function drawHand(ctx, pos, length, width) {
+    function drawHand(ctx, pos, length, width, symbol="") {
         ctx.lineWidth = width;
         ctx.lineCap = 'round';
         ctx.beginPath();
@@ -217,176 +234,39 @@ window.addEventListener('load', function load() {
         ctx.rotate(pos);
         ctx.lineTo(0, -length);
         ctx.stroke();
+        // Draw planet symbol in sign
+        if (symbol)
+        {
+            ctx.font = radius * 0.10 + 'px Astro';
+            ctx.fillText(symbol, 0, -length);
+        }
         ctx.rotate(-pos);
     }
 
-    function getSign() {
-        if (day != date.getDate()) {
-            day = date.getDate();
-            let month = date.getMonth();
-            switch (month) {
-                case 0: // January
-                    if (day <= 19) {
-                        // Capricon
-                        // Dec 22 - Jan 19
-                        // 9 (Dec) + 19 (Jan) = 28
-                        sign = 10 + ((day + 8) / 28);
-                    } else {
-                        // Aquarius
-                        // Jan 20 - Feb 18
-                        // 11 (Jan) + 18 (Feb) = 29
-                        sign = 11 + ((day - 20) / 29);
-                    }
-                    break;
-                case 1: // February
-                    if (day <= 18) {
-                        // Aquarius
-                        // Jan 20 - Feb 18
-                        // 11 (Jan) + 18 (Feb) = 29
-                        sign = 11 + ((day + 10) / 29);
-                    } else {
-                        // Pisces
-                        // Feb 19 - Mar 20
-                        // 9/10 (Feb) + 20 (Mar) = 29/30
-                        sign = 12 + ((day - 19) / (isLeapYear(date.getYear()) ? 29 : 30));
-                    }
-                    break;
-                case 2:  // March
-                    if (day <= 20) {
-                        // Pisces
-                        // Feb 19 - Mar 20
-                        // 9/10 (Feb) + 20 (Mar) = 29/30
-                        let leapYear = isLeapYear(date.getYear());
-                        sign = 12 + ((day + (leapYear ? 8 : 9)) / (leapYear ? 29 : 30));
-                    } else {
-                        // Aries
-                        // Mar 21 - Apr 19
-                        // 10 (Mar) + 19 (Apr) = 29
-                        sign = 1 + ((day - 21) / 29);
-                    }
-                    break;
-                case 3: // April
-                    if (day <= 19) {
-                        // Aries
-                        // Mar 21 - Apr 19
-                        // 10 (Mar) + 19 (Apr) = 29
-                        sign = 1 + ((day + 9) / 29);
-                    } else {
-                        // Taurus
-                        // Apr 20 - May 20
-                        // 10 (Apr) + 20 (May) = 30
-                        sign = 2 + ((day - 20) / 30);
-                    }
-                    break;
-                case 4: // May
-                    if (day <= 20) {
-                        // Taurus
-                        // Apr 20 - May 20
-                        // 10 (Apr) + 20 (May) = 30
-                        sign = 2 + ((day + 9) / 30);
-                    } else {
-                        // Gemini
-                        // May 21 - Jun 20
-                        // 10 (May) + 20 (Jun) = 30
-                        sign = 3 + ((day - 21) / 30);
-                    }
-                    break;
-                case 5: // June
-                    if (day <= 20) {
-                        // Gemini
-                        // May 21 - Jun 20
-                        // 10 (May) + 20 (Jun) = 30
-                        sign = 3 + ((day + 9) / 30);
-                    } else {
-                        // Cancer
-                        // Jun 21 - Jul 22
-                        // 9 (Jun) + 22 (Jul) = 31
-                        sign = 4 + ((day - 21) / 31);
-                    }
-                    break;
-                case 6: // July
-                    if (day <= 22) {
-                        // Cancer
-                        // Jun 21 - Jul 22
-                        // 9 (Jun) + 22 (Jul) = 31
-                        sign = 4 + ((day + 8) / 31);
-                    } else {
-                        // Leo
-                        // Jul 23 - Aug 22
-                        // 7 (Jul) + 22 (Aug) = 29
-                        sign = 5 + ((day - 23) / 29);
-                    }
-                    break;
-                case 7:  // August
-                    if (day <= 22) {
-                        // Leo
-                        // Jul 23 - Aug 22
-                        // 7 (Jul) + 22 (Aug) = 29
-                        sign = 5 + ((day + 6) / 29);
-                    } else {
-                        // Virgo
-                        // Aug 23 - Sep 22
-                        // 8 (Aug) + 22 (Sep) = 30
-                        sign = 6 + ((day - 23) / 30);
-                    }
-                    break;
-                case 8: // September
-                    if (day <= 22) {
-                        // Virgo
-                        // Aug 23 - Sep 22
-                        // 8 (Aug) + 22 (Sep) = 30
-                        sign = 6 + ((day + 7) / 30);
-                    } else {
-                        // Libra
-                        // Sep 23 - Oct 22
-                        // 8 (Sep) + 22 (Oct) = 30
-                        sign = 7 + ((day - 23) / 30);
-                    }
-                    break;
-                case 9: // October
-                    if (day <= 22) {
-                        // Libra
-                        // Sep 23 - Oct 22
-                        // 8 (Sep) + 22 (Oct) = 30
-                        sign = 7 + ((day + 7) / 30);
-                    } else {
-                        // Scorpio
-                        // Oct 23 - Nov 21
-                        // 8 (Oct) + 21 (Nov) = 29
-                        sign = 8 + ((day - 23) / 29);
-                    }
-                    break;
-                case 10: // November
-                    if (day <= 21) {
-                        // Scorpio
-                        // Oct 23 - Nov 21
-                        // 8 (Oct) + 21 (Nov) = 29
-                        sign = 8 + ((day + 7) / 29);
-                    } else {
-                        // Sagittarius
-                        // Nov 22 - Dec 21
-                        // 8 (Nov) + 21 (Dec) = 29
-                        sign = 9 + ((day - 22) / 29);
-                    }
-                    break;
-                case 11: // December
-                    if (day <= 21) {
-                        // Sagittarius
-                        // Nov 22 - Dec 21
-                        // 8 (Nov) + 21 (Dec) = 29
-                        sign = 9 + ((day + 7) / 29);
-                    } else {
-                        // Capicorn
-                        // Dec 22 - Jan 19
-                        // 9 (Dec) + 19 (Jan) = 28
-                        sign = 10 + ((day - 22) / 28);
-                    }
-            }
+    function getSigns() {
+        var ephemeris;
+        if (minutes != date.getMinutes()) {
+            minutes = date.getMinutes();
+            
+            ephemeris = getEphemeris();
+            signSun = (ephemeris.sun.position.apparentLongitude / 30) + 1;
+            signMoon = (ephemeris.moon.position.apparentLongitude / 30) + 1;
+            signMerc = (ephemeris.mercury.position.apparentLongitude / 30) + 1;
+            signVenus = (ephemeris.venus.position.apparentLongitude / 30) + 1;
+            signMars = (ephemeris.mars.position.apparentLongitude / 30) + 1;
+            // This can easily be extended to other bodies by adding them to the
+            // key field in input within getEphemeris() and then addressing them
+            // like how it's done here.
         }
     }
 
-    function isLeapYear(year) {
-        return (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) ? true : false;
+    function getEphemeris() {
+        var input = {year: date.getFullYear(), month: date.getMonth(), day: date.getDate(), 
+            hours: date.getHours(), minutes: date.getMinutes(), latitude: 25, 
+            longitude: -80, key: ["sun", "moon", "mercury", "venus", "mars"] };
+
+        const ephemeris = new Ephemeris.default(input);
+        return ephemeris;
     }
 
 }, true);
