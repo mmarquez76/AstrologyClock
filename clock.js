@@ -8,7 +8,7 @@ window.addEventListener('load', function load() {
             saturn: 'V', jupiter: 'W', uranus: 'X', neptune: 'Y', pluto: 'Z',
             chiron: 't', ascNode: '<' },
         retro = 'M',
-        radius, date, minutes, 
+        radius, date, minutes, illumFraction, phaseDecimal,
         signSun, signMercury, signVenus, signMars, signMoon,
         signJupiter, signSaturn, signUranus, signNeptune, signPluto, signAscNode, signChiron,
         retroMerc, retroVenus, retroMars,
@@ -64,14 +64,31 @@ window.addEventListener('load', function load() {
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = radius * .016;
         ctx.beginPath();
-        ctx.arc(0, 0, radius * .14, 0, 2 * Math.PI);
+        ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(0, 0, radius * .093, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(0, 0, radius * .047, 0, 2 * Math.PI);
-        ctx.stroke();
+        // Normalize moon phase just in case it gets passed some weird value
+        illumFraction = Math.abs(illumFraction % 1);
+        // Draw phase of moon
+        if (illumFraction >= 0.5)
+        {
+            // Fill with light-yellow tinge on full moon
+            ctx.fillStyle = (illumFraction >= 0.99) ? '#ffb' : '#fff';
+            ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI/2, Math.PI/2, true);
+            ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5)/0.5)), radius * .143, 0, -Math.PI/2, Math.PI/2);
+            ctx.fill();
+        }
+        else if (illumFraction < 0.5)
+        {
+            ctx.fillStyle = '#fff';
+            ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillStyle = (illumFraction <= 0.01) ? '#888' : gradient;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, radius * .14, radius * .14, 0, -Math.PI/2, Math.PI/2);
+            ctx.ellipse(0, 0, radius * (.14 * ((0.5 - illumFraction)/0.5)), radius * .14, 0, -Math.PI/2, Math.PI/2, true);
+            ctx.fill();
+        }
         // Stellated dodecahedron
         ctx.lineWidth = radius * .008;
         ctx.beginPath();
@@ -206,7 +223,7 @@ window.addEventListener('load', function load() {
         // Draw mercury sign hand
         drawSign = ((signMercury - .5) * Math.PI / 6);
         ctx.strokeStyle = '#bbb';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.mercury, true);
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.mercury, retroMerc);
         // Draw venus sign hand
         drawSign = ((signVenus - .5) * Math.PI / 6);
         ctx.strokeStyle = '#bbb';
@@ -292,6 +309,9 @@ window.addEventListener('load', function load() {
         if (minutes != date.getMinutes()) {
             minutes = date.getMinutes();
             ephemeris = getEphemeris();
+            illumFraction = ephemeris.moon.position.illuminatedFraction;
+            phaseDecimal = ephemeris.moon.position.phaseDecimal;
+            phaseQuarter = ephemeris.moon.position.phaseQuarter;
             signSun = (ephemeris.sun.position.apparentLongitude / 30) + 1;
             signMoon = (ephemeris.moon.position.apparentLongitude / 30) + 1;
             signMercury = (ephemeris.mercury.position.apparentLongitude / 30) + 1;
