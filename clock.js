@@ -164,7 +164,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 13; i++) {
             angle = (i + .5) * Math.PI / 6;
-            ctx.fillStyle = (i === ((hour === 0) ? 12 : hour % 12)) ? '#333' : '#777';
+            ctx.fillStyle = (i === ((hour === 0) ? 12 : hour % 12)) ? '#333' : '#bbb';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.8);
             ctx.rotate(-angle);
@@ -178,7 +178,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 61; i++) {
             angle = i * Math.PI / 30;
-            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#333' : '#777';
+            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#333' : '#bbb';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.95);
             ctx.rotate(-angle);
@@ -206,7 +206,7 @@ window.addEventListener('load', function load() {
         // Draw mercury sign hand
         drawSign = ((signMercury - .5) * Math.PI / 6);
         ctx.strokeStyle = '#bbb';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.mercury, retroMerc);
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.mercury, true);
         // Draw venus sign hand
         drawSign = ((signVenus - .5) * Math.PI / 6);
         ctx.strokeStyle = '#bbb';
@@ -274,12 +274,14 @@ window.addEventListener('load', function load() {
         if (symbol)
         {
             ctx.font = radius * 0.10 + 'px Astro';
+            ctx.fillStyle = '#666'
             ctx.fillText(symbol, 0, -length);
         }
         // Draw retrograde symbol underneath planet
         if (isRetro)
         {
             ctx.font = radius * 0.09 + 'px Astro';
+            ctx.fillStyle = '#c66'
             ctx.fillText(retro, 0, -length + (radius * 0.07));
         }
         ctx.rotate(-pos);
