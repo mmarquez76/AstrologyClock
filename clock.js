@@ -4,8 +4,15 @@ window.addEventListener('load', function load() {
     var canvas = document.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         signs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
-        planets = ['Q', 'R', 'S', 'T', 'U'],
-        radius, date, sign, signSun, signMerc, signVenus, signMars, signMoon, minutes;
+        planets = { sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U', 
+            saturn: 'V', jupiter: 'W', uranus: 'X', neptune: 'Y', pluto: 'Z',
+            chiron: 't', ascNode: '<' },
+        retro = 'M',
+        radius, date, minutes, 
+        signSun, signMercury, signVenus, signMars, signMoon,
+        signJupiter, signSaturn, signUranus, signNeptune, signPluto, signAscNode, signChiron,
+        retroMerc, retroVenus, retroMars,
+        retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
 
     document.body.appendChild(canvas);
     window.addEventListener('resize', resize);
@@ -190,24 +197,53 @@ window.addEventListener('load', function load() {
             drawSign;
         // Draw sun sign hand
         drawSign = ((signSun - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#555';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "Q");
+        ctx.strokeStyle = '#bbb';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.sun);
         // Draw moon sign hand
         drawSign = ((signMoon - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#555';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "R");
+        ctx.strokeStyle = '#bbb';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.moon);
         // Draw mercury sign hand
-        drawSign = ((signMerc - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#555';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "S");
+        drawSign = ((signMercury - .5) * Math.PI / 6);
+        ctx.strokeStyle = '#bbb';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.mercury, retroMerc);
         // Draw venus sign hand
         drawSign = ((signVenus - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#555';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "T");
+        ctx.strokeStyle = '#bbb';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.venus, retroVenus);
         // Draw mars sign hand
         drawSign = ((signMars - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#555';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, "U");
+        ctx.strokeStyle = '#bbb';
+        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.mars, retroMars);
+        // Uncomment below blocks to add outer planets/asc node
+        // // Draw jupiter sign hand
+        // drawSign = ((signJupiter - .5) * Math.PI / 6);
+        // ctx.strokeStyle = '#bbb';
+        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.jupiter, retroJupiter);
+        // // Draw saturn sign hand
+        // drawSign = ((signSaturn - .5) * Math.PI / 6);
+        // ctx.strokeStyle = '#bbb';
+        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.saturn, retroSaturn);
+        // // Draw uranus sign hand
+        // drawSign = ((signUranus - .5) * Math.PI / 6);
+        // ctx.strokeStyle = '#bbb';
+        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.uranus, retroUranus);
+        // // Draw neptune sign hand
+        // drawSign = ((signNeptune - .5) * Math.PI / 6);
+        // ctx.strokeStyle = '#bbb';
+        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.neptune, retroNeptune);
+        // // Draw pluto sign hand
+        // drawSign = ((signPluto - .5) * Math.PI / 6);
+        // ctx.strokeStyle = '#bbb';
+        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.pluto, retroPluto);
+        // // Draw chiron sign hand
+        // drawSign = ((signChiron - .5) * Math.PI / 6);
+        // ctx.strokeStyle = '#bbb';
+        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.chiron, retroChiron);
+        // // Draw asc node sign hand
+        // drawSign = ((signAscNode - .5) * Math.PI / 6);
+        // ctx.strokeStyle = '#bbb';
+        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.ascNode);
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
             (minute * Math.PI / (6 * 60)) +
@@ -226,7 +262,7 @@ window.addEventListener('load', function load() {
         drawHand(ctx, second, radius, radius * 0.002);
     }
 
-    function drawHand(ctx, pos, length, width, symbol="") {
+    function drawHand(ctx, pos, length, width, symbol="", isRetro=false) {
         ctx.lineWidth = width;
         ctx.lineCap = 'round';
         ctx.beginPath();
@@ -234,11 +270,17 @@ window.addEventListener('load', function load() {
         ctx.rotate(pos);
         ctx.lineTo(0, -length);
         ctx.stroke();
-        // Draw planet symbol in sign
+        // Draw planet symbol at sign
         if (symbol)
         {
             ctx.font = radius * 0.10 + 'px Astro';
             ctx.fillText(symbol, 0, -length);
+        }
+        // Draw retrograde symbol underneath planet
+        if (isRetro)
+        {
+            ctx.font = radius * 0.09 + 'px Astro';
+            ctx.fillText(retro, 0, -length + (radius * 0.07));
         }
         ctx.rotate(-pos);
     }
@@ -247,23 +289,37 @@ window.addEventListener('load', function load() {
         var ephemeris;
         if (minutes != date.getMinutes()) {
             minutes = date.getMinutes();
-            
             ephemeris = getEphemeris();
             signSun = (ephemeris.sun.position.apparentLongitude / 30) + 1;
             signMoon = (ephemeris.moon.position.apparentLongitude / 30) + 1;
-            signMerc = (ephemeris.mercury.position.apparentLongitude / 30) + 1;
+            signMercury = (ephemeris.mercury.position.apparentLongitude / 30) + 1;
             signVenus = (ephemeris.venus.position.apparentLongitude / 30) + 1;
             signMars = (ephemeris.mars.position.apparentLongitude / 30) + 1;
-            // This can easily be extended to other bodies by adding them to the
-            // key field in input within getEphemeris() and then addressing them
-            // like how it's done here.
+            // Uncomment the commented blocks below to add the outer planets/asc node
+            // signJupiter = (ephemeris.jupiter.position.apparentLongitude / 30) + 1;
+            // signSaturn = (ephemeris.saturn.position.apparentLongitude / 30) + 1;
+            // signUranus = (ephemeris.uranus.position.apparentLongitude / 30) + 1;
+            // signNeptune = (ephemeris.neptune.position.apparentLongitude / 30) + 1;
+            // signPluto = (ephemeris.pluto.position.apparentLongitude / 30) + 1;
+            // signAscNode = (ephemeris.moon.orbit.meanAscendingNode.apparentLongitude / 30) + 1;
+            // signChiron = (ephemeris.chiron.position.apparentLongitude / 30) + 1;
+            retroMerc = ephemeris.mercury.motion.isRetrograde;
+            retroVenus = ephemeris.venus.motion.isRetrograde;
+            retroMars = ephemeris.mars.motion.isRetrograde;
+            // retroJupiter = ephemeris.jupiter.motion.isRetrograde;
+            // retroSaturn = ephemeris.saturn.motion.isRetrograde;
+            // retroUranus = ephemeris.uranus.motion.isRetrograde;
+            // retroNeptune = ephemeris.neptune.motion.isRetrograde;
+            // retroPluto = ephemeris.pluto.motion.isRetrograde;
+            // retroChiron = ephemeris.chiron.motion.isRetrograde;
         }
     }
 
     function getEphemeris() {
+        // INSERT YOUR LATITUDE AND LONGITUDE BELOW
         var input = {year: date.getFullYear(), month: date.getMonth(), day: date.getDate(), 
             hours: date.getHours(), minutes: date.getMinutes(), latitude: 25, 
-            longitude: -80, key: ["sun", "moon", "mercury", "venus", "mars"] };
+            longitude: -80, key: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"] };
 
         const ephemeris = new Ephemeris.default(input);
         return ephemeris;
