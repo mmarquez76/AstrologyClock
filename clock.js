@@ -2,8 +2,8 @@
 const SHOW_INNER_BODIES = true;
 // Display saturn, jupiter, uranus, neptune, pluto, and chiron
 const SHOW_OUTER_BODIES = false;
-// Display lilith and ascending and descending lunar nodes
-const SHOW_LUNAR_NODES = true;
+// Display dark moon lilith and ascending lunar node
+const SHOW_LUNAR_POINTS = false;
 // Display angles (midheaven, ascendant)
 const SHOW_ANGLES = false;
 // Display phases of the moon
@@ -18,12 +18,13 @@ window.addEventListener('load', function load() {
         symbols = {
             sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U',
             saturn: 'V', jupiter: 'W', uranus: 'X', neptune: 'Y', pluto: 'Z',
-            chiron: 't', ascNode: '<', descNode: '>', lilith: '⚸',
+            chiron: 't', ascNode: '<', lilith: '⚸',
             ascendant: 'a', midheaven: 'b', retro: 'M'
         },
         radius, date, minutes, illumFraction,
         signSun, signMercury, signVenus, signMars, signMoon,
-        signJupiter, signSaturn, signUranus, signNeptune, signPluto, signAscNode, signDescNode, signChiron,
+        signJupiter, signSaturn, signUranus, signNeptune, signPluto, signChiron,
+        signAscNode, signLilith,
         retroMerc, retroVenus, retroMars,
         retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
 
@@ -73,7 +74,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
         ctx.fill();
-        // Stellated dodecahedron inner rings; Eye of the Sahara
+        // Outer circle of inner section
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = radius * .016;
         ctx.beginPath();
@@ -102,6 +103,7 @@ window.addEventListener('load', function load() {
                 ctx.fill();
             }
         } else {
+            // No moon phases; draw stellated dodecahedron inner rings; Eye of the Sahara
             ctx.arc(0, 0, radius * .093, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.beginPath();
@@ -279,15 +281,15 @@ window.addEventListener('load', function load() {
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.chiron, retroChiron);
         }
-        if (SHOW_LUNAR_NODES) {
+        if (SHOW_LUNAR_POINTS) {
             // Draw ascending node sign hand
             drawSign = ((signAscNode - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascNode);
             // Draw descending node sign hand
-            drawSign = ((signDescNode - .5) * Math.PI / 6);
+            drawSign = ((signLilith - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.descNode);
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.lilith);
         }
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
@@ -359,9 +361,9 @@ window.addEventListener('load', function load() {
                 retroPluto = ephemeris.pluto.motion.isRetrograde;
                 retroChiron = ephemeris.chiron.motion.isRetrograde;
             }
-            if (SHOW_LUNAR_NODES) {
+            if (SHOW_LUNAR_POINTS) {
                 signAscNode = (ephemeris.moon.orbit.meanAscendingNode.apparentLongitude / 30) + 1;
-                signDescNode = (ephemeris.moon.orbit.meanDescendingNode.apparentLongitude / 30) + 1;
+                signLilith = (ephemeris.moon.orbit.meanApogee.apparentLongitude / 30) + 1;
             }
             if (SHOW_MOON_PHASES) {
                 illumFraction = ephemeris.moon.position.illuminatedFraction;
