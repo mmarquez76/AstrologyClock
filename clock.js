@@ -1,16 +1,29 @@
+// Display sun, moon, mercury, venus, and mars
+const SHOW_INNER_BODIES = true;
+// Display saturn, jupiter, uranus, neptune, pluto, and chiron
+const SHOW_OUTER_BODIES = false;
+// Display lilith and ascending and descending lunar nodes
+const SHOW_LUNAR_NODES = true;
+// Display angles (midheaven, ascendant)
+const SHOW_ANGLES = false;
+// Display phases of the moon
+const SHOW_MOON_PHASES = true;
+
 window.addEventListener('load', function load() {
     window.removeEventListener('load', load, false);
 
     var canvas = document.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         signs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
-        planets = { sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U', 
+        symbols = {
+            sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U',
             saturn: 'V', jupiter: 'W', uranus: 'X', neptune: 'Y', pluto: 'Z',
-            chiron: 't', ascNode: '<' },
-        retro = 'M',
-        radius, date, minutes, illumFraction, phaseDecimal,
+            chiron: 't', ascNode: '<', descNode: '>', lilith: '⚸',
+            ascendant: 'a', midheaven: 'b', retro: 'M'
+        },
+        radius, date, minutes, illumFraction,
         signSun, signMercury, signVenus, signMars, signMoon,
-        signJupiter, signSaturn, signUranus, signNeptune, signPluto, signAscNode, signChiron,
+        signJupiter, signSaturn, signUranus, signNeptune, signPluto, signAscNode, signDescNode, signChiron,
         retroMerc, retroVenus, retroMars,
         retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
 
@@ -67,27 +80,33 @@ window.addEventListener('load', function load() {
         ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.beginPath();
-        // Normalize moon phase just in case it gets passed some weird value
-        illumFraction = Math.abs(illumFraction % 1);
-        // Draw phase of moon
-        if (illumFraction >= 0.5)
-        {
-            // Fill with light-yellow tinge on full moon
-            ctx.fillStyle = (illumFraction >= 0.99) ? '#ffb' : '#fff';
-            ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI/2, Math.PI/2, true);
-            ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5)/0.5)), radius * .143, 0, -Math.PI/2, Math.PI/2);
-            ctx.fill();
-        }
-        else if (illumFraction < 0.5)
-        {
-            ctx.fillStyle = '#fff';
-            ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.fillStyle = (illumFraction <= 0.01) ? '#888' : gradient;
+        if (SHOW_MOON_PHASES) {
+            // Normalize moon phase just in case it gets passed some weird value
+            illumFraction = Math.abs(illumFraction % 1);
+            // Draw phase of moon
+            if (illumFraction >= 0.5) {
+                // Fill with light-yellow tinge on full moon
+                ctx.fillStyle = (illumFraction >= 0.99) ? '#ffb' : '#fff';
+                ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
+                ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2);
+                ctx.fill();
+            }
+            else if (illumFraction < 0.5) {
+                ctx.fillStyle = '#fff';
+                ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.fillStyle = (illumFraction <= 0.01) ? '#888' : gradient;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, radius * .14, radius * .14, 0, -Math.PI / 2, Math.PI / 2);
+                ctx.ellipse(0, 0, radius * (.14 * ((0.5 - illumFraction) / 0.5)), radius * .14, 0, -Math.PI / 2, Math.PI / 2, true);
+                ctx.fill();
+            }
+        } else {
+            ctx.arc(0, 0, radius * .093, 0, 2 * Math.PI);
+            ctx.stroke();
             ctx.beginPath();
-            ctx.ellipse(0, 0, radius * .14, radius * .14, 0, -Math.PI/2, Math.PI/2);
-            ctx.ellipse(0, 0, radius * (.14 * ((0.5 - illumFraction)/0.5)), radius * .14, 0, -Math.PI/2, Math.PI/2, true);
-            ctx.fill();
+            ctx.arc(0, 0, radius * .047, 0, 2 * Math.PI);
+            ctx.stroke();
         }
         // Stellated dodecahedron
         ctx.lineWidth = radius * .008;
@@ -181,7 +200,7 @@ window.addEventListener('load', function load() {
         ctx.beginPath();
         for (let i = 1; i < 13; i++) {
             angle = (i + .5) * Math.PI / 6;
-            ctx.fillStyle = (i === ((hour === 0) ? 12 : hour % 12)) ? '#333' : '#bbb';
+            ctx.fillStyle = (i === ((hour === 0 || hour === 12) ? 12 : hour % 12)) ? '#333' : '#bbb';
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.8);
             ctx.rotate(-angle);
@@ -212,55 +231,64 @@ window.addEventListener('load', function load() {
             second = date.getSeconds(),
             millisec = date.getMilliseconds(),
             drawSign;
-        // Draw sun sign hand
-        drawSign = ((signSun - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#bbb';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.sun);
-        // Draw moon sign hand
-        drawSign = ((signMoon - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#bbb';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.moon);
-        // Draw mercury sign hand
-        drawSign = ((signMercury - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#bbb';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.mercury, retroMerc);
-        // Draw venus sign hand
-        drawSign = ((signVenus - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#bbb';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.venus, retroVenus);
-        // Draw mars sign hand
-        drawSign = ((signMars - .5) * Math.PI / 6);
-        ctx.strokeStyle = '#bbb';
-        drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.mars, retroMars);
-        // Uncomment below blocks to add outer planets/asc node
-        // // Draw jupiter sign hand
-        // drawSign = ((signJupiter - .5) * Math.PI / 6);
-        // ctx.strokeStyle = '#bbb';
-        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.jupiter, retroJupiter);
-        // // Draw saturn sign hand
-        // drawSign = ((signSaturn - .5) * Math.PI / 6);
-        // ctx.strokeStyle = '#bbb';
-        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.saturn, retroSaturn);
-        // // Draw uranus sign hand
-        // drawSign = ((signUranus - .5) * Math.PI / 6);
-        // ctx.strokeStyle = '#bbb';
-        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.uranus, retroUranus);
-        // // Draw neptune sign hand
-        // drawSign = ((signNeptune - .5) * Math.PI / 6);
-        // ctx.strokeStyle = '#bbb';
-        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.neptune, retroNeptune);
-        // // Draw pluto sign hand
-        // drawSign = ((signPluto - .5) * Math.PI / 6);
-        // ctx.strokeStyle = '#bbb';
-        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.pluto, retroPluto);
-        // // Draw chiron sign hand
-        // drawSign = ((signChiron - .5) * Math.PI / 6);
-        // ctx.strokeStyle = '#bbb';
-        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.chiron, retroChiron);
-        // // Draw asc node sign hand
-        // drawSign = ((signAscNode - .5) * Math.PI / 6);
-        // ctx.strokeStyle = '#bbb';
-        // drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, planets.ascNode);
+        if (SHOW_INNER_BODIES) {
+            // Draw sun sign hand
+            drawSign = ((signSun - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.sun);
+            // Draw moon sign hand
+            drawSign = ((signMoon - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.moon);
+            // Draw mercury sign hand
+            drawSign = ((signMercury - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mercury, retroMerc);
+            // Draw venus sign hand
+            drawSign = ((signVenus - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.venus, retroVenus);
+            // Draw mars sign hand
+            drawSign = ((signMars - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mars, retroMars);
+        }
+        if (SHOW_OUTER_BODIES) {
+            // Draw jupiter sign hand
+            drawSign = ((signJupiter - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.jupiter, retroJupiter);
+            // Draw saturn sign hand
+            drawSign = ((signSaturn - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.saturn, retroSaturn);
+            // Draw uranus sign hand
+            drawSign = ((signUranus - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.uranus, retroUranus);
+            // Draw neptune sign hand
+            drawSign = ((signNeptune - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.neptune, retroNeptune);
+            // Draw pluto sign hand
+            drawSign = ((signPluto - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.pluto, retroPluto);
+            // Draw chiron sign hand
+            drawSign = ((signChiron - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.chiron, retroChiron);
+        }
+        if (SHOW_LUNAR_NODES) {
+            // Draw ascending node sign hand
+            drawSign = ((signAscNode - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascNode);
+            // Draw descending node sign hand
+            drawSign = ((signDescNode - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.descNode);
+        }
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
             (minute * Math.PI / (6 * 60)) +
@@ -279,7 +307,7 @@ window.addEventListener('load', function load() {
         drawHand(ctx, second, radius, radius * 0.002);
     }
 
-    function drawHand(ctx, pos, length, width, symbol="", isRetro=false) {
+    function drawHand(ctx, pos, length, width, symbol = "", isRetro = false) {
         ctx.lineWidth = width;
         ctx.lineCap = 'round';
         ctx.beginPath();
@@ -288,18 +316,16 @@ window.addEventListener('load', function load() {
         ctx.lineTo(0, -length);
         ctx.stroke();
         // Draw planet symbol at sign
-        if (symbol)
-        {
+        if (symbol) {
             ctx.font = radius * 0.10 + 'px Astro';
             ctx.fillStyle = '#666'
             ctx.fillText(symbol, 0, -length);
         }
         // Draw retrograde symbol underneath planet
-        if (isRetro)
-        {
+        if (isRetro) {
             ctx.font = radius * 0.09 + 'px Astro';
             ctx.fillStyle = '#c66'
-            ctx.fillText(retro, 0, -length + (radius * 0.07));
+            ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
         }
         ctx.rotate(-pos);
     }
@@ -309,39 +335,47 @@ window.addEventListener('load', function load() {
         if (minutes != date.getMinutes()) {
             minutes = date.getMinutes();
             ephemeris = getEphemeris();
-            illumFraction = ephemeris.moon.position.illuminatedFraction;
-            phaseDecimal = ephemeris.moon.position.phaseDecimal;
-            phaseQuarter = ephemeris.moon.position.phaseQuarter;
-            signSun = (ephemeris.sun.position.apparentLongitude / 30) + 1;
-            signMoon = (ephemeris.moon.position.apparentLongitude / 30) + 1;
-            signMercury = (ephemeris.mercury.position.apparentLongitude / 30) + 1;
-            signVenus = (ephemeris.venus.position.apparentLongitude / 30) + 1;
-            signMars = (ephemeris.mars.position.apparentLongitude / 30) + 1;
-            // Uncomment the commented blocks below to add the outer planets/asc node
-            // signJupiter = (ephemeris.jupiter.position.apparentLongitude / 30) + 1;
-            // signSaturn = (ephemeris.saturn.position.apparentLongitude / 30) + 1;
-            // signUranus = (ephemeris.uranus.position.apparentLongitude / 30) + 1;
-            // signNeptune = (ephemeris.neptune.position.apparentLongitude / 30) + 1;
-            // signPluto = (ephemeris.pluto.position.apparentLongitude / 30) + 1;
-            // signAscNode = (ephemeris.moon.orbit.meanAscendingNode.apparentLongitude / 30) + 1;
-            // signChiron = (ephemeris.chiron.position.apparentLongitude / 30) + 1;
-            retroMerc = ephemeris.mercury.motion.isRetrograde;
-            retroVenus = ephemeris.venus.motion.isRetrograde;
-            retroMars = ephemeris.mars.motion.isRetrograde;
-            // retroJupiter = ephemeris.jupiter.motion.isRetrograde;
-            // retroSaturn = ephemeris.saturn.motion.isRetrograde;
-            // retroUranus = ephemeris.uranus.motion.isRetrograde;
-            // retroNeptune = ephemeris.neptune.motion.isRetrograde;
-            // retroPluto = ephemeris.pluto.motion.isRetrograde;
-            // retroChiron = ephemeris.chiron.motion.isRetrograde;
+            if (SHOW_INNER_BODIES) {
+                signSun = (ephemeris.sun.position.apparentLongitude / 30) + 1;
+                signMoon = (ephemeris.moon.position.apparentLongitude / 30) + 1;
+                signMercury = (ephemeris.mercury.position.apparentLongitude / 30) + 1;
+                signVenus = (ephemeris.venus.position.apparentLongitude / 30) + 1;
+                signMars = (ephemeris.mars.position.apparentLongitude / 30) + 1;           
+                retroMerc = ephemeris.mercury.motion.isRetrograde;
+                retroVenus = ephemeris.venus.motion.isRetrograde;
+                retroMars = ephemeris.mars.motion.isRetrograde;
+            }
+            if (SHOW_OUTER_BODIES) {
+                signJupiter = (ephemeris.jupiter.position.apparentLongitude / 30) + 1;
+                signSaturn = (ephemeris.saturn.position.apparentLongitude / 30) + 1;
+                signUranus = (ephemeris.uranus.position.apparentLongitude / 30) + 1;
+                signNeptune = (ephemeris.neptune.position.apparentLongitude / 30) + 1;
+                signPluto = (ephemeris.pluto.position.apparentLongitude / 30) + 1;
+                signChiron = (ephemeris.chiron.position.apparentLongitude / 30) + 1;                
+                retroJupiter = ephemeris.jupiter.motion.isRetrograde;
+                retroSaturn = ephemeris.saturn.motion.isRetrograde;
+                retroUranus = ephemeris.uranus.motion.isRetrograde;
+                retroNeptune = ephemeris.neptune.motion.isRetrograde;
+                retroPluto = ephemeris.pluto.motion.isRetrograde;
+                retroChiron = ephemeris.chiron.motion.isRetrograde;
+            }
+            if (SHOW_LUNAR_NODES) {
+                signAscNode = (ephemeris.moon.orbit.meanAscendingNode.apparentLongitude / 30) + 1;
+                signDescNode = (ephemeris.moon.orbit.meanDescendingNode.apparentLongitude / 30) + 1;
+            }
+            if (SHOW_MOON_PHASES) {
+                illumFraction = ephemeris.moon.position.illuminatedFraction;
+            }
         }
     }
 
     function getEphemeris() {
         // INSERT YOUR LATITUDE AND LONGITUDE BELOW
-        var input = {year: date.getFullYear(), month: date.getMonth(), day: date.getDate(), 
-            hours: date.getHours(), minutes: date.getMinutes(), latitude: 25, 
-            longitude: -80, key: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"] };
+        var input = {
+            year: date.getFullYear(), month: date.getMonth(), day: date.getDate(),
+            hours: date.getHours(), minutes: date.getMinutes(), latitude: 25,
+            longitude: -80, key: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]
+        };
 
         const ephemeris = new Ephemeris.default(input);
         return ephemeris;
