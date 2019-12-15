@@ -5,11 +5,17 @@ const SHOW_OUTER_BODIES = false;
 // Display dark moon lilith and ascending lunar node
 const SHOW_LUNAR_POINTS = false;
 // Display angles (midheaven, ascendant)
-const SHOW_ANGLES = false;
+const SHOW_ANGLES = true;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
+const LATITUDE = 25;
+const LONGITUDE = -80;
 
-window.addEventListener('load', function load() {
+Date.prototype.getJulian = function () {
+    return (this / 86400000) + 2440587.5;
+}
+
+window.addEventListener('load', function load() {       
     window.removeEventListener('load', load, false);
 
     var canvas = document.createElement('canvas'),
@@ -25,6 +31,7 @@ window.addEventListener('load', function load() {
         signSun, signMercury, signVenus, signMars, signMoon,
         signJupiter, signSaturn, signUranus, signNeptune, signPluto, signChiron,
         signAscNode, signLilith,
+        signMidheaven, signAscendant,
         retroMerc, retroVenus, retroMars,
         retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
 
@@ -286,10 +293,20 @@ window.addEventListener('load', function load() {
             drawSign = ((signAscNode - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascNode);
-            // Draw descending node sign hand
+            // Draw lilith sign hand
             drawSign = ((signLilith - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.lilith);
+        }
+        if (SHOW_ANGLES) {
+            // Draw ascendant sign hand
+            drawSign = ((signAscendant - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascendant);           
+            // Draw midheaven sign hand
+            drawSign = ((signMidheaven - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.midheaven);
         }
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
@@ -336,13 +353,14 @@ window.addEventListener('load', function load() {
         var ephemeris;
         if (minutes != date.getMinutes()) {
             minutes = date.getMinutes();
+            console.log("GETTING NEW EPHEMERIS AT HOUR " + date.getHours() + " MINUTE " + date.getMinutes());
             ephemeris = getEphemeris();
             if (SHOW_INNER_BODIES) {
                 signSun = (ephemeris.sun.position.apparentLongitude / 30) + 1;
                 signMoon = (ephemeris.moon.position.apparentLongitude / 30) + 1;
                 signMercury = (ephemeris.mercury.position.apparentLongitude / 30) + 1;
                 signVenus = (ephemeris.venus.position.apparentLongitude / 30) + 1;
-                signMars = (ephemeris.mars.position.apparentLongitude / 30) + 1;           
+                signMars = (ephemeris.mars.position.apparentLongitude / 30) + 1;
                 retroMerc = ephemeris.mercury.motion.isRetrograde;
                 retroVenus = ephemeris.venus.motion.isRetrograde;
                 retroMars = ephemeris.mars.motion.isRetrograde;
@@ -353,7 +371,7 @@ window.addEventListener('load', function load() {
                 signUranus = (ephemeris.uranus.position.apparentLongitude / 30) + 1;
                 signNeptune = (ephemeris.neptune.position.apparentLongitude / 30) + 1;
                 signPluto = (ephemeris.pluto.position.apparentLongitude / 30) + 1;
-                signChiron = (ephemeris.chiron.position.apparentLongitude / 30) + 1;                
+                signChiron = (ephemeris.chiron.position.apparentLongitude / 30) + 1;
                 retroJupiter = ephemeris.jupiter.motion.isRetrograde;
                 retroSaturn = ephemeris.saturn.motion.isRetrograde;
                 retroUranus = ephemeris.uranus.motion.isRetrograde;
@@ -368,15 +386,128 @@ window.addEventListener('load', function load() {
             if (SHOW_MOON_PHASES) {
                 illumFraction = ephemeris.moon.position.illuminatedFraction;
             }
+            if (SHOW_ANGLES) {
+                signMidheaven = (getMidheavenSun() / 30) + 1;
+                signAscendant = (getAscendant()/ 30) + 1;
+            }
         }
     }
 
+    function getMidheavenSun(obliquityEcliptic = 23.4367) {
+        // Also known as: Medium Coeli or M.C.
+        //////////
+        // * float localSiderealTime = local sidereal time in degrees
+        // * float obliquityEcliptic = obliquity of ecpliptic in degrees
+        // => returns Float as degrees
+        /////////
+        // Source: Astronomical Algorithims by Jean Meeus (1991) Ch 24 pg 153 - formula 24.6
+        // verified with https://astrolibrary.org/midheaven-calculator/ and https://cafeastrology.com/midheaven.html
+        // Default obliquityEcliptic value from http://www.neoprogrammics.com/obliquity_of_the_ecliptic/
+        // for Mean Obliquity on Sept. 22 2019 at 0000 UTC
+
+        const localSiderealTime = getLocalSiderealTime();
+        const tanLST = Math.tan(toRadians(localSiderealTime));
+        const cosOE = Math.cos(toRadians(obliquityEcliptic));
+        let midheaven = toDegrees(Math.atan(tanLST / cosOE));
+
+        // Correcting the quadrant
+        if (midheaven < 0) {
+            midheaven += 360;
+        }
+
+        if (midheaven > localSiderealTime) {
+            midheaven -= 180;
+        }
+
+        if (midheaven < 0) {
+            midheaven += 180;
+        }
+
+        if (midheaven < 180 && localSiderealTime >= 180) {
+            midheaven += 180;
+        }
+
+        return modulo(midheaven, 360);
+    }
+
+    function getAscendant(obliquityEcliptic = 23.4367) {
+        latitude = LATITUDE;
+        localSiderealTime = getLocalSiderealTime();
+
+        const a = -Math.cos(toRadians(localSiderealTime));
+        const b = Math.sin(toRadians(obliquityEcliptic)) * Math.tan(toRadians(latitude));
+        const c = Math.cos(toRadians(obliquityEcliptic)) * Math.sin(toRadians(localSiderealTime));
+        const d = b + c;
+        const e = a / d;
+        const f = Math.atan(e);
+
+        let ascendant = toDegrees(f);
+
+        // modulation from wikipedia
+        // https://en.wikipedia.org/wiki/Ascendant
+        // citation Peter Duffett-Smith, Jonathan Zwart, Practical astronomy with your calculator or spreadsheet-4th ed., p47, 2011
+
+        if (d < 0)
+            ascendant += 180;
+        else
+            ascendant += 360;
+
+        if (ascendant < 180)
+            ascendant += 180;
+        else
+            ascendant -= 180;
+
+        return modulo(ascendant, 360);
+    }
+
+    function toRadians(degrees) {
+        return degrees * (Math.PI / 180);
+    }
+
+    function toDegrees(radians) {
+        return radians * (180 / Math.PI);
+    }
+
+    function modulo(number, mod) {
+        // Modulo function which works with negative numbers
+        // https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
+        ///////////
+        // * float number = the primary number to compute on
+        // * float mod = the modulating number
+        // => Returns Float
+        ///////////
+      
+        return (number % mod + mod) % mod
+      }
+
+    function getLocalSiderealTime() {
+        // Also gives: Right Ascension of M.C. or RAMC
+        /////////
+        // * float jd = julian date decimal
+        // * float longitude = local longitude in decimal form
+        // => returns Float || the sidereal time in arc degrees (0...359)
+        /////////
+        // Source: Astronomical Algorithims by Jean Meeus (1991) - Ch 11, pg 84 formula 11.4
+        // verified with http://neoprogrammics.com/sidereal_time_calculator/index.php
+        const julianDaysJan1st2000 = 2451545.0;
+        const julianDaysSince2000 = date.getJulian() - julianDaysJan1st2000;
+        const tFactor = (julianDaysSince2000) / 36525; // centuries
+        const degreesRotationInSiderealDay = 360.98564736629;
+        const lst = 280.46061837 +
+            (degreesRotationInSiderealDay * (julianDaysSince2000)) +
+            0.000387933 * Math.pow(tFactor, 2) -
+            (Math.pow(tFactor, 3) / 38710000) +
+            LONGITUDE;
+
+        const modLst = modulo(parseFloat(lst), 360);
+        return modLst;
+    }
+
     function getEphemeris() {
-        // INSERT YOUR LATITUDE AND LONGITUDE BELOW
         var input = {
             year: date.getFullYear(), month: date.getMonth(), day: date.getDate(),
-            hours: date.getHours(), minutes: date.getMinutes(), latitude: 25,
-            longitude: -80, key: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]
+            hours: date.getHours(), minutes: date.getMinutes(), latitude: LATITUDE,
+            longitude: LONGITUDE, key: ["sun", "moon", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]
         };
 
         const ephemeris = new Ephemeris.default(input);
