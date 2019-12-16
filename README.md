@@ -1,9 +1,9 @@
 # Astrology Clock
 
-Displays the time and current sun sign.
+Displays the time, moon phase, and current planetary positions in the zodiac, with optional indicators for the major angles, lunar points, and outer planets.
 
-Uses Astro font type by Cosmorama.
+Uses Astro font type by Cosmorama, as well as the Moshier Ephemeris JS fork by @0xStarcat
 
-    git clone git@github.com:robertmermet/AstrologyClock.git
+    git clone git@github.com:mtaylor76/AstrologyClock.git
 
->**demo** [robertmermet.com/projects/AstrologyClock](http://robertmermet.com/projects/AstrologyClock)
+>**demo** [https://mtaylor76.github.io/AstrologyClock/](https://mtaylor76.github.io/AstrologyClock/)
