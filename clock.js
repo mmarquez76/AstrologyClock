@@ -5,7 +5,7 @@ const SHOW_OUTER_BODIES = false;
 // Display dark moon lilith and ascending lunar node
 const SHOW_LUNAR_POINTS = false;
 // Display angles (midheaven, ascendant)
-const SHOW_ANGLES = true;
+const SHOW_ANGLES = false;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
 const LATITUDE = 25;
@@ -20,7 +20,7 @@ window.addEventListener('load', function load() {
 
     var canvas = document.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        signs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
+        signs = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A'],
         symbols = {
             sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U',
             saturn: 'V', jupiter: 'W', uranus: 'X', neptune: 'Y', pluto: 'Z',
@@ -355,23 +355,23 @@ window.addEventListener('load', function load() {
             minutes = date.getMinutes();
             console.log("GETTING NEW EPHEMERIS AT HOUR " + date.getHours() + " MINUTE " + date.getMinutes());
             ephemeris = getEphemeris();
-            if (SHOW_INNER_BODIES) {
-                signSun = (ephemeris.sun.position.apparentLongitude / 30) + 1;
-                signMoon = (ephemeris.moon.position.apparentLongitude / 30) + 1;
-                signMercury = (ephemeris.mercury.position.apparentLongitude / 30) + 1;
-                signVenus = (ephemeris.venus.position.apparentLongitude / 30) + 1;
-                signMars = (ephemeris.mars.position.apparentLongitude / 30) + 1;
+            if (SHOW_INNER_BODIES) { 
+                signSun = (Math.abs(ephemeris.sun.position.apparentLongitude - 360) / 30) + 1;
+                signMoon = (Math.abs(ephemeris.moon.position.apparentLongitude - 360) / 30) + 1;
+                signMercury = (Math.abs(ephemeris.mercury.position.apparentLongitude - 360) / 30) + 1;
+                signVenus = (Math.abs(ephemeris.venus.position.apparentLongitude - 360) / 30) + 1;
+                signMars = (Math.abs(ephemeris.mars.position.apparentLongitude - 360) / 30) + 1;
                 retroMerc = ephemeris.mercury.motion.isRetrograde;
                 retroVenus = ephemeris.venus.motion.isRetrograde;
                 retroMars = ephemeris.mars.motion.isRetrograde;
             }
             if (SHOW_OUTER_BODIES) {
-                signJupiter = (ephemeris.jupiter.position.apparentLongitude / 30) + 1;
-                signSaturn = (ephemeris.saturn.position.apparentLongitude / 30) + 1;
-                signUranus = (ephemeris.uranus.position.apparentLongitude / 30) + 1;
-                signNeptune = (ephemeris.neptune.position.apparentLongitude / 30) + 1;
-                signPluto = (ephemeris.pluto.position.apparentLongitude / 30) + 1;
-                signChiron = (ephemeris.chiron.position.apparentLongitude / 30) + 1;
+                signJupiter = (Math.abs(ephemeris.jupiter.position.apparentLongitude - 360) / 30) + 1;
+                signSaturn = (Math.abs(ephemeris.saturn.position.apparentLongitude - 360) / 30) + 1;
+                signUranus = (Math.abs(ephemeris.uranus.position.apparentLongitude - 360) / 30) + 1;
+                signNeptune = (Math.abs(ephemeris.neptune.position.apparentLongitude - 360) / 30) + 1;
+                signPluto = (Math.abs(ephemeris.pluto.position.apparentLongitude - 360) / 30) + 1;
+                signChiron = (Math.abs(ephemeris.chiron.position.apparentLongitude - 360) / 30) + 1;
                 retroJupiter = ephemeris.jupiter.motion.isRetrograde;
                 retroSaturn = ephemeris.saturn.motion.isRetrograde;
                 retroUranus = ephemeris.uranus.motion.isRetrograde;
@@ -380,15 +380,15 @@ window.addEventListener('load', function load() {
                 retroChiron = ephemeris.chiron.motion.isRetrograde;
             }
             if (SHOW_LUNAR_POINTS) {
-                signAscNode = (ephemeris.moon.orbit.meanAscendingNode.apparentLongitude / 30) + 1;
-                signLilith = (ephemeris.moon.orbit.meanApogee.apparentLongitude / 30) + 1;
+                signAscNode = (Math.abs(ephemeris.moon.orbit.meanAscendingNode.apparentLongitude - 360) / 30) + 1;
+                signLilith = (Math.abs(ephemeris.moon.orbit.meanApogee.apparentLongitude - 360) / 30) + 1;
             }
             if (SHOW_MOON_PHASES) {
                 illumFraction = ephemeris.moon.position.illuminatedFraction;
             }
             if (SHOW_ANGLES) {
-                signMidheaven = (getMidheavenSun() / 30) + 1;
-                signAscendant = (getAscendant()/ 30) + 1;
+                signMidheaven = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
+                signAscendant = (Math.abs(getAscendant() - 360) / 30) + 1;
             }
         }
     }
@@ -457,6 +457,7 @@ window.addEventListener('load', function load() {
         else
             ascendant -= 180;
 
+        console.log("ASCENDANT: "+modulo(ascendant, 360));
         return modulo(ascendant, 360);
     }
 
