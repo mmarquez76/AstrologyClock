@@ -75,8 +75,8 @@ window.addEventListener('load', function load() {
         ctx.fillStyle = '#fff';
         ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
         // Stellated dodecahedron inner circle fill
-        gradient.addColorStop(0, '#ddd');
-        gradient.addColorStop(.7, '#f3f3f3');
+        gradient.addColorStop(0, '#ccc');
+        gradient.addColorStop(.7, '#e3e3e3');
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
