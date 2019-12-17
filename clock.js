@@ -461,7 +461,7 @@ window.addEventListener('load', function load() {
                 let upper = (getAscendant() + 180) % 360;
                 // Handles the case where the upper bound wraps around 360 degrees
                 if (upper < lower) {
-                    if (sunLong < lower && sunLong > upper)
+                    if (sunLong > lower || sunLong < upper)
                         isNightChart = true;
                 } else if (upper > lower) {
                     if (sunLong > lower && sunLong < upper)
@@ -471,10 +471,6 @@ window.addEventListener('load', function load() {
                     signFortune = (Math.abs(lower + sunLong - moonLong - 360) / 30) + 1;
                 else
                     signFortune = (Math.abs(lower + moonLong - sunLong - 360) / 30) + 1;
-                console.log("NIGHT: "+isNightChart)
-                console.log(sunLong)
-                console.log(moonLong)
-                console.log(ephemeris.mercury.position.apparentLongitude)
             }
         }
     }
