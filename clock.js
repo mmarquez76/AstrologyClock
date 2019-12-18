@@ -1,15 +1,18 @@
 //// THESE VALUES SHOULD BE EDITED TO MATCH YOUR PERSONAL PREFERENCES ////
 
+// Enable to use the live GPS permissions from your browser to fetch coordinates
+// This will override the manually set LATITUDE and LONGITUDE values if enabled
+const USE_LIVE_LOCATION = false;
 // Edit these to your precise latitude and longitude to get
 // the precise live chart for your area
-const LATITUDE = 25;
-const LONGITUDE = -80;
+var LATITUDE = 25;
+var LONGITUDE = -80;
 
 // Update rate in milliseconds 
 // Lowering this number will cause the clock to move more smoothly,
-// but will consume more system resources. 
-// To simulate a regular clock that ticks every second, set this to 1000.
-// For a clock that moves smoothly at 60fps, set this to 16.67.
+// but will consume more system resources
+// To simulate a regular clock that ticks every second, set this to 1000
+// For a clock that moves smoothly at 60fps, set this to 16.67
 const UPDATE_RATE = 16.67
 
 // Display sun, moon, mercury, venus, and mars
@@ -24,10 +27,11 @@ const SHOW_MAJOR_ANGLES = true;
 const SHOW_ARABIC_PARTS = false;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
+
 // Activate dark mode on sunset (overrides DARK_MODE)
 const AUTO_DARK_MODE = true;
-// Invert colors (dark mode). 
-// If AUTO_DARK_MODE is enabled, this setting is overridden.
+// Invert colors (dark mode)
+// If AUTO_DARK_MODE is enabled, this setting is overridden
 var DARK_MODE = false;
 
 //// END OF CONFIG VALUES -- START OF SOURCE CODE ////
@@ -37,6 +41,14 @@ var DARK_MODE = false;
 // works based off the UNIX-style "seconds since epoch" timestamp
 Date.prototype.getJulian = function () {
     return (this / 86400000) + 2440587.5;
+}
+
+// Get current location to display the local chart
+if (USE_LIVE_LOCATION) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+        LATITUDE = position.coords.latitude;
+        LONGITUDE = position.coords.longitude;
+    });
 }
 
 window.addEventListener('load', function load() {
