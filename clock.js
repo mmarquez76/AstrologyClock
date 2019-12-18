@@ -19,9 +19,9 @@ const SHOW_OUTER_BODIES = false;
 // Display dark moon lilith and ascending lunar node
 const SHOW_LUNAR_POINTS = false;
 // Display angles (midheaven, ascendant)
-const SHOW_ANGLES = true;
+const SHOW_MAJOR_ANGLES = true;
 // Display parts (part of fortune)
-const SHOW_PARTS = false;
+const SHOW_ARABIC_PARTS = false;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
 // Activate dark mode on sunset (overrides DARK_MODE)
@@ -373,7 +373,7 @@ window.addEventListener('load', function load() {
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.lilith);
         }
-        if (SHOW_ANGLES) {
+        if (SHOW_MAJOR_ANGLES) {
             // Draw ascendant sign hand
             drawSign = ((signAscendant + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
@@ -383,7 +383,7 @@ window.addEventListener('load', function load() {
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.midheaven);
         }
-        if (SHOW_PARTS) {
+        if (SHOW_ARABIC_PARTS) {
             // Draw part of fortune sign hand
             drawSign = ((signFortune - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
@@ -478,10 +478,10 @@ window.addEventListener('load', function load() {
         if (SHOW_MOON_PHASES) {
             illumFraction = ephemeris.moon.position.illuminatedFraction;
         }
-        if (SHOW_ANGLES) {
+        if (SHOW_MAJOR_ANGLES) {
             signMidheaven = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
         }
-        if (SHOW_PARTS) {
+        if (SHOW_ARABIC_PARTS) {
             // As per https://cafeastrology.com/partoffortune.html, the part of fortune
             // is calculated different depending on whether we are currently in a day
             // or night chart. 
