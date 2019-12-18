@@ -5,11 +5,16 @@ const SHOW_OUTER_BODIES = false;
 // Display dark moon lilith and ascending lunar node
 const SHOW_LUNAR_POINTS = false;
 // Display angles (midheaven, ascendant)
-const SHOW_ANGLES = false;
+const SHOW_ANGLES = true;
+// Display parts (part of fortune)
+const SHOW_PARTS = true;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
 // Invert colors (dark mode)
 const DARK_MODE = true;
+
+// Edit these to your precise latitude and longitude to get
+// the precise live chart for your area
 const LATITUDE = 25;
 const LONGITUDE = -80;
 
@@ -27,13 +32,14 @@ window.addEventListener('load', function load() {
             sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U',
             saturn: 'V', jupiter: 'W', uranus: 'X', neptune: 'Y', pluto: 'Z',
             chiron: 't', ascNode: '<', lilith: '⚸',
-            ascendant: 'a', midheaven: 'b', retro: 'M'
+            ascendant: 'a', midheaven: 'b', retro: 'M', fortune: '?'
         },
         radius, date, minutes, illumFraction,
         signSun, signMercury, signVenus, signMars, signMoon,
         signJupiter, signSaturn, signUranus, signNeptune, signPluto, signChiron,
         signAscNode, signLilith,
         signMidheaven, signAscendant,
+        signFortune,
         retroMerc, retroVenus, retroMars,
         retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
 
@@ -347,6 +353,12 @@ window.addEventListener('load', function load() {
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.midheaven);
         }
+        if (SHOW_PARTS) {
+            // Draw part of fortune sign hand
+            drawSign = ((signFortune - .5) * Math.PI / 6);
+            ctx.strokeStyle = '#bbb';
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.fortune);
+        }
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
             (minute * Math.PI / (6 * 60)) +
@@ -434,6 +446,35 @@ window.addEventListener('load', function load() {
             if (SHOW_ANGLES) {
                 signMidheaven = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
                 signAscendant = (Math.abs(getAscendant() - 360) / 30) + 1;
+            }
+            if (SHOW_PARTS) {
+                // As per https://cafeastrology.com/partoffortune.html, the part of fortune
+                // is calculated different depending on whether we are currently in a day
+                // or night chart. 
+                //
+                // At night, the part of fortune's longitude is equal to Ascendant + Sun - Moon
+                // In the day, it's equal to Ascendant + Moon - Sun
+                var isNightChart = false;
+                let sunLong = ephemeris.sun.position.apparentLongitude;
+                let moonLong = ephemeris.moon.position.apparentLongitude;
+                let lower = getAscendant();
+                let upper = (getAscendant() + 180) % 360;
+                // Handles the case where the upper bound wraps around 360 degrees
+                if (upper < lower) {
+                    if (sunLong < lower && sunLong > upper)
+                        isNightChart = true;
+                } else if (upper > lower) {
+                    if (sunLong > lower && sunLong < upper)
+                        isNightChart = true;
+                }
+                if (isNightChart)
+                    signFortune = (Math.abs(lower + sunLong - moonLong - 360) / 30) + 1;
+                else
+                    signFortune = (Math.abs(lower + moonLong - sunLong - 360) / 30) + 1;
+                console.log("NIGHT: "+isNightChart)
+                console.log(sunLong)
+                console.log(moonLong)
+                console.log(ephemeris.mercury.position.apparentLongitude)
             }
         }
     }
@@ -550,9 +591,9 @@ window.addEventListener('load', function load() {
 
     function getEphemeris() {
         var input = {
-            year: date.getFullYear(), month: date.getMonth(), day: date.getDate(),
-            hours: date.getHours(), minutes: date.getMinutes(), latitude: LATITUDE,
-            longitude: LONGITUDE, key: ["sun", "moon", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]
+            year: date.getUTCFullYear(), month: date.getUTCMonth(), day: date.getUTCDate(),
+            hours: date.getUTCHours(), minutes: date.getUTCMinutes(), 
+            latitude: LATITUDE, longitude: LONGITUDE
         };
 
         const ephemeris = new Ephemeris.default(input);
