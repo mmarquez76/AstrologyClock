@@ -22,7 +22,7 @@ const SHOW_OUTER_BODIES = false;
 // Display dark moon lilith and ascending lunar node
 const SHOW_LUNAR_POINTS = false;
 // Display angles (midheaven, ascendant)
-const SHOW_MAJOR_ANGLES = true;
+const SHOW_MAJOR_ANGLES = false;
 // Display parts (part of fortune)
 const SHOW_ARABIC_PARTS = false;
 // Display phases of the moon
