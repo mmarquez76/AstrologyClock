@@ -398,7 +398,7 @@ window.addEventListener('load', function load() {
         var ephemeris;
         if (minutes != date.getMinutes()) {
             minutes = date.getMinutes();
-            console.log("GETTING NEW EPHEMERIS AT HOUR " + date.getHours() + " MINUTE " + date.getMinutes());
+            console.log("UPDATING EPHEMERIS AT HOUR " + date.getHours() + " MINUTE " + date.getMinutes());
             ephemeris = getEphemeris();
             if (SHOW_INNER_BODIES) { 
                 signSun = (Math.abs(ephemeris.sun.position.apparentLongitude - 360) / 30) + 1;
@@ -502,7 +502,6 @@ window.addEventListener('load', function load() {
         else
             ascendant -= 180;
 
-        console.log("ASCENDANT: "+modulo(ascendant, 360));
         return modulo(ascendant, 360);
     }
 
