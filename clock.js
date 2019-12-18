@@ -27,6 +27,8 @@ const SHOW_MAJOR_ANGLES = false;
 const SHOW_ARABIC_PARTS = false;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
+// Display horizontal line representing the horizon
+const SHOW_HORIZON = false;
 
 // Activate dark mode on sunset (overrides DARK_MODE)
 const AUTO_DARK_MODE = true;
@@ -205,6 +207,15 @@ window.addEventListener('load', function load() {
             ctx.stroke();
             ctx.rotate(-(i * Math.PI / 6));
             ctx.rotate(-1.0471975511965976);
+        }
+        // Horizon line
+        if (SHOW_HORIZON) {
+            ctx.strokeStyle = '#bbb'
+            ctx.lineWidth = radius * 0.005
+            ctx.beginPath();
+            ctx.moveTo(-radius * .4, 0);
+            ctx.lineTo(radius * .4, 0);
+            ctx.stroke();
         }
     }
 
