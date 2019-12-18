@@ -2,6 +2,8 @@
 
 Displays the time, moon phase, and current planetary positions in the zodiac, with additional optional indicators for the outer planets, major angles, lunar points, and part of fortune.
 
+Positions are displayed with the x-axis as the horizon, with the ascendant degree on the left.
+
 Uses Astro font type by Cosmorama, as well as the Moshier Ephemeris JS fork by @0xStarcat
 
     git clone git@github.com:mtaylor76/AstrologyClock.git
