@@ -24,8 +24,11 @@ const SHOW_ANGLES = true;
 const SHOW_PARTS = false;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
-// Invert colors (dark mode)
-const DARK_MODE = true;
+// Activate dark mode on sunset (overrides DARK_MODE)
+const AUTO_DARK_MODE = true;
+// Invert colors (dark mode). 
+// If AUTO_DARK_MODE is enabled, this setting is overridden.
+var DARK_MODE = true;
 
 //// END OF CONFIG VALUES -- START OF SOURCE CODE ////
 
@@ -72,7 +75,7 @@ window.addEventListener('load', function load() {
             drawCenter();
             drawFace();
             drawNumerals();
-            drawTime();
+            drawAllHands();
             if (DARK_MODE) {
                 invertColors();
             }
@@ -305,7 +308,7 @@ window.addEventListener('load', function load() {
         }
     }
 
-    function drawTime() {
+    function drawAllHands() {
         let hour = date.getHours(),
             minute = date.getMinutes(),
             second = date.getSeconds(),
@@ -434,7 +437,6 @@ window.addEventListener('load', function load() {
 
     function getSigns() {
         var ephemeris;
-        console.log("UPDATING EPHEMERIS AT HOUR " + date.getHours() + " MINUTE " + date.getMinutes());
         ephemeris = getEphemeris();
 
         // This part is done independently of the SHOW_ANGLES if-statement, because
@@ -485,24 +487,34 @@ window.addEventListener('load', function load() {
             //
             // At night, the part of fortune's longitude is equal to Ascendant + Sun - Moon
             // In the day, it's equal to Ascendant + Moon - Sun
-            var isNightChart = false;
+            let night = false;
             let sunLong = ephemeris.sun.position.apparentLongitude;
             let moonLong = ephemeris.moon.position.apparentLongitude;
-            let lower = getAscendant();
-            let upper = (getAscendant() + 180) % 360;
-            // Handles the case where the upper bound wraps around 360 degrees
-            if (upper < lower) {
-                if (sunLong > lower || sunLong < upper)
-                    isNightChart = true;
-            } else if (upper > lower) {
-                if (sunLong > lower && sunLong < upper)
-                    isNightChart = true;
-            }
-            if (isNightChart)
+            night = isNightChart(sunLong, getAscendant());
+            if (night)
                 signFortune = (Math.abs(lower + sunLong - moonLong - 360) / 30) + 1;
             else
                 signFortune = (Math.abs(lower + moonLong - sunLong - 360) / 30) + 1;
         }
+        if (AUTO_DARK_MODE) {
+            // Enable dark mode at night, disable it in the day.
+            DARK_MODE = isNightChart(ephemeris.sun.position.apparentLongitude, getAscendant());
+        }
+    }
+
+    function isNightChart(sun, ascendant) {
+        let isNight = false;
+        let lower = ascendant;
+        let upper = (ascendant + 180) % 360;
+        // Handles the case where the upper bound wraps around 360 degrees
+        if (upper < lower) {
+            if (sun > lower || sun < upper)
+                isNight = true;
+        } else if (upper > lower) {
+            if (sun > lower && sun < upper)
+                isNight = true;
+        }
+        return isNight;
     }
 
     function getMidheavenSun(obliquityEcliptic = 23.4367) {
@@ -616,10 +628,11 @@ window.addEventListener('load', function load() {
     }
 
     function getEphemeris() {
-        var input = {
+        let input = {
             year: date.getUTCFullYear(), month: date.getUTCMonth(), day: date.getUTCDate(),
             hours: date.getUTCHours(), minutes: date.getUTCMinutes(),
-            latitude: LATITUDE, longitude: LONGITUDE
+            latitude: LATITUDE, longitude: LONGITUDE,
+            key: ["sun", "moon", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]
         };
 
         const ephemeris = new Ephemeris.default(input);
