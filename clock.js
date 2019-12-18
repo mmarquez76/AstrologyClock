@@ -28,7 +28,7 @@ const SHOW_MOON_PHASES = true;
 const AUTO_DARK_MODE = true;
 // Invert colors (dark mode). 
 // If AUTO_DARK_MODE is enabled, this setting is overridden.
-var DARK_MODE = true;
+var DARK_MODE = false;
 
 //// END OF CONFIG VALUES -- START OF SOURCE CODE ////
 
@@ -76,9 +76,8 @@ window.addEventListener('load', function load() {
             drawFace();
             drawNumerals();
             drawAllHands();
-            if (DARK_MODE) {
+            if (DARK_MODE)
                 invertColors();
-            }
             // Draw center dot
             ctx.fillStyle = '#555';
             ctx.beginPath();
@@ -87,6 +86,8 @@ window.addEventListener('load', function load() {
         }, UPDATE_RATE);
     })();
 
+    // Invert the colors of everything drawn on the canvas
+    // (effectively activating dark mode)
     function invertColors() {
         ctx.globalCompositeOperation = 'difference';
         ctx.fillStyle = 'white';
@@ -102,13 +103,14 @@ window.addEventListener('load', function load() {
     }
 
     function getCircleRadius(padding) {
-        if (window.innerWidth < window.innerHeight) {
+        if (window.innerWidth < window.innerHeight)
             return Math.round((window.innerWidth / 2) - padding);
-        } else {
+        else
             return Math.round((window.innerHeight / 2) - padding);
-        }
     }
 
+    // Draws the center stellated dodecahedron and moon phase
+    // If moon phases are disabled, concentric circles are drawn instead
     function drawCenter() {
         let gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4)
         // Stellated dodecahedron inner circle fill
@@ -128,6 +130,8 @@ window.addEventListener('load', function load() {
         if (SHOW_MOON_PHASES) {
             // Normalize moon phase just in case it gets passed some weird value
             illumFraction = Math.abs(illumFraction % 1);
+            // Dark mode requires us to draw the moon differently, so that there's proper
+            // contrast between the light and dark parts of the moon
             if (DARK_MODE) {
                 ctx.fillStyle = '#fff';
                 ctx.beginPath();
@@ -141,8 +145,7 @@ window.addEventListener('load', function load() {
                     ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
                     ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2);
                     ctx.fill();
-                }
-                else if (illumFraction < 0.5) {
+                } else if (illumFraction < 0.5) {
                     ctx.fillStyle = gradient;
                     ctx.arc(0, 0, radius * .143, 0, 2 * Math.PI);
                     ctx.fill();
@@ -152,8 +155,7 @@ window.addEventListener('load', function load() {
                     ctx.ellipse(0, 0, radius * (.143 * ((0.5 - illumFraction) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
                     ctx.fill();
                 }
-            }
-            else {
+            } else {
                 // Draw phase of moon
                 if (illumFraction >= 0.5) {
                     // Fill with light-yellow tinge on full moon
@@ -161,8 +163,7 @@ window.addEventListener('load', function load() {
                     ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
                     ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2);
                     ctx.fill();
-                }
-                else if (illumFraction < 0.5) {
+                } else if (illumFraction < 0.5) {
                     ctx.fillStyle = '#fff';
                     ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
                     ctx.fill();
@@ -414,7 +415,7 @@ window.addEventListener('load', function load() {
         ctx.rotate(pos);
         ctx.lineTo(0, -length);
         ctx.stroke();
-        // Draw planet symbol at sign
+        // Draw the given symbol at the end of the hand
         if (symbol) {
             ctx.font = radius * 0.10 + 'px Astro';
             ctx.fillStyle = '#666'
@@ -436,12 +437,12 @@ window.addEventListener('load', function load() {
     }
 
     function getSigns() {
-        var ephemeris;
-        ephemeris = getEphemeris();
+        let ephemeris = getEphemeris();
 
         // This part is done independently of the SHOW_ANGLES if-statement, because
         // offsetAscendant is necessary to display every other indicator
-        signAscendant = (Math.abs(getAscendant() - 360) / 30) + 1;
+        ascendantDeg = getAscendant();
+        signAscendant = (Math.abs(ascendantDeg - 360) / 30) + 1;
         offsetAscendant = 9.5 - signAscendant;
 
         if (SHOW_INNER_BODIES) {
@@ -487,21 +488,22 @@ window.addEventListener('load', function load() {
             //
             // At night, the part of fortune's longitude is equal to Ascendant + Sun - Moon
             // In the day, it's equal to Ascendant + Moon - Sun
-            let night = false;
-            let sunLong = ephemeris.sun.position.apparentLongitude;
-            let moonLong = ephemeris.moon.position.apparentLongitude;
-            night = isNightChart(sunLong, getAscendant());
+            let sunDeg = ephemeris.sun.position.apparentLongitude,
+                moonDeg = ephemeris.moon.position.apparentLongitude,
+                night = isNightChart(sunDeg, ascendantDeg);
             if (night)
-                signFortune = (Math.abs(lower + sunLong - moonLong - 360) / 30) + 1;
+                signFortune = (Math.abs(ascendantDeg + sunDeg - moonDeg - 360) / 30) + 1;
             else
-                signFortune = (Math.abs(lower + moonLong - sunLong - 360) / 30) + 1;
+                signFortune = (Math.abs(ascendantDeg + moonDeg - sunDeg - 360) / 30) + 1;
         }
         if (AUTO_DARK_MODE) {
             // Enable dark mode at night, disable it in the day.
-            DARK_MODE = isNightChart(ephemeris.sun.position.apparentLongitude, getAscendant());
+            DARK_MODE = isNightChart(ephemeris.sun.position.apparentLongitude, ascendantDeg);
         }
     }
 
+    // Returns true if the sun is below the horizon as defined by the ascendant degree
+    // Returns false otherwise (i.e. if the sun is above the horizon
     function isNightChart(sun, ascendant) {
         let isNight = false;
         let lower = ascendant;
