@@ -8,6 +8,8 @@ const SHOW_LUNAR_POINTS = false;
 const SHOW_ANGLES = false;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
+// Invert colors (dark mode)
+const DARK_MODE = true;
 const LATITUDE = 25;
 const LONGITUDE = -80;
 
@@ -46,12 +48,22 @@ window.addEventListener('load', function load() {
         drawFace();
         drawNumerals();
         drawTime();
+        if (DARK_MODE) {
+            invertColors();
+        }
         // Draw center dot
         ctx.fillStyle = '#555';
         ctx.beginPath();
         ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
         ctx.fill();
     })();
+
+    function invertColors() {
+        ctx.globalCompositeOperation = 'difference';
+        ctx.fillStyle = 'white';
+        ctx.fillRect(-canvas.width, -canvas.height, canvas.width*2, canvas.height*2);
+        ctx.globalCompositeOperation = 'source-over';
+    }
 
     function resize() {
         radius = getCircleRadius(20);
@@ -91,23 +103,50 @@ window.addEventListener('load', function load() {
         if (SHOW_MOON_PHASES) {
             // Normalize moon phase just in case it gets passed some weird value
             illumFraction = Math.abs(illumFraction % 1);
-            // Draw phase of moon
-            if (illumFraction >= 0.5) {
-                // Fill with light-yellow tinge on full moon
-                ctx.fillStyle = (illumFraction >= 0.99) ? '#ffb' : '#fff';
-                ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
-                ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2);
-                ctx.fill();
-            }
-            else if (illumFraction < 0.5) {
+            if (DARK_MODE) {
                 ctx.fillStyle = '#fff';
-                ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
-                ctx.fill();
-                ctx.fillStyle = (illumFraction <= 0.01) ? '#888' : gradient;
                 ctx.beginPath();
-                ctx.ellipse(0, 0, radius * .14, radius * .14, 0, -Math.PI / 2, Math.PI / 2);
-                ctx.ellipse(0, 0, radius * (.14 * ((0.5 - illumFraction) / 0.5)), radius * .14, 0, -Math.PI / 2, Math.PI / 2, true);
+                ctx.arc(0, 0, radius * .143, 0, 2 * Math.PI);
                 ctx.fill();
+                ctx.beginPath();
+                // Draw phase of moon inverted, for dark mode
+                if (illumFraction >= 0.5) {
+                    // Fill with light-blue tinge on full moon, which gets inverted to yellow
+                    ctx.fillStyle = (illumFraction >= 0.99) ? '#bbf' : gradient;
+                    ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
+                    ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2);
+                    ctx.fill();
+                }
+                else if (illumFraction < 0.5) {
+                    ctx.fillStyle = gradient;
+                    ctx.arc(0, 0, radius * .143, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.fillStyle = (illumFraction <= 0.01) ? '#eee' : '#fff';
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2);
+                    ctx.ellipse(0, 0, radius * (.143 * ((0.5 - illumFraction) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
+                    ctx.fill();
+                }
+            }
+            else {
+                // Draw phase of moon
+                if (illumFraction >= 0.5) {
+                    // Fill with light-yellow tinge on full moon
+                    ctx.fillStyle = (illumFraction >= 0.99) ? '#ffb' : '#fff';
+                    ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
+                    ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2);
+                    ctx.fill();
+                }
+                else if (illumFraction < 0.5) {
+                    ctx.fillStyle = '#fff';
+                    ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.fillStyle = (illumFraction <= 0.01) ? '#888' : gradient;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2);
+                    ctx.ellipse(0, 0, radius * (.143 * ((0.5 - illumFraction) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
+                    ctx.fill();
+                }
             }
         } else {
             // No moon phases; draw stellated dodecahedron inner rings; Eye of the Sahara
@@ -342,9 +381,15 @@ window.addEventListener('load', function load() {
         }
         // Draw retrograde symbol underneath planet
         if (isRetro) {
-            ctx.font = radius * 0.09 + 'px Astro';
-            ctx.fillStyle = '#c66'
-            ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
+            if (DARK_MODE) {
+                ctx.font = radius * 0.09 + 'px Astro';
+                ctx.fillStyle = '#399'
+                ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
+            } else {
+                ctx.font = radius * 0.09 + 'px Astro';
+                ctx.fillStyle = '#c66'
+                ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
+            }
         }
         ctx.rotate(-pos);
     }
