@@ -1,3 +1,17 @@
+//// THESE VALUES SHOULD BE EDITED TO MATCH YOUR PERSONAL PREFERENCES ////
+
+// Edit these to your precise latitude and longitude to get
+// the precise live chart for your area
+const LATITUDE = 25;
+const LONGITUDE = -80;
+
+// Update rate in milliseconds 
+// Lowering this number will cause the clock to move more smoothly,
+// but will consume more system resources. 
+// To simulate a regular clock that ticks every second, set this to 1000.
+// For a clock that moves smoothly at 60fps, set this to 16.67.
+const UPDATE_RATE = 16.67
+
 // Display sun, moon, mercury, venus, and mars
 const SHOW_INNER_BODIES = true;
 // Display saturn, jupiter, uranus, neptune, pluto, and chiron
@@ -7,22 +21,22 @@ const SHOW_LUNAR_POINTS = false;
 // Display angles (midheaven, ascendant)
 const SHOW_ANGLES = true;
 // Display parts (part of fortune)
-const SHOW_PARTS = true;
+const SHOW_PARTS = false;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
 // Invert colors (dark mode)
 const DARK_MODE = true;
 
-// Edit these to your precise latitude and longitude to get
-// the precise live chart for your area
-const LATITUDE = 25;
-const LONGITUDE = -80;
+//// END OF CONFIG VALUES -- START OF SOURCE CODE ////
 
+// Adds functionality to the default Date() class to get the Julian
+// date from it as well. This is in UTC by default, since this function
+// works based off the UNIX-style "seconds since epoch" timestamp
 Date.prototype.getJulian = function () {
     return (this / 86400000) + 2440587.5;
 }
 
-window.addEventListener('load', function load() {       
+window.addEventListener('load', function load() {
     window.removeEventListener('load', load, false);
 
     var canvas = document.createElement('canvas'),
@@ -34,7 +48,7 @@ window.addEventListener('load', function load() {
             chiron: 't', ascNode: '<', lilith: '⚸',
             ascendant: 'a', midheaven: 'b', retro: 'M', fortune: '?'
         },
-        radius, date, minutes, illumFraction,
+        radius, date, illumFraction, offsetAscendant,
         signSun, signMercury, signVenus, signMars, signMoon,
         signJupiter, signSaturn, signUranus, signNeptune, signPluto, signChiron,
         signAscNode, signLilith,
@@ -48,26 +62,32 @@ window.addEventListener('load', function load() {
     resize();
 
     (function drawFrame() {
-        requestAnimationFrame(drawFrame);
-        date = new Date();
-        getSigns();
-        drawFace();
-        drawNumerals();
-        drawTime();
-        if (DARK_MODE) {
-            invertColors();
-        }
-        // Draw center dot
-        ctx.fillStyle = '#555';
-        ctx.beginPath();
-        ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
-        ctx.fill();
+        // Only draw a frame once every time 
+        // period specified in UPDATE_RATE
+        setTimeout(function () {
+            requestAnimationFrame(drawFrame);
+            date = new Date();
+            clearCanvas();
+            getSigns();
+            drawCenter();
+            drawFace();
+            drawNumerals();
+            drawTime();
+            if (DARK_MODE) {
+                invertColors();
+            }
+            // Draw center dot
+            ctx.fillStyle = '#555';
+            ctx.beginPath();
+            ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
+            ctx.fill();
+        }, UPDATE_RATE);
     })();
 
     function invertColors() {
         ctx.globalCompositeOperation = 'difference';
         ctx.fillStyle = 'white';
-        ctx.fillRect(-canvas.width, -canvas.height, canvas.width*2, canvas.height*2);
+        ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
         ctx.globalCompositeOperation = 'source-over';
     }
 
@@ -86,12 +106,8 @@ window.addEventListener('load', function load() {
         }
     }
 
-    function drawFace() {
-        let angle,
-            gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4);
-        // Clear canvas
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
+    function drawCenter() {
+        let gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4)
         // Stellated dodecahedron inner circle fill
         gradient.addColorStop(0, '#ccc');
         gradient.addColorStop(.7, '#e3e3e3');
@@ -174,6 +190,16 @@ window.addEventListener('load', function load() {
             ctx.rotate(-(i * Math.PI / 6));
             ctx.rotate(-1.0471975511965976);
         }
+    }
+
+    function clearCanvas() {
+        // Clear canvas
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
+    }
+
+    function drawFace() {
+        let angle;
         // Rings
         ctx.strokeStyle = '#ccc';
         ctx.lineWidth = radius * .005;
@@ -192,7 +218,7 @@ window.addEventListener('load', function load() {
         // Indices for signs
         ctx.beginPath();
         for (let i = 0; i < 12; i++) {
-            angle = (i + .5) * Math.PI / 6;
+            angle = (i + offsetAscendant + .5) * Math.PI / 6;
             ctx.rotate(angle);
             ctx.moveTo(radius * .4, 0);
             ctx.lineTo(radius * .7, 0);
@@ -233,7 +259,7 @@ window.addEventListener('load', function load() {
         ctx.font = radius * 0.12 + 'px Astro';
         ctx.beginPath();
         for (let i = 1; i < 13; i++) {
-            angle = i * Math.PI / 6;
+            angle = (i + offsetAscendant) * Math.PI / 6;
             if (i == currentSign) {
                 ctx.fillStyle = '#333';
             } else if (currentSign % 2 == i % 2) {
@@ -287,69 +313,69 @@ window.addEventListener('load', function load() {
             drawSign;
         if (SHOW_INNER_BODIES) {
             // Draw sun sign hand
-            drawSign = ((signSun - .5) * Math.PI / 6);
+            drawSign = ((signSun + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.sun);
             // Draw moon sign hand
-            drawSign = ((signMoon - .5) * Math.PI / 6);
+            drawSign = ((signMoon + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.moon);
             // Draw mercury sign hand
-            drawSign = ((signMercury - .5) * Math.PI / 6);
+            drawSign = ((signMercury + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mercury, retroMerc);
             // Draw venus sign hand
-            drawSign = ((signVenus - .5) * Math.PI / 6);
+            drawSign = ((signVenus + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.venus, retroVenus);
             // Draw mars sign hand
-            drawSign = ((signMars - .5) * Math.PI / 6);
+            drawSign = ((signMars + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mars, retroMars);
         }
         if (SHOW_OUTER_BODIES) {
             // Draw jupiter sign hand
-            drawSign = ((signJupiter - .5) * Math.PI / 6);
+            drawSign = ((signJupiter + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.jupiter, retroJupiter);
             // Draw saturn sign hand
-            drawSign = ((signSaturn - .5) * Math.PI / 6);
+            drawSign = ((signSaturn + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.saturn, retroSaturn);
             // Draw uranus sign hand
-            drawSign = ((signUranus - .5) * Math.PI / 6);
+            drawSign = ((signUranus + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.uranus, retroUranus);
             // Draw neptune sign hand
-            drawSign = ((signNeptune - .5) * Math.PI / 6);
+            drawSign = ((signNeptune + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.neptune, retroNeptune);
             // Draw pluto sign hand
-            drawSign = ((signPluto - .5) * Math.PI / 6);
+            drawSign = ((signPluto + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.pluto, retroPluto);
             // Draw chiron sign hand
-            drawSign = ((signChiron - .5) * Math.PI / 6);
+            drawSign = ((signChiron + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.chiron, retroChiron);
         }
         if (SHOW_LUNAR_POINTS) {
             // Draw ascending node sign hand
-            drawSign = ((signAscNode - .5) * Math.PI / 6);
+            drawSign = ((signAscNode + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascNode);
             // Draw lilith sign hand
-            drawSign = ((signLilith - .5) * Math.PI / 6);
+            drawSign = ((signLilith + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.lilith);
         }
         if (SHOW_ANGLES) {
             // Draw ascendant sign hand
-            drawSign = ((signAscendant - .5) * Math.PI / 6);
+            drawSign = ((signAscendant + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascendant);           
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascendant);
             // Draw midheaven sign hand
-            drawSign = ((signMidheaven - .5) * Math.PI / 6);
+            drawSign = ((signMidheaven + offsetAscendant - .5) * Math.PI / 6);
             ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.midheaven);
         }
@@ -408,70 +434,74 @@ window.addEventListener('load', function load() {
 
     function getSigns() {
         var ephemeris;
-        if (minutes != date.getMinutes()) {
-            minutes = date.getMinutes();
-            console.log("UPDATING EPHEMERIS AT HOUR " + date.getHours() + " MINUTE " + date.getMinutes());
-            ephemeris = getEphemeris();
-            if (SHOW_INNER_BODIES) { 
-                signSun = (Math.abs(ephemeris.sun.position.apparentLongitude - 360) / 30) + 1;
-                signMoon = (Math.abs(ephemeris.moon.position.apparentLongitude - 360) / 30) + 1;
-                signMercury = (Math.abs(ephemeris.mercury.position.apparentLongitude - 360) / 30) + 1;
-                signVenus = (Math.abs(ephemeris.venus.position.apparentLongitude - 360) / 30) + 1;
-                signMars = (Math.abs(ephemeris.mars.position.apparentLongitude - 360) / 30) + 1;
-                retroMerc = ephemeris.mercury.motion.isRetrograde;
-                retroVenus = ephemeris.venus.motion.isRetrograde;
-                retroMars = ephemeris.mars.motion.isRetrograde;
+        console.log("UPDATING EPHEMERIS AT HOUR " + date.getHours() + " MINUTE " + date.getMinutes());
+        ephemeris = getEphemeris();
+
+        // This part is done independently of the SHOW_ANGLES if-statement, because
+        // offsetAscendant is necessary to display every other indicator
+        signAscendant = (Math.abs(getAscendant() - 360) / 30) + 1;
+        offsetAscendant = 9.5 - signAscendant;
+
+        if (SHOW_INNER_BODIES) {
+            // For each sign index, we calculate the abs of the inverse of the longitude to effectively
+            // mirror the position, so that the signs progress properly over the ascendant.
+            signSun = (Math.abs(ephemeris.sun.position.apparentLongitude - 360) / 30) + 1;
+            signMoon = (Math.abs(ephemeris.moon.position.apparentLongitude - 360) / 30) + 1;
+            signMercury = (Math.abs(ephemeris.mercury.position.apparentLongitude - 360) / 30) + 1;
+            signVenus = (Math.abs(ephemeris.venus.position.apparentLongitude - 360) / 30) + 1;
+            signMars = (Math.abs(ephemeris.mars.position.apparentLongitude - 360) / 30) + 1;
+            retroMerc = ephemeris.mercury.motion.isRetrograde;
+            retroVenus = ephemeris.venus.motion.isRetrograde;
+            retroMars = ephemeris.mars.motion.isRetrograde;
+        }
+        if (SHOW_OUTER_BODIES) {
+            signJupiter = (Math.abs(ephemeris.jupiter.position.apparentLongitude - 360) / 30) + 1;
+            signSaturn = (Math.abs(ephemeris.saturn.position.apparentLongitude - 360) / 30) + 1;
+            signUranus = (Math.abs(ephemeris.uranus.position.apparentLongitude - 360) / 30) + 1;
+            signNeptune = (Math.abs(ephemeris.neptune.position.apparentLongitude - 360) / 30) + 1;
+            signPluto = (Math.abs(ephemeris.pluto.position.apparentLongitude - 360) / 30) + 1;
+            signChiron = (Math.abs(ephemeris.chiron.position.apparentLongitude - 360) / 30) + 1;
+            retroJupiter = ephemeris.jupiter.motion.isRetrograde;
+            retroSaturn = ephemeris.saturn.motion.isRetrograde;
+            retroUranus = ephemeris.uranus.motion.isRetrograde;
+            retroNeptune = ephemeris.neptune.motion.isRetrograde;
+            retroPluto = ephemeris.pluto.motion.isRetrograde;
+            retroChiron = ephemeris.chiron.motion.isRetrograde;
+        }
+        if (SHOW_LUNAR_POINTS) {
+            signAscNode = (Math.abs(ephemeris.moon.orbit.meanAscendingNode.apparentLongitude - 360) / 30) + 1;
+            signLilith = (Math.abs(ephemeris.moon.orbit.meanApogee.apparentLongitude - 360) / 30) + 1;
+        }
+        if (SHOW_MOON_PHASES) {
+            illumFraction = ephemeris.moon.position.illuminatedFraction;
+        }
+        if (SHOW_ANGLES) {
+            signMidheaven = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
+        }
+        if (SHOW_PARTS) {
+            // As per https://cafeastrology.com/partoffortune.html, the part of fortune
+            // is calculated different depending on whether we are currently in a day
+            // or night chart. 
+            //
+            // At night, the part of fortune's longitude is equal to Ascendant + Sun - Moon
+            // In the day, it's equal to Ascendant + Moon - Sun
+            var isNightChart = false;
+            let sunLong = ephemeris.sun.position.apparentLongitude;
+            let moonLong = ephemeris.moon.position.apparentLongitude;
+            let lower = getAscendant();
+            let upper = (getAscendant() + 180) % 360;
+            // Handles the case where the upper bound wraps around 360 degrees
+            if (upper < lower) {
+                if (sunLong > lower || sunLong < upper)
+                    isNightChart = true;
+            } else if (upper > lower) {
+                if (sunLong > lower && sunLong < upper)
+                    isNightChart = true;
             }
-            if (SHOW_OUTER_BODIES) {
-                signJupiter = (Math.abs(ephemeris.jupiter.position.apparentLongitude - 360) / 30) + 1;
-                signSaturn = (Math.abs(ephemeris.saturn.position.apparentLongitude - 360) / 30) + 1;
-                signUranus = (Math.abs(ephemeris.uranus.position.apparentLongitude - 360) / 30) + 1;
-                signNeptune = (Math.abs(ephemeris.neptune.position.apparentLongitude - 360) / 30) + 1;
-                signPluto = (Math.abs(ephemeris.pluto.position.apparentLongitude - 360) / 30) + 1;
-                signChiron = (Math.abs(ephemeris.chiron.position.apparentLongitude - 360) / 30) + 1;
-                retroJupiter = ephemeris.jupiter.motion.isRetrograde;
-                retroSaturn = ephemeris.saturn.motion.isRetrograde;
-                retroUranus = ephemeris.uranus.motion.isRetrograde;
-                retroNeptune = ephemeris.neptune.motion.isRetrograde;
-                retroPluto = ephemeris.pluto.motion.isRetrograde;
-                retroChiron = ephemeris.chiron.motion.isRetrograde;
-            }
-            if (SHOW_LUNAR_POINTS) {
-                signAscNode = (Math.abs(ephemeris.moon.orbit.meanAscendingNode.apparentLongitude - 360) / 30) + 1;
-                signLilith = (Math.abs(ephemeris.moon.orbit.meanApogee.apparentLongitude - 360) / 30) + 1;
-            }
-            if (SHOW_MOON_PHASES) {
-                illumFraction = ephemeris.moon.position.illuminatedFraction;
-            }
-            if (SHOW_ANGLES) {
-                signMidheaven = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
-                signAscendant = (Math.abs(getAscendant() - 360) / 30) + 1;
-            }
-            if (SHOW_PARTS) {
-                // As per https://cafeastrology.com/partoffortune.html, the part of fortune
-                // is calculated different depending on whether we are currently in a day
-                // or night chart. 
-                //
-                // At night, the part of fortune's longitude is equal to Ascendant + Sun - Moon
-                // In the day, it's equal to Ascendant + Moon - Sun
-                var isNightChart = false;
-                let sunLong = ephemeris.sun.position.apparentLongitude;
-                let moonLong = ephemeris.moon.position.apparentLongitude;
-                let lower = getAscendant();
-                let upper = (getAscendant() + 180) % 360;
-                // Handles the case where the upper bound wraps around 360 degrees
-                if (upper < lower) {
-                    if (sunLong > lower || sunLong < upper)
-                        isNightChart = true;
-                } else if (upper > lower) {
-                    if (sunLong > lower && sunLong < upper)
-                        isNightChart = true;
-                }
-                if (isNightChart)
-                    signFortune = (Math.abs(lower + sunLong - moonLong - 360) / 30) + 1;
-                else
-                    signFortune = (Math.abs(lower + moonLong - sunLong - 360) / 30) + 1;
-            }
+            if (isNightChart)
+                signFortune = (Math.abs(lower + sunLong - moonLong - 360) / 30) + 1;
+            else
+                signFortune = (Math.abs(lower + moonLong - sunLong - 360) / 30) + 1;
         }
     }
 
@@ -558,9 +588,9 @@ window.addEventListener('load', function load() {
         // * float mod = the modulating number
         // => Returns Float
         ///////////
-      
+
         return (number % mod + mod) % mod
-      }
+    }
 
     function getLocalSiderealTime() {
         // Also gives: Right Ascension of M.C. or RAMC
@@ -588,7 +618,7 @@ window.addEventListener('load', function load() {
     function getEphemeris() {
         var input = {
             year: date.getUTCFullYear(), month: date.getUTCMonth(), day: date.getUTCDate(),
-            hours: date.getUTCHours(), minutes: date.getUTCMinutes(), 
+            hours: date.getUTCHours(), minutes: date.getUTCMinutes(),
             latitude: LATITUDE, longitude: LONGITUDE
         };
 
