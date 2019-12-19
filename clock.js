@@ -65,7 +65,7 @@ window.addEventListener('load', function load() {
             chiron: 't', ascNode: '<', lilith: '⚸',
             ascendant: 'a', midheaven: 'b', retro: 'M', fortune: '?'
         },
-        radius, date, illumFraction, offsetAscendant,
+        radius, date, seconds, illumFraction, offsetAscendant,
         signSun, signMercury, signVenus, signMars, signMoon,
         signJupiter, signSaturn, signUranus, signNeptune, signPluto, signChiron,
         signAscNode, signLilith,
@@ -85,7 +85,11 @@ window.addEventListener('load', function load() {
             requestAnimationFrame(drawFrame);
             date = new Date();
             clearCanvas();
-            getSigns();
+            // Only get a new ephemeris every 20 seconds to save resources
+            if (Math.floor(seconds / 20) != Math.floor(date.getSeconds() / 20)) {
+                getSigns();
+                seconds = date.getSeconds();
+            }
             drawCenter();
             drawFace();
             drawNumerals();
@@ -657,7 +661,7 @@ window.addEventListener('load', function load() {
             year: date.getUTCFullYear(), month: date.getUTCMonth(), day: date.getUTCDate(),
             hours: date.getUTCHours(), minutes: date.getUTCMinutes(),
             latitude: LATITUDE, longitude: LONGITUDE,
-            key: ["sun", "moon", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]
+            key: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]
         };
 
         const ephemeris = new Ephemeris.default(input);
