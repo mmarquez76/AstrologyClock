@@ -14,6 +14,12 @@ var LONGITUDE = -80;
 // To simulate a regular clock that ticks every second, set this to 1000
 // For a clock that moves smoothly at 60fps, set this to 16.67
 const UPDATE_RATE = 16.67
+// Amount of time in seconds to wait between
+// updating the ephemeris (an expensive operation)
+// Lower values will update more often, but take more resources
+// Higher values will update less and are lighter on system resources,
+// but the clock may appear to visually jump on each update
+const EPHEMERIS_COOLDOWN = 30
 
 // Display sun, moon, mercury, venus, and mars
 const SHOW_INNER_BODIES = true;
@@ -85,8 +91,8 @@ window.addEventListener('load', function load() {
             requestAnimationFrame(drawFrame);
             date = new Date();
             clearCanvas();
-            // Only get a new ephemeris every 20 seconds to save resources
-            if (Math.floor(seconds / 20) != Math.floor(date.getSeconds() / 20)) {
+            // Only get a new ephemeris every cooldown period to save resources
+            if (Math.floor(seconds / EPHEMERIS_COOLDOWN) != Math.floor(date.getSeconds() / EPHEMERIS_COOLDOWN)) {
                 getSigns();
                 seconds = date.getSeconds();
             }
