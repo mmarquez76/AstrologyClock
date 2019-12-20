@@ -348,95 +348,78 @@ window.addEventListener('load', function load() {
             second = date.getSeconds(),
             millisec = date.getMilliseconds(),
             drawSign;
+        ctx.strokeStyle = '#bbb';
         if (SHOW_INNER_BODIES) {
             // Draw sun sign hand
             drawSign = ((signSun + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.sun);
             // Draw moon sign hand
             drawSign = ((signMoon + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.moon);
             // Draw mercury sign hand
             drawSign = ((signMercury + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mercury, retroMerc);
             // Draw venus sign hand
             drawSign = ((signVenus + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.venus, retroVenus);
             // Draw mars sign hand
             drawSign = ((signMars + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mars, retroMars);
         }
         if (SHOW_OUTER_BODIES) {
             // Draw jupiter sign hand
             drawSign = ((signJupiter + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.jupiter, retroJupiter);
             // Draw saturn sign hand
             drawSign = ((signSaturn + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.saturn, retroSaturn);
             // Draw uranus sign hand
             drawSign = ((signUranus + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.uranus, retroUranus);
             // Draw neptune sign hand
             drawSign = ((signNeptune + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.neptune, retroNeptune);
             // Draw pluto sign hand
             drawSign = ((signPluto + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.pluto, retroPluto);
             // Draw chiron sign hand
             drawSign = ((signChiron + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.chiron, retroChiron);
         }
         if (SHOW_LUNAR_POINTS) {
             // Draw ascending node sign hand
             drawSign = ((signAscNode + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascNode);
             // Draw lilith sign hand
             drawSign = ((signLilith + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.lilith);
         }
         if (SHOW_MAJOR_ANGLES) {
             // Draw ascendant sign hand
             drawSign = ((signAscendant + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascendant);
             // Draw midheaven sign hand
             drawSign = ((signMidheaven + offsetAscendant - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.midheaven);
         }
         if (SHOW_ARABIC_PARTS) {
             // Draw part of fortune sign hand
             drawSign = ((signFortune - .5) * Math.PI / 6);
-            ctx.strokeStyle = '#bbb';
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.fortune);
         }
+        ctx.strokeStyle = '#555';
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
             (minute * Math.PI / (6 * 60)) +
             (second * Math.PI / (360 * 60));
-        ctx.strokeStyle = '#555';
         drawHand(ctx, hour, radius * 0.7, radius * 0.0035);
         // Draw minute hand
         minute = ((minute - 0.5) * Math.PI / 30) +
             (second * Math.PI / (30 * 60)) +
             (millisec * Math.PI / (30 * 60000));
-        ctx.strokeStyle = '#555';
         drawHand(ctx, minute, radius * 0.9, radius * 0.003);
         // Draw second hand
         second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
-        ctx.strokeStyle = '#555';
         drawHand(ctx, second, radius, radius * 0.002);
     }
 
