@@ -2,7 +2,7 @@
 
 // Enable to use the live GPS permissions from your browser to fetch coordinates
 // This will override the manually set LATITUDE and LONGITUDE values if enabled
-const USE_LIVE_LOCATION = false;
+const USE_LIVE_LOCATION = true;
 // Edit these to your precise latitude and longitude to get
 // the precise live chart for your area
 var LATITUDE = 25;
@@ -19,7 +19,7 @@ const UPDATE_RATE = 16.67
 // Lower values will update more often, but take more resources
 // Higher values will update less and are lighter on system resources,
 // but the clock may appear to visually jump on each update
-const EPHEMERIS_COOLDOWN = 30
+const EPHEMERIS_COOLDOWN = 20
 
 // Display sun, moon, mercury, venus, and mars
 const SHOW_INNER_BODIES = true;
@@ -34,13 +34,13 @@ const SHOW_ARABIC_PARTS = false;
 // Display phases of the moon
 const SHOW_MOON_PHASES = true;
 // Display horizontal line representing the horizon
-const SHOW_HORIZON = false;
+const SHOW_HORIZON = true;
 
 // Activate dark mode on sunset (overrides DARK_MODE)
-const AUTO_DARK_MODE = true;
+const AUTO_DARK_MODE = false;
 // Invert colors (dark mode)
 // If AUTO_DARK_MODE is enabled, this setting is overridden
-var DARK_MODE = false;
+var DARK_MODE = true;
 
 //// END OF CONFIG VALUES -- START OF SOURCE CODE ////
 
