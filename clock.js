@@ -13,7 +13,8 @@ var LONGITUDE = -80;
 // but will consume more system resources
 // To simulate a regular clock that ticks every second, set this to 1000
 // For a clock that moves smoothly at 60fps, set this to 16.67
-var UPDATE_RATE = 16.67
+var UPDATE_RATE = 16.67;
+
 // Amount of time in seconds to wait between
 // updating the ephemeris (an expensive operation)
 // Lower values will update more often, but take more resources
@@ -46,6 +47,10 @@ var DARK_MODE = true;
 
 window.wallpaperPropertyListener = {
     applyUserProperties: function(properties) {
+        if (properties.fps) {
+            UPDATE_RATE = 1000.0 / properties.fps;
+        }
+
         if (properties.use_live_location) {
             USE_LIVE_LOCATION = properties.use_live_location.value;
         }
