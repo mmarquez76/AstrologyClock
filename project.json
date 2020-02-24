@@ -1,0 +1,130 @@
+{
+	"contentrating" : "Everyone",
+	"description" : "Displays the time, moon phase, and current planetary positions and retrogrades in the zodiac, with additional optional indicators for the outer planets, major angles, lunar points, and part of fortune.\n\nPositions are displayed with the x-axis as the horizon, with the ascendant degree on the left.\n\nSource: https://github.com/mtaylor76/AstrologyClock",
+	"file" : "index.html",
+	"general" : 
+	{
+		"properties" : 
+		{
+			"auto_dark_mode" : 
+			{
+				"order" : 111,
+				"text" : "Auto Dark Mode",
+				"type" : "bool",
+				"value" : false
+			},
+			"dark_mode" : 
+			{
+				"condition" : "!auto_dark_mode.value",
+				"order" : 112,
+				"text" : "Dark Mode",
+				"type" : "bool",
+				"value" : true
+			},
+			"ephemeris_refresh_rate" : 
+			{
+				"fraction" : false,
+				"max" : 300,
+				"min" : 1,
+				"order" : 103,
+				"text" : "Ephemeris Refresh Rate",
+				"type" : "slider",
+				"value" : 20
+			},
+			"latitude" : 
+			{
+				"condition" : "!use_live_location.value",
+				"fraction" : true,
+				"max" : 90,
+				"min" : -90,
+				"order" : 101,
+				"precision" : 2,
+				"step" : 0.10000000000000001,
+				"text" : "Latitude",
+				"type" : "slider",
+				"value" : 25
+			},
+			"longitude" : 
+			{
+				"condition" : "!use_live_location.value",
+				"fraction" : true,
+				"max" : 90,
+				"min" : -90,
+				"order" : 102,
+				"precision" : 2,
+				"step" : 0.10000000000000001,
+				"text" : "Longitude",
+				"type" : "slider",
+				"value" : -80
+			},
+			"schemecolor" : 
+			{
+				"order" : 0,
+				"text" : "ui_browse_properties_scheme_color",
+				"type" : "color",
+				"value" : "0.4666666666666667 0.4666666666666667 0.4666666666666667"
+			},
+			"show_arabic_parts" : 
+			{
+				"order" : 108,
+				"text" : "Show Arabic Parts",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_horizon" : 
+			{
+				"order" : 110,
+				"text" : "Show Horizon",
+				"type" : "bool",
+				"value" : true
+			},
+			"show_inner_bodies" : 
+			{
+				"order" : 104,
+				"text" : "Show Inner Bodies",
+				"type" : "bool",
+				"value" : true
+			},
+			"show_lunar_points" : 
+			{
+				"order" : 106,
+				"text" : "Show Lunar Points",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_major_angles" : 
+			{
+				"order" : 107,
+				"text" : "Show Major Angles",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_moon_phases" : 
+			{
+				"order" : 109,
+				"text" : "Show Moon Phases",
+				"type" : "bool",
+				"value" : true
+			},
+			"show_outer_bodies" : 
+			{
+				"order" : 105,
+				"text" : "Show Outer Bodies",
+				"type" : "bool",
+				"value" : false
+			},
+			"use_live_location" : 
+			{
+				"order" : 100,
+				"text" : "Use Live Location",
+				"type" : "bool",
+				"value" : true
+			}
+		}
+	},
+	"preview" : "preview.png",
+	"tags" : [ "Fantasy" ],
+	"title" : "Astrology Clock",
+	"type" : "web",
+	"workshopid" : "2005926748"
+}
