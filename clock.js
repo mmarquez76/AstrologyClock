@@ -2,7 +2,7 @@
 
 // Enable to use the live GPS permissions from your browser to fetch coordinates
 // This will override the manually set LATITUDE and LONGITUDE values if enabled
-const USE_LIVE_LOCATION = true;
+var USE_LIVE_LOCATION = true;
 // Edit these to your precise latitude and longitude to get
 // the precise live chart for your area
 var LATITUDE = 25;
@@ -13,36 +13,89 @@ var LONGITUDE = -80;
 // but will consume more system resources
 // To simulate a regular clock that ticks every second, set this to 1000
 // For a clock that moves smoothly at 60fps, set this to 16.67
-const UPDATE_RATE = 16.67
+var UPDATE_RATE = 16.67
 // Amount of time in seconds to wait between
 // updating the ephemeris (an expensive operation)
 // Lower values will update more often, but take more resources
 // Higher values will update less and are lighter on system resources,
 // but the clock may appear to visually jump on each update
-const EPHEMERIS_COOLDOWN = 20
+var EPHEMERIS_COOLDOWN = 20;
 
 // Display sun, moon, mercury, venus, and mars
-const SHOW_INNER_BODIES = true;
+var SHOW_INNER_BODIES = true;
 // Display saturn, jupiter, uranus, neptune, pluto, and chiron
-const SHOW_OUTER_BODIES = false;
+var SHOW_OUTER_BODIES = false;
 // Display dark moon lilith and ascending lunar node
-const SHOW_LUNAR_POINTS = false;
+var SHOW_LUNAR_POINTS = false;
 // Display angles (midheaven, ascendant)
-const SHOW_MAJOR_ANGLES = false;
+var SHOW_MAJOR_ANGLES = false;
 // Display parts (part of fortune)
-const SHOW_ARABIC_PARTS = false;
+var SHOW_ARABIC_PARTS = false;
 // Display phases of the moon
-const SHOW_MOON_PHASES = true;
+var SHOW_MOON_PHASES = true;
 // Display horizontal line representing the horizon
-const SHOW_HORIZON = true;
+var SHOW_HORIZON = true;
 
 // Activate dark mode on sunset (overrides DARK_MODE)
-const AUTO_DARK_MODE = false;
+var AUTO_DARK_MODE = false;
 // Invert colors (dark mode)
 // If AUTO_DARK_MODE is enabled, this setting is overridden
 var DARK_MODE = true;
 
 //// END OF CONFIG VALUES -- START OF SOURCE CODE ////
+
+window.wallpaperPropertyListener = {
+    applyUserProperties: function(properties) {
+        if (properties.use_live_location) {
+            USE_LIVE_LOCATION = properties.use_live_location.value;
+        }
+
+        if (properties.latitude && properties.longitude) {
+            LATITUDE = parseFloat(properties.latitude.value);
+            LONGITUDE = parseFloat(properties.longitude.value);
+        }
+
+        if (properties.ephemeris_cooldown) {
+            EPHEMERIS_COOLDOWN = properties.ephemeris_cooldown.value;
+        }
+
+        if (properties.show_inner_bodies) {
+            SHOW_INNER_BODIES = properties.show_inner_bodies.value;
+        }
+
+        if (properties.show_outer_bodies) {
+            SHOW_OUTER_BODIES = properties.show_outer_bodies.value;
+        }
+
+        if (properties.show_lunar_points) {
+            SHOW_LUNAR_POINTS = properties.show_lunar_points.value;
+        }
+
+        if (properties.show_major_angles) {
+            SHOW_MAJOR_ANGLES = properties.show_major_angles.value;
+        }
+
+        if (properties.show_arabic_parts) {
+            SHOW_ARABIC_PARTS = properties.show_arabic_parts.value;
+        }
+
+        if (properties.show_moon_phases) {
+            SHOW_MOON_PHASES = properties.show_moon_phases.value;
+        }
+
+        if (properties.show_horizon) {
+            SHOW_HORIZON = properties.show_horizon.value;
+        }
+
+        if (properties.auto_dark_mode) {
+            AUTO_DARK_MODE = properties.auto_dark_mode.value;
+        }
+
+        if (!AUTO_DARK_MODE && properties.dark_mode) {
+            DARK_MODE = properties.dark_mode.value;
+        }
+    }
+};
 
 // Adds functionality to the default Date() class to get the Julian
 // date from it as well. This is in UTC by default, since this function
@@ -79,6 +132,8 @@ window.addEventListener('load', function load() {
         signFortune,
         retroMerc, retroVenus, retroMars,
         retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
+
+    var first = true; // initialized to true and set to false after the first ephemeris generation
 
     document.body.appendChild(canvas);
     window.addEventListener('resize', resize);
@@ -461,7 +516,7 @@ window.addEventListener('load', function load() {
         signAscendant = (Math.abs(ascendantDeg - 360) / 30) + 1;
         offsetAscendant = 9.5 - signAscendant;
 
-        if (SHOW_INNER_BODIES) {
+        if (SHOW_INNER_BODIES || first) {
             // For each sign index, we calculate the abs of the inverse of the longitude to effectively
             // mirror the position, so that the signs progress properly over the ascendant.
             signSun = (Math.abs(ephemeris.sun.position.apparentLongitude - 360) / 30) + 1;
@@ -473,7 +528,7 @@ window.addEventListener('load', function load() {
             retroVenus = ephemeris.venus.motion.isRetrograde;
             retroMars = ephemeris.mars.motion.isRetrograde;
         }
-        if (SHOW_OUTER_BODIES) {
+        if (SHOW_OUTER_BODIES || first) {
             signJupiter = (Math.abs(ephemeris.jupiter.position.apparentLongitude - 360) / 30) + 1;
             signSaturn = (Math.abs(ephemeris.saturn.position.apparentLongitude - 360) / 30) + 1;
             signUranus = (Math.abs(ephemeris.uranus.position.apparentLongitude - 360) / 30) + 1;
@@ -487,17 +542,17 @@ window.addEventListener('load', function load() {
             retroPluto = ephemeris.pluto.motion.isRetrograde;
             retroChiron = ephemeris.chiron.motion.isRetrograde;
         }
-        if (SHOW_LUNAR_POINTS) {
+        if (SHOW_LUNAR_POINTS || first) {
             signAscNode = (Math.abs(ephemeris.moon.orbit.meanAscendingNode.apparentLongitude - 360) / 30) + 1;
             signLilith = (Math.abs(ephemeris.moon.orbit.meanApogee.apparentLongitude - 360) / 30) + 1;
         }
-        if (SHOW_MOON_PHASES) {
+        if (SHOW_MOON_PHASES || first) {
             illumFraction = ephemeris.moon.position.illuminatedFraction;
         }
-        if (SHOW_MAJOR_ANGLES) {
+        if (SHOW_MAJOR_ANGLES || first) {
             signMidheaven = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
         }
-        if (SHOW_ARABIC_PARTS) {
+        if (SHOW_ARABIC_PARTS || first) {
             // As per https://cafeastrology.com/partoffortune.html, the part of fortune
             // is calculated different depending on whether we are currently in a day
             // or night chart. 
@@ -516,6 +571,7 @@ window.addEventListener('load', function load() {
             // Enable dark mode at night, disable it in the day.
             DARK_MODE = isNightChart(ephemeris.sun.position.apparentLongitude, ascendantDeg);
         }
+        first = false;
     }
 
     // Returns true if the sun is below the horizon as defined by the ascendant degree
