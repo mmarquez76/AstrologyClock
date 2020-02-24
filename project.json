@@ -1,6 +1,6 @@
 {
 	"contentrating" : "Everyone",
-	"description" : "Displays the time, moon phase, and current planetary positions and retrogrades in the zodiac, with additional optional indicators for the outer planets, major angles, lunar points, and part of fortune.\n\nPositions are displayed with the x-axis as the horizon, with the ascendant degree on the left.\n\nSource: https://github.com/mtaylor76/AstrologyClock",
+	"description" : "Displays the time, moon phase, and current planetary positions and retrogrades in the zodiac, with additional optional indicators for the outer planets, major angles, lunar points, and part of fortune.\r\n\r\nPositions are displayed with the x-axis as the horizon, with the ascendant degree on the left.",
 	"file" : "index.html",
 	"general" : 
 	{
@@ -8,7 +8,7 @@
 		{
 			"auto_dark_mode" : 
 			{
-				"order" : 111,
+				"order" : 112,
 				"text" : "Auto Dark Mode",
 				"type" : "bool",
 				"value" : false
@@ -16,7 +16,7 @@
 			"dark_mode" : 
 			{
 				"condition" : "!auto_dark_mode.value",
-				"order" : 112,
+				"order" : 113,
 				"text" : "Dark Mode",
 				"type" : "bool",
 				"value" : true
@@ -26,7 +26,7 @@
 				"fraction" : false,
 				"max" : 300,
 				"min" : 1,
-				"order" : 103,
+				"order" : 104,
 				"text" : "Ephemeris Refresh Rate",
 				"type" : "slider",
 				"value" : 20
@@ -34,84 +34,86 @@
 			"latitude" : 
 			{
 				"condition" : "!use_live_location.value",
-				"fraction" : true,
-				"max" : 90,
-				"min" : -90,
 				"order" : 101,
-				"precision" : 2,
-				"step" : 0.10000000000000001,
 				"text" : "Latitude",
-				"type" : "slider",
-				"value" : 25
+				"type" : "textinput",
+				"value" : "25"
 			},
 			"longitude" : 
 			{
 				"condition" : "!use_live_location.value",
-				"fraction" : true,
-				"max" : 90,
-				"min" : -90,
 				"order" : 102,
-				"precision" : 2,
-				"step" : 0.10000000000000001,
 				"text" : "Longitude",
-				"type" : "slider",
-				"value" : -80
+				"type" : "textinput",
+				"value" : "80"
 			},
 			"schemecolor" : 
 			{
 				"order" : 0,
 				"text" : "ui_browse_properties_scheme_color",
 				"type" : "color",
-				"value" : "0.4666666666666667 0.4666666666666667 0.4666666666666667"
+				"value" : "0.25882352941176473 0.25882352941176473 0.25882352941176473"
 			},
 			"show_arabic_parts" : 
 			{
-				"order" : 108,
+				"order" : 109,
 				"text" : "Show Arabic Parts",
 				"type" : "bool",
 				"value" : false
 			},
 			"show_horizon" : 
 			{
-				"order" : 110,
+				"order" : 111,
 				"text" : "Show Horizon",
 				"type" : "bool",
 				"value" : true
 			},
 			"show_inner_bodies" : 
 			{
-				"order" : 104,
+				"order" : 105,
 				"text" : "Show Inner Bodies",
 				"type" : "bool",
 				"value" : true
 			},
 			"show_lunar_points" : 
 			{
-				"order" : 106,
+				"order" : 107,
 				"text" : "Show Lunar Points",
 				"type" : "bool",
 				"value" : false
 			},
 			"show_major_angles" : 
 			{
-				"order" : 107,
+				"order" : 108,
 				"text" : "Show Major Angles",
 				"type" : "bool",
 				"value" : false
 			},
 			"show_moon_phases" : 
 			{
-				"order" : 109,
+				"order" : 110,
 				"text" : "Show Moon Phases",
 				"type" : "bool",
 				"value" : true
 			},
 			"show_outer_bodies" : 
 			{
-				"order" : 105,
+				"order" : 106,
 				"text" : "Show Outer Bodies",
 				"type" : "bool",
 				"value" : false
+			},
+			"size_ratio" : 
+			{
+				"fraction" : true,
+				"max" : 1,
+				"min" : 0,
+				"order" : 103,
+				"precision" : 2,
+				"step" : 0.05000000000000001,
+				"text" : "Size Ratio",
+				"type" : "slider",
+				"value" : 1
 			},
 			"use_live_location" : 
 			{
@@ -126,5 +128,6 @@
 	"tags" : [ "Fantasy" ],
 	"title" : "Astrology Clock",
 	"type" : "web",
+	"visibility" : "public",
 	"workshopid" : "2005926748"
 }

@@ -22,6 +22,11 @@ var UPDATE_RATE = 16.67;
 // but the clock may appear to visually jump on each update
 var EPHEMERIS_COOLDOWN = 20;
 
+// Controls the diameter of the clock
+// Useful for shrinking the clock so that it doesn't overlap the taskbar
+// when used as a background for desktops
+var SIZE_RATIO = 1;
+
 // Display sun, moon, mercury, venus, and mars
 var SHOW_INNER_BODIES = true;
 // Display saturn, jupiter, uranus, neptune, pluto, and chiron
@@ -44,63 +49,6 @@ var AUTO_DARK_MODE = false;
 var DARK_MODE = true;
 
 //// END OF CONFIG VALUES -- START OF SOURCE CODE ////
-
-window.wallpaperPropertyListener = {
-    applyUserProperties: function(properties) {
-        if (properties.fps) {
-            UPDATE_RATE = 1000.0 / properties.fps;
-        }
-
-        if (properties.use_live_location) {
-            USE_LIVE_LOCATION = properties.use_live_location.value;
-        }
-
-        if (properties.latitude && properties.longitude) {
-            LATITUDE = parseFloat(properties.latitude.value);
-            LONGITUDE = parseFloat(properties.longitude.value);
-        }
-
-        if (properties.ephemeris_cooldown) {
-            EPHEMERIS_COOLDOWN = properties.ephemeris_cooldown.value;
-        }
-
-        if (properties.show_inner_bodies) {
-            SHOW_INNER_BODIES = properties.show_inner_bodies.value;
-        }
-
-        if (properties.show_outer_bodies) {
-            SHOW_OUTER_BODIES = properties.show_outer_bodies.value;
-        }
-
-        if (properties.show_lunar_points) {
-            SHOW_LUNAR_POINTS = properties.show_lunar_points.value;
-        }
-
-        if (properties.show_major_angles) {
-            SHOW_MAJOR_ANGLES = properties.show_major_angles.value;
-        }
-
-        if (properties.show_arabic_parts) {
-            SHOW_ARABIC_PARTS = properties.show_arabic_parts.value;
-        }
-
-        if (properties.show_moon_phases) {
-            SHOW_MOON_PHASES = properties.show_moon_phases.value;
-        }
-
-        if (properties.show_horizon) {
-            SHOW_HORIZON = properties.show_horizon.value;
-        }
-
-        if (properties.auto_dark_mode) {
-            AUTO_DARK_MODE = properties.auto_dark_mode.value;
-        }
-
-        if (!AUTO_DARK_MODE && properties.dark_mode) {
-            DARK_MODE = properties.dark_mode.value;
-        }
-    }
-};
 
 // Adds functionality to the default Date() class to get the Julian
 // date from it as well. This is in UTC by default, since this function
@@ -139,10 +87,72 @@ window.addEventListener('load', function load() {
         retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
 
     var first = true; // initialized to true and set to false after the first ephemeris generation
-
+    
     document.body.appendChild(canvas);
     window.addEventListener('resize', resize);
     resize();
+
+    window.wallpaperPropertyListener = {
+        applyUserProperties: function(properties) {
+            if (properties.fps) {
+                UPDATE_RATE = 1000.0 / properties.fps;
+            }
+    
+            if (properties.size_ratio) {
+                radius = getCircleRadius(20) * properties.size_ratio.value;
+                SIZE_RATIO = properties.size_ratio.value;
+            }
+    
+            if (properties.use_live_location) {
+                USE_LIVE_LOCATION = properties.use_live_location.value;
+            }
+    
+            if (properties.latitude && properties.longitude) {
+                LATITUDE = parseFloat(properties.latitude.value);
+                LONGITUDE = parseFloat(properties.longitude.value);
+            }
+    
+            if (properties.ephemeris_cooldown) {
+                EPHEMERIS_COOLDOWN = properties.ephemeris_cooldown.value;
+            }
+    
+            if (properties.show_inner_bodies) {
+                SHOW_INNER_BODIES = properties.show_inner_bodies.value;
+            }
+    
+            if (properties.show_outer_bodies) {
+                SHOW_OUTER_BODIES = properties.show_outer_bodies.value;
+            }
+    
+            if (properties.show_lunar_points) {
+                SHOW_LUNAR_POINTS = properties.show_lunar_points.value;
+            }
+    
+            if (properties.show_major_angles) {
+                SHOW_MAJOR_ANGLES = properties.show_major_angles.value;
+            }
+    
+            if (properties.show_arabic_parts) {
+                SHOW_ARABIC_PARTS = properties.show_arabic_parts.value;
+            }
+    
+            if (properties.show_moon_phases) {
+                SHOW_MOON_PHASES = properties.show_moon_phases.value;
+            }
+    
+            if (properties.show_horizon) {
+                SHOW_HORIZON = properties.show_horizon.value;
+            }
+    
+            if (properties.auto_dark_mode) {
+                AUTO_DARK_MODE = properties.auto_dark_mode.value;
+            }
+    
+            if (!AUTO_DARK_MODE && properties.dark_mode) {
+                DARK_MODE = properties.dark_mode.value;
+            }
+        }
+    };
 
     (function drawFrame() {
         // Only draw a frame once every time 
@@ -180,7 +190,7 @@ window.addEventListener('load', function load() {
     }
 
     function resize() {
-        radius = getCircleRadius(20);
+        radius = getCircleRadius(20) * SIZE_RATIO;
         ctx.canvas.width = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
         ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -188,9 +198,9 @@ window.addEventListener('load', function load() {
 
     function getCircleRadius(padding) {
         if (window.innerWidth < window.innerHeight)
-            return Math.round((window.innerWidth / 2) - padding);
+            return Math.round(((window.innerWidth / 2) - padding));
         else
-            return Math.round((window.innerHeight / 2) - padding);
+            return Math.round(((window.innerHeight / 2) - padding));
     }
 
     // Draws the center stellated dodecahedron and moon phase
