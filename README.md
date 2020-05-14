@@ -26,4 +26,3 @@ Uses Astro font type by Cosmorama, as well as the Moshier Ephemeris JS fork by @
 ## TODO
 
 * Move the config values from `clock.js` to their own config file
-* Rework dark mode to improve performance
