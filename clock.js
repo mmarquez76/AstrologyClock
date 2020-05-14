@@ -68,8 +68,11 @@ if (USE_LIVE_LOCATION) {
 window.addEventListener('load', function load() {
     window.removeEventListener('load', load, false);
 
-    var canvas = document.createElement('canvas'),
-        ctx = canvas.getContext('2d'),
+    var bgCanvas = document.getElementById('background-layer'), 
+    faceCanvas = document.getElementById('face-layer'),
+    signCanvas = document.getElementById('sign-layer'),
+    signHandCanvas = document.getElementById('sign-hand-layer'),
+    timeHandCanvas = document.getElementById('time-hand-layer'),
         signs = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A'],
         symbols = {
             sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U',
@@ -87,8 +90,7 @@ window.addEventListener('load', function load() {
         retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
 
     var first = true; // initialized to true and set to false after the first ephemeris generation
-    
-    document.body.appendChild(canvas);
+
     window.addEventListener('resize', resize);
     resize();
 
@@ -160,40 +162,78 @@ window.addEventListener('load', function load() {
         setTimeout(function () {
             requestAnimationFrame(drawFrame);
             date = new Date();
-            clearCanvas();
             // Only get a new ephemeris every cooldown period to save resources
             if (Math.floor(seconds / EPHEMERIS_COOLDOWN) != Math.floor(date.getSeconds() / EPHEMERIS_COOLDOWN)) {
                 getSigns();
                 seconds = date.getSeconds();
             }
+            clearChangedCanvas();
             drawCenter();
             drawFace();
             drawNumerals();
-            drawAllHands();
-            if (DARK_MODE)
-                invertColors();
-            // Draw center dot
-            ctx.fillStyle = '#555';
-            ctx.beginPath();
-            ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
-            ctx.fill();
+            drawTimeHands();
+            drawSignHands();
         }, UPDATE_RATE);
     })();
 
-    // Invert the colors of everything drawn on the canvas
-    // (effectively activating dark mode)
-    function invertColors() {
-        ctx.globalCompositeOperation = 'difference';
-        ctx.fillStyle = 'white';
-        ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
-        ctx.globalCompositeOperation = 'source-over';
-    }
-
     function resize() {
         radius = getCircleRadius(20) * SIZE_RATIO;
+        let ctx = bgCanvas.getContext('2d');
         ctx.canvas.width = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
-        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.translate(bgCanvas.width / 2, bgCanvas.height / 2);
+        ctx = faceCanvas.getContext('2d');
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
+        ctx.translate(faceCanvas.width / 2, faceCanvas.height / 2);
+        ctx = signCanvas.getContext('2d');
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
+        ctx.translate(signCanvas.width / 2, signCanvas.height / 2);
+        ctx = signHandCanvas.getContext('2d');
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
+        ctx.translate(signHandCanvas.width / 2, signHandCanvas.height / 2);
+        ctx = timeHandCanvas.getContext('2d');
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
+        ctx.translate(timeHandCanvas.width / 2, timeHandCanvas.height / 2);
+    }
+
+    function darkify(color) {
+        if (DARK_MODE) {
+            if(color.length != 7) {
+                console.error("Hex color must be seven characters in length (e.g. #FFFFFF).");
+                return false;
+            }
+            
+            color = color.toUpperCase();
+            let splitnum = color.split("");
+            let resultnum = "#";
+            let simplenum = "FEDCBA9876".split("");
+            let complexnum = new Array();
+            complexnum.A = "5";
+            complexnum.B = "4";
+            complexnum.C = "3";
+            complexnum.D = "2";
+            complexnum.E = "1";
+            complexnum.F = "0";
+            
+            for(i=1; i<7; i++){
+                if(!isNaN(splitnum[i])) {
+                resultnum += simplenum[splitnum[i]]; 
+                } else if(complexnum[splitnum[i]]){
+                resultnum += complexnum[splitnum[i]]; 
+                } else {
+                console.error("Hex colors must only include the leading # and hex numbers 0-9, A-F");
+                return false;
+                }
+            }
+            
+            return resultnum;
+        } 
+        else
+            return color;
     }
 
     function getCircleRadius(padding) {
@@ -206,28 +246,28 @@ window.addEventListener('load', function load() {
     // Draws the center stellated dodecahedron and moon phase
     // If moon phases are disabled, concentric circles are drawn instead
     function drawCenter() {
-        let gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4)
+        let ctx = faceCanvas.getContext('2d'),
+            gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4)
         // Stellated dodecahedron inner circle fill
-        gradient.addColorStop(0, '#ccc');
-        gradient.addColorStop(.7, '#e3e3e3');
+        gradient.addColorStop(0, darkify('#cccccc'));
+        gradient.addColorStop(.7, darkify('#e3e3e3'));
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
         ctx.fill();
         // Outer circle of inner section
-        ctx.strokeStyle = '#fff';
+        ctx.strokeStyle = darkify('#ffffff');
         ctx.lineWidth = radius * .016;
         ctx.beginPath();
         ctx.arc(0, 0, radius * .15, 0, 2 * Math.PI);
         ctx.stroke();
-        ctx.beginPath();
         if (SHOW_MOON_PHASES) {
             // Normalize moon phase just in case it gets passed some weird value
             illumFraction = Math.abs(illumFraction % 1);
             // Dark mode requires us to draw the moon differently, so that there's proper
             // contrast between the light and dark parts of the moon
             if (DARK_MODE) {
-                ctx.fillStyle = '#fff';
+                ctx.fillStyle = darkify('#ffffff');
                 ctx.beginPath();
                 ctx.arc(0, 0, radius * .143, 0, 2 * Math.PI);
                 ctx.fill();
@@ -250,6 +290,7 @@ window.addEventListener('load', function load() {
                     ctx.fill();
                 }
             } else {
+                ctx.beginPath();
                 // Draw phase of moon
                 if (illumFraction >= 0.5) {
                     // Fill with light-yellow tinge on full moon
@@ -297,82 +338,92 @@ window.addEventListener('load', function load() {
             ctx.lineTo(radius * .4, 0);
             ctx.stroke();
         }
+        // Draw center dot
+        ctx.fillStyle = '#555';
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
+        ctx.fill();
     }
 
-    function clearCanvas() {
+    function clearChangedCanvas() {
         // Clear canvas
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
+        // let ctx = bgCanvas.getContext('2d');
+        // ctx.clearRect(-bgCanvas.width, -bgCanvas.height, bgCanvas.width * 2, bgCanvas.height * 2);
+        let ctx = faceCanvas.getContext('2d');
+        ctx.clearRect(-faceCanvas.width, -faceCanvas.height, faceCanvas.width * 2, faceCanvas.height * 2);
+        ctx = signCanvas.getContext('2d');
+        ctx.clearRect(-signCanvas.width, -signCanvas.height, signCanvas.width * 2, signCanvas.height * 2);
+        ctx = timeHandCanvas.getContext('2d');
+        ctx.clearRect(-timeHandCanvas.width, -timeHandCanvas.height, timeHandCanvas.width * 2, timeHandCanvas.height * 2);
+        ctx = signHandCanvas.getContext('2d');
+        ctx.clearRect(-signHandCanvas.width, -signHandCanvas.height, signHandCanvas.width * 2, signHandCanvas.height * 2);
     }
 
     function drawFace() {
-        let angle;
+        let ctx = faceCanvas.getContext('2d'),
+            bgctx = bgCanvas.getContext('2d'),
+            angle;
+    
+        bgctx.fillStyle = darkify('#ffffff');
+        bgctx.fillRect(-bgCanvas.width, -bgCanvas.height, bgCanvas.width * 2, bgCanvas.height * 2);    
+
         // Rings
-        ctx.strokeStyle = '#ccc';
+        ctx.strokeStyle = darkify('#cccccc');
         ctx.lineWidth = radius * .005;
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
+        ctx.moveTo(radius * .4, 0);
         ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
+        ctx.moveTo(radius * .7, 0);
         ctx.arc(0, 0, radius * .7, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
+        ctx.moveTo(radius * .9, 0);
         ctx.arc(0, 0, radius * .9, 0, 2 * Math.PI);
-        ctx.stroke();
         // Indices for signs
-        ctx.beginPath();
         for (let i = 0; i < 12; i++) {
             angle = (i + offsetAscendant + .5) * Math.PI / 6;
             ctx.rotate(angle);
             ctx.moveTo(radius * .4, 0);
             ctx.lineTo(radius * .7, 0);
-            ctx.stroke();
             ctx.rotate(-angle);
         }
         // Indices for hours
-        ctx.beginPath();
         for (let i = 0; i < 12; i++) {
             angle = i * Math.PI / 6;
             ctx.rotate(angle);
             ctx.moveTo(radius * .7, 0);
             ctx.lineTo(radius * .9, 0);
-            ctx.stroke();
             ctx.rotate(-angle);
         }
         // Indices for minutes / seconds
-        ctx.beginPath();
         for (let i = 0; i < 60; i++) {
             angle = (i + .5) * Math.PI / 30;
             ctx.rotate(angle);
             ctx.moveTo(radius * .9, 0);
             ctx.lineTo(radius, 0);
-            ctx.stroke();
             ctx.rotate(-angle);
         }
+        ctx.stroke();
     }
 
     function drawNumerals() {
         let currentSign = Math.floor(signSun),
             hour = date.getHours(),
             minute = date.getMinutes(),
+            ctx = signCanvas.getContext('2d'),
             angle;
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#ddd';
         // 12 signs
         ctx.font = radius * 0.12 + 'px Astro';
-        ctx.beginPath();
         for (let i = 1; i < 13; i++) {
             angle = (i + offsetAscendant) * Math.PI / 6;
             if (i == currentSign) {
-                ctx.fillStyle = '#333';
+                ctx.fillStyle = darkify('#333333');
             } else if (currentSign % 2 == i % 2) {
-                ctx.fillStyle = '#777';
+                ctx.fillStyle = darkify('#777777');
             } else {
-                ctx.fillStyle = '#aaa';
+                ctx.fillStyle = darkify('#aaaaaa');
             }
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.55);
@@ -384,10 +435,9 @@ window.addEventListener('load', function load() {
         }
         // 12 hours
         ctx.font = radius * 0.1 + 'px Astro';
-        ctx.beginPath();
         for (let i = 1; i < 13; i++) {
             angle = (i + .5) * Math.PI / 6;
-            ctx.fillStyle = (i === ((hour === 0 || hour === 12) ? 12 : hour % 12)) ? '#333' : '#bbb';
+            ctx.fillStyle = (i === ((hour === 0 || hour === 12) ? 12 : hour % 12)) ? darkify('#333333') : darkify('#bbbbbb');
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.8);
             ctx.rotate(-angle);
@@ -398,10 +448,9 @@ window.addEventListener('load', function load() {
         }
         // 60 minutes / seconds
         ctx.font = radius * 0.04 + 'px arial';
-        ctx.beginPath();
         for (let i = 1; i < 61; i++) {
             angle = i * Math.PI / 30;
-            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? '#333' : '#bbb';
+            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? darkify('#333333') : darkify('#bbbbbb');
             ctx.rotate(angle);
             ctx.translate(0, -radius * 0.95);
             ctx.rotate(-angle);
@@ -412,13 +461,32 @@ window.addEventListener('load', function load() {
         }
     }
 
-    function drawAllHands() {
+    function drawTimeHands() {
         let hour = date.getHours(),
             minute = date.getMinutes(),
             second = date.getSeconds(),
             millisec = date.getMilliseconds(),
+            ctx = timeHandCanvas.getContext('2d');
+        ctx.strokeStyle = darkify('#555555');
+        // Draw hour hand
+        hour = ((hour) * Math.PI / 6) +
+            (minute * Math.PI / (6 * 60)) +
+            (second * Math.PI / (360 * 60));
+        drawHand(ctx, hour, radius * 0.7, radius * 0.0035);
+        // Draw minute hand
+        minute = ((minute - 0.5) * Math.PI / 30) +
+            (second * Math.PI / (30 * 60)) +
+            (millisec * Math.PI / (30 * 60000));
+        drawHand(ctx, minute, radius * 0.9, radius * 0.003);
+        // Draw second hand
+        second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
+        drawHand(ctx, second, radius, radius * 0.002);
+    }
+
+    function drawSignHands() {
+        let ctx = signHandCanvas.getContext('2d'),
             drawSign;
-        ctx.strokeStyle = '#bbb';
+        ctx.strokeStyle = darkify('#bbbbbb');
         if (SHOW_INNER_BODIES) {
             // Draw sun sign hand
             drawSign = ((signSun + offsetAscendant - .5) * Math.PI / 6);
@@ -477,20 +545,6 @@ window.addEventListener('load', function load() {
             drawSign = ((signFortune - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.fortune);
         }
-        ctx.strokeStyle = '#555';
-        // Draw hour hand
-        hour = ((hour) * Math.PI / 6) +
-            (minute * Math.PI / (6 * 60)) +
-            (second * Math.PI / (360 * 60));
-        drawHand(ctx, hour, radius * 0.7, radius * 0.0035);
-        // Draw minute hand
-        minute = ((minute - 0.5) * Math.PI / 30) +
-            (second * Math.PI / (30 * 60)) +
-            (millisec * Math.PI / (30 * 60000));
-        drawHand(ctx, minute, radius * 0.9, radius * 0.003);
-        // Draw second hand
-        second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
-        drawHand(ctx, second, radius, radius * 0.002);
     }
 
     function drawHand(ctx, pos, length, width, symbol = "", isRetro = false) {
@@ -504,20 +558,14 @@ window.addEventListener('load', function load() {
         // Draw the given symbol at the end of the hand
         if (symbol) {
             ctx.font = radius * 0.10 + 'px Astro';
-            ctx.fillStyle = '#666'
+            ctx.fillStyle = darkify('#666666');
             ctx.fillText(symbol, 0, -length);
         }
         // Draw retrograde symbol underneath planet
         if (isRetro) {
-            if (DARK_MODE) {
-                ctx.font = radius * 0.09 + 'px Astro';
-                ctx.fillStyle = '#399'
-                ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
-            } else {
-                ctx.font = radius * 0.09 + 'px Astro';
-                ctx.fillStyle = '#c66'
-                ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
-            }
+            ctx.font = radius * 0.09 + 'px Astro';
+            ctx.fillStyle = '#c66'
+            ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
         }
         ctx.rotate(-pos);
     }

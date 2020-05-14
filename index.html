@@ -7,7 +7,19 @@
     <script src="ephemeris-1.2.1.bundle.js" type="text/javascript"></script>
     <script src="clock.js" type="text/javascript"></script>
 </head>
+<style> 
+    canvas { position: absolute; }
+    #time-hand-layer { z-index: 5; }
+    #sign-hand-layer { z-index: 4; }
+    #sign-layer { z-index: 3; }
+    #face-layer { z-index: 2; }
+    #background-layer { z-index: 1; }
+</style>
 <body>
-
+    <canvas id="time-hand-layer"></canvas>
+    <canvas id="sign-hand-layer"></canvas>
+    <canvas id="sign-layer"></canvas>
+    <canvas id="face-layer"></canvas>
+    <canvas id="background-layer"></canvas>
 </body>
 </html>
