@@ -265,7 +265,7 @@ window.addEventListener('load', function load() {
             // Normalize moon phase just in case it gets passed some weird value
             illumFraction = Math.abs(illumFraction % 1);
             // Dark mode requires us to draw the moon differently, so that there's proper
-            // contrast between the light and dark parts of the moon
+            // contrast between the light and dark parts of the moon, meaning we don't use darkify here
             if (DARK_MODE) {
                 ctx.fillStyle = darkify('#ffffff');
                 ctx.beginPath();
@@ -331,7 +331,7 @@ window.addEventListener('load', function load() {
         }
         // Horizon line
         if (SHOW_HORIZON) {
-            ctx.strokeStyle = '#bbb'
+            ctx.strokeStyle = darkify('#bbbbbb')
             ctx.lineWidth = radius * 0.005
             ctx.beginPath();
             ctx.moveTo(-radius * .4, 0);
@@ -339,7 +339,7 @@ window.addEventListener('load', function load() {
             ctx.stroke();
         }
         // Draw center dot
-        ctx.fillStyle = '#555';
+        ctx.fillStyle = darkify('#555555');
         ctx.beginPath();
         ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
         ctx.fill();
