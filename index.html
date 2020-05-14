@@ -3,10 +3,8 @@
 <head>
     <title>Astrology Clock</title>
     <meta charset="utf-8"/>
-    <link rel="preload" href="Astro.TTF" as="font"/>
+    <link rel="preload" type="font/ttf" href="Astro.TTF" as="font"/>
     <link rel="stylesheet" type="text/css" href="style.css"/>
-    <script src="ephemeris-1.2.1.bundle.js" type="text/javascript"></script>
-    <script src="clock.js" type="text/javascript"></script>
 </head>
 <style> 
     canvas { position: absolute; }
@@ -25,5 +23,7 @@
     <canvas id="inner-face-layer"></canvas>
     <canvas id="outer-face-layer"></canvas>
     <canvas id="background-layer"></canvas>
+    <script src="ephemeris-1.2.1.bundle.js" type="text/javascript"></script>
+    <script src="clock.js" type="text/javascript"></script>
 </body>
 </html>
