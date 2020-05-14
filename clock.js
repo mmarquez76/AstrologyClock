@@ -68,11 +68,15 @@ if (USE_LIVE_LOCATION) {
 window.addEventListener('load', function load() {
     window.removeEventListener('load', load, false);
 
+    // bgCanvas and outerCanvas are for things that should never be redrawn (background, borders for outer clock face)
+    // innerCanvas is for things that should be redrawn every minute or so (numerals on clock face, inner clock face borders, moon phase)
+    // signCanvas redraws at the same rate as innerCanvas, but for things layered on top (sign hands, horizon)
+    // timeCanvas is for things that should be redrawn every frame (second/minute/hour hands)
     var bgCanvas = document.getElementById('background-layer'), 
-    faceCanvas = document.getElementById('face-layer'),
+    outerCanvas = document.getElementById('outer-face-layer'),
+    innerCanvas = document.getElementById('inner-face-layer'),
     signCanvas = document.getElementById('sign-layer'),
-    signHandCanvas = document.getElementById('sign-hand-layer'),
-    timeHandCanvas = document.getElementById('time-hand-layer'),
+    timeCanvas = document.getElementById('time-layer'),
         signs = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A'],
         symbols = {
             sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U',
@@ -162,44 +166,46 @@ window.addEventListener('load', function load() {
         setTimeout(function () {
             requestAnimationFrame(drawFrame);
             date = new Date();
+            clearCanvas(timeCanvas);
+            drawTimeHands();
             // Only get a new ephemeris every cooldown period to save resources
             if (Math.floor(seconds / EPHEMERIS_COOLDOWN) != Math.floor(date.getSeconds() / EPHEMERIS_COOLDOWN)) {
                 getSigns();
                 seconds = date.getSeconds();
             }
-            clearChangedCanvas();
-            drawCenter();
-            drawFace();
-            drawNumerals();
-            drawTimeHands();
-            drawSignHands();
+            // Only redraw innerCanvas and signCanvas every minute
+            if (Math.floor(seconds) % 60 == 0) {
+                clearCanvas(innerCanvas);
+                clearCanvas(signCanvas);
+                drawNumerals();
+                drawSignHands();
+                drawInnerFace();
+                drawMoonPhase();
+            }
         }, UPDATE_RATE);
     })();
 
     function resize() {
         radius = getCircleRadius(20) * SIZE_RATIO;
-        let ctx = bgCanvas.getContext('2d');
-        ctx.canvas.width = window.innerWidth;
-        ctx.canvas.height = window.innerHeight;
-        ctx.translate(bgCanvas.width / 2, bgCanvas.height / 2);
-        ctx = faceCanvas.getContext('2d');
-        ctx.canvas.width = window.innerWidth;
-        ctx.canvas.height = window.innerHeight;
-        ctx.translate(faceCanvas.width / 2, faceCanvas.height / 2);
-        ctx = signCanvas.getContext('2d');
-        ctx.canvas.width = window.innerWidth;
-        ctx.canvas.height = window.innerHeight;
-        ctx.translate(signCanvas.width / 2, signCanvas.height / 2);
-        ctx = signHandCanvas.getContext('2d');
-        ctx.canvas.width = window.innerWidth;
-        ctx.canvas.height = window.innerHeight;
-        ctx.translate(signHandCanvas.width / 2, signHandCanvas.height / 2);
-        ctx = timeHandCanvas.getContext('2d');
-        ctx.canvas.width = window.innerWidth;
-        ctx.canvas.height = window.innerHeight;
-        ctx.translate(timeHandCanvas.width / 2, timeHandCanvas.height / 2);
+        let canvases = [bgCanvas, innerCanvas, outerCanvas, timeCanvas, signCanvas];
+        for (let canvas of canvases) {
+            let ctx = canvas.getContext('2d');
+            ctx.canvas.width = window.innerWidth;
+            ctx.canvas.height = window.innerHeight;
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+        }
+        date = new Date();
+        getSigns();
+        fillBackground();
+        drawCenter();
+        drawOuterFace();
+        drawNumerals();
+        drawSignHands();
+        drawInnerFace();
+        drawMoonPhase();
     }
 
+    // Invert a hex color string (i.e. #FFFFFF -> #000000)
     function darkify(color) {
         if (DARK_MODE) {
             if(color.length != 7) {
@@ -243,19 +249,38 @@ window.addEventListener('load', function load() {
             return Math.round(((window.innerHeight / 2) - padding));
     }
 
-    // Draws the center stellated dodecahedron and moon phase
-    // If moon phases are disabled, concentric circles are drawn instead
+    // Draws the center stellated dodecahedron
     function drawCenter() {
-        let ctx = faceCanvas.getContext('2d'),
+        let ctx = outerCanvas.getContext('2d'),
             gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4)
         // Stellated dodecahedron inner circle fill
         gradient.addColorStop(0, darkify('#cccccc'));
         gradient.addColorStop(.7, darkify('#e3e3e3'));
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(0, 0, radius * .4, 0, 2 * Math.PI);
+        ctx.arc(0, 0, radius * .402, 0, 2 * Math.PI);
         ctx.fill();
-        // Outer circle of inner section
+        ctx.strokeStyle = darkify('#ffffff');
+        // Stellated dodecahedron
+        ctx.lineWidth = radius * .008;
+        for (let i = 0; i < 12; i++) {
+            ctx.rotate(i * Math.PI / 6);
+            ctx.moveTo(radius * .36, 0);
+            ctx.rotate(1.0471975511965976);
+            ctx.lineTo(-radius * .36, 0);
+            ctx.rotate(-(i * Math.PI / 6));
+            ctx.rotate(-1.0471975511965976);
+        }
+        ctx.stroke();
+    }
+
+    // If enabled, drawn over the inner concentric rings
+    function drawMoonPhase() {
+        let ctx = innerCanvas.getContext('2d');
+        let gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4)
+        // Stellated dodecahedron inner circle fill
+        gradient.addColorStop(0, darkify('#cccccc'));
+        gradient.addColorStop(.7, darkify('#e3e3e3'));
         ctx.strokeStyle = darkify('#ffffff');
         ctx.lineWidth = radius * .016;
         ctx.beginPath();
@@ -268,7 +293,6 @@ window.addEventListener('load', function load() {
             // contrast between the light and dark parts of the moon, meaning we don't use darkify here
             if (DARK_MODE) {
                 ctx.fillStyle = darkify('#ffffff');
-                ctx.beginPath();
                 ctx.arc(0, 0, radius * .143, 0, 2 * Math.PI);
                 ctx.fill();
                 ctx.beginPath();
@@ -310,62 +334,49 @@ window.addEventListener('load', function load() {
                 }
             }
         } else {
-            // No moon phases; draw stellated dodecahedron inner rings; Eye of the Sahara
+            // Draw stellated dodecahedron inner rings; Eye of the Sahara
+            ctx.moveTo(radius * .093, 0);
             ctx.arc(0, 0, radius * .093, 0, 2 * Math.PI);
-            ctx.stroke();
-            ctx.beginPath();
+            ctx.moveTo(radius * .047, 0);
             ctx.arc(0, 0, radius * .047, 0, 2 * Math.PI);
             ctx.stroke();
         }
-        // Stellated dodecahedron
-        ctx.lineWidth = radius * .008;
-        ctx.beginPath();
-        for (let i = 0; i < 12; i++) {
-            ctx.rotate(i * Math.PI / 6);
-            ctx.moveTo(radius * .36, 0);
-            ctx.rotate(1.0471975511965976);
-            ctx.lineTo(-radius * .36, 0);
-            ctx.stroke();
-            ctx.rotate(-(i * Math.PI / 6));
-            ctx.rotate(-1.0471975511965976);
-        }
-        // Horizon line
-        if (SHOW_HORIZON) {
-            ctx.strokeStyle = darkify('#bbbbbb')
-            ctx.lineWidth = radius * 0.005
-            ctx.beginPath();
-            ctx.moveTo(-radius * .4, 0);
-            ctx.lineTo(radius * .4, 0);
-            ctx.stroke();
-        }
-        // Draw center dot
-        ctx.fillStyle = darkify('#555555');
-        ctx.beginPath();
-        ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
-        ctx.fill();
     }
 
-    function clearChangedCanvas() {
-        // Clear canvas
-        // let ctx = bgCanvas.getContext('2d');
-        // ctx.clearRect(-bgCanvas.width, -bgCanvas.height, bgCanvas.width * 2, bgCanvas.height * 2);
-        let ctx = faceCanvas.getContext('2d');
-        ctx.clearRect(-faceCanvas.width, -faceCanvas.height, faceCanvas.width * 2, faceCanvas.height * 2);
-        ctx = signCanvas.getContext('2d');
-        ctx.clearRect(-signCanvas.width, -signCanvas.height, signCanvas.width * 2, signCanvas.height * 2);
-        ctx = timeHandCanvas.getContext('2d');
-        ctx.clearRect(-timeHandCanvas.width, -timeHandCanvas.height, timeHandCanvas.width * 2, timeHandCanvas.height * 2);
-        ctx = signHandCanvas.getContext('2d');
-        ctx.clearRect(-signHandCanvas.width, -signHandCanvas.height, signHandCanvas.width * 2, signHandCanvas.height * 2);
+    // Clears a given canvas
+    function clearCanvas(canvas) {
+        ctx = canvas.getContext('2d');
+        ctx.clearRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2);
     }
 
-    function drawFace() {
-        let ctx = faceCanvas.getContext('2d'),
-            bgctx = bgCanvas.getContext('2d'),
-            angle;
+    // Fills the background with a color
+    function fillBackground() {
+        let bgctx = bgCanvas.getContext('2d');
     
         bgctx.fillStyle = darkify('#ffffff');
-        bgctx.fillRect(-bgCanvas.width, -bgCanvas.height, bgCanvas.width * 2, bgCanvas.height * 2);    
+        bgctx.fillRect(-bgCanvas.width, -bgCanvas.height, bgCanvas.width * 2, bgCanvas.height * 2);   
+    }
+
+    // Draw outlines of cells in inner clock face (surrounding the signs).
+    function drawInnerFace() {
+        // Indices for signs
+        let signctx = innerCanvas.getContext('2d');
+        signctx.strokeStyle = darkify('#cccccc');
+        signctx.lineWidth = radius * .005;
+        signctx.beginPath();
+        for (let i = 0; i < 12; i++) {
+            angle = (i + offsetAscendant + .5) * Math.PI / 6;
+            signctx.rotate(angle);
+            signctx.moveTo(radius * .4, 0);
+            signctx.lineTo(radius * .7, 0);
+            signctx.rotate(-angle);     
+        }
+        signctx.stroke();
+    }
+
+    function drawOuterFace() {
+        let ctx = outerCanvas.getContext('2d'),
+            angle; 
 
         // Rings
         ctx.strokeStyle = darkify('#cccccc');
@@ -378,14 +389,6 @@ window.addEventListener('load', function load() {
         ctx.arc(0, 0, radius * .7, 0, 2 * Math.PI);
         ctx.moveTo(radius * .9, 0);
         ctx.arc(0, 0, radius * .9, 0, 2 * Math.PI);
-        // Indices for signs
-        for (let i = 0; i < 12; i++) {
-            angle = (i + offsetAscendant + .5) * Math.PI / 6;
-            ctx.rotate(angle);
-            ctx.moveTo(radius * .4, 0);
-            ctx.lineTo(radius * .7, 0);
-            ctx.rotate(-angle);
-        }
         // Indices for hours
         for (let i = 0; i < 12; i++) {
             angle = i * Math.PI / 6;
@@ -409,7 +412,7 @@ window.addEventListener('load', function load() {
         let currentSign = Math.floor(signSun),
             hour = date.getHours(),
             minute = date.getMinutes(),
-            ctx = signCanvas.getContext('2d'),
+            ctx = innerCanvas.getContext('2d'),
             angle;
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'center';
@@ -466,7 +469,7 @@ window.addEventListener('load', function load() {
             minute = date.getMinutes(),
             second = date.getSeconds(),
             millisec = date.getMilliseconds(),
-            ctx = timeHandCanvas.getContext('2d');
+            ctx = timeCanvas.getContext('2d');
         ctx.strokeStyle = darkify('#555555');
         // Draw hour hand
         hour = ((hour) * Math.PI / 6) +
@@ -481,12 +484,25 @@ window.addEventListener('load', function load() {
         // Draw second hand
         second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
         drawHand(ctx, second, radius, radius * 0.002);
+        // Draw center dot
+        ctx.fillStyle = darkify('#bbbbbb');
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * .008, 0, 2 * Math.PI);
+        ctx.fill();
     }
 
     function drawSignHands() {
-        let ctx = signHandCanvas.getContext('2d'),
+        let ctx = signCanvas.getContext('2d'),
             drawSign;
-        ctx.strokeStyle = darkify('#bbbbbb');
+        ctx.strokeStyle = darkify('#bbbbbb');        
+        // Horizon line
+        if (SHOW_HORIZON) {
+            ctx.lineWidth = radius * 0.005
+            ctx.beginPath();
+            ctx.moveTo(-radius * .4, 0);
+            ctx.lineTo(radius * .4, 0);
+            ctx.stroke();
+        }
         if (SHOW_INNER_BODIES) {
             // Draw sun sign hand
             drawSign = ((signSun + offsetAscendant - .5) * Math.PI / 6);
@@ -555,6 +571,8 @@ window.addEventListener('load', function load() {
         ctx.rotate(pos);
         ctx.lineTo(0, -length);
         ctx.stroke();
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = "center";
         // Draw the given symbol at the end of the hand
         if (symbol) {
             ctx.font = radius * 0.10 + 'px Astro';
@@ -563,7 +581,7 @@ window.addEventListener('load', function load() {
         }
         // Draw retrograde symbol underneath planet
         if (isRetro) {
-            ctx.font = radius * 0.09 + 'px Astro';
+            ctx.font = radius * 0.08 + 'px Astro';
             ctx.fillStyle = '#c66'
             ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
         }
@@ -573,7 +591,7 @@ window.addEventListener('load', function load() {
     function getSigns() {
         let ephemeris = getEphemeris();
 
-        // This part is done independently of the SHOW_ANGLES if-statement, because
+        // This part is done independently of the SHOW_MAJOR_ANGLES if-statement, because
         // offsetAscendant is necessary to display every other indicator
         ascendantDeg = getAscendant();
         signAscendant = (Math.abs(ascendantDeg - 360) / 30) + 1;

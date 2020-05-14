@@ -9,17 +9,20 @@
 </head>
 <style> 
     canvas { position: absolute; }
-    #time-hand-layer { z-index: 5; }
-    #sign-hand-layer { z-index: 4; }
-    #sign-layer { z-index: 3; }
-    #face-layer { z-index: 2; }
+    #time-layer { z-index: 5; }
+    #sign-layer { z-index: 4; }
+    #inner-face-layer { z-index: 3; }
+    #outer-face-layer { z-index: 2; }
     #background-layer { z-index: 1; }
 </style>
-<body>
-    <canvas id="time-hand-layer"></canvas>
-    <canvas id="sign-hand-layer"></canvas>
+<body>    
+    <div class="font_preload" style="opacity: 0">
+        <span style="font-family: Astro, Arial, sans-serif;"></span>
+    </div>
+    <canvas id="time-layer"></canvas>
     <canvas id="sign-layer"></canvas>
-    <canvas id="face-layer"></canvas>
+    <canvas id="inner-face-layer"></canvas>
+    <canvas id="outer-face-layer"></canvas>
     <canvas id="background-layer"></canvas>
 </body>
 </html>
