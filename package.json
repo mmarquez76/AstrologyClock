@@ -1,0 +1,19 @@
+{
+  "name": "astrologyclock",
+  "version": "1.0.0",
+  "description": "Displays the time, moon phase, and current planetary positions and retrogrades in the zodiac, with additional optional indicators for the outer planets, major angles, lunar points, and part of fortune.",
+  "main": "clock.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtaylor76/AstrologyClock.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mtaylor76/AstrologyClock/issues"
+  },
+  "homepage": "https://github.com/mtaylor76/AstrologyClock#readme"
+}
