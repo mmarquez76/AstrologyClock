@@ -95,8 +95,9 @@ window.addEventListener('load', function load() {
 
     var first = true; // initialized to true and set to false after the first ephemeris generation
 
-    window.addEventListener('resize', resize);
-    resize();
+    window.addEventListener('resize', redraw);
+    
+    redraw();
 
     window.wallpaperPropertyListener = {
         applyUserProperties: function(properties) {
@@ -107,55 +108,68 @@ window.addEventListener('load', function load() {
             if (properties.size_ratio) {
                 radius = getCircleRadius(20) * properties.size_ratio.value;
                 SIZE_RATIO = properties.size_ratio.value;
+                redraw();
             }
     
             if (properties.use_live_location) {
                 USE_LIVE_LOCATION = properties.use_live_location.value;
+                redraw();
             }
     
             if (properties.latitude && properties.longitude) {
                 LATITUDE = parseFloat(properties.latitude.value);
                 LONGITUDE = parseFloat(properties.longitude.value);
+                redraw();
             }
     
             if (properties.ephemeris_cooldown) {
                 EPHEMERIS_COOLDOWN = properties.ephemeris_cooldown.value;
+                redraw();
             }
     
             if (properties.show_inner_bodies) {
                 SHOW_INNER_BODIES = properties.show_inner_bodies.value;
+                redraw();
             }
     
             if (properties.show_outer_bodies) {
                 SHOW_OUTER_BODIES = properties.show_outer_bodies.value;
+                redraw();
             }
     
             if (properties.show_lunar_points) {
                 SHOW_LUNAR_POINTS = properties.show_lunar_points.value;
+                redraw();
             }
     
             if (properties.show_major_angles) {
                 SHOW_MAJOR_ANGLES = properties.show_major_angles.value;
+                redraw();
             }
     
             if (properties.show_arabic_parts) {
                 SHOW_ARABIC_PARTS = properties.show_arabic_parts.value;
+                redraw();
             }
     
             if (properties.show_moon_phases) {
                 SHOW_MOON_PHASES = properties.show_moon_phases.value;
+                redraw();
             }
     
             if (properties.show_horizon) {
                 SHOW_HORIZON = properties.show_horizon.value;
+                redraw();
             }
     
             if (properties.auto_dark_mode) {
                 AUTO_DARK_MODE = properties.auto_dark_mode.value;
+                redraw();
             }
     
             if (!AUTO_DARK_MODE && properties.dark_mode) {
                 DARK_MODE = properties.dark_mode.value;
+                redraw();
             }
         }
     };
@@ -185,7 +199,8 @@ window.addEventListener('load', function load() {
         }, UPDATE_RATE);
     })();
 
-    function resize() {
+    function redraw() {
+        date = new Date();
         radius = getCircleRadius(20) * SIZE_RATIO;
         let canvases = [bgCanvas, innerCanvas, outerCanvas, timeCanvas, signCanvas];
         for (let canvas of canvases) {
@@ -194,7 +209,6 @@ window.addEventListener('load', function load() {
             ctx.canvas.height = window.innerHeight;
             ctx.translate(canvas.width / 2, canvas.height / 2);
         }
-        date = new Date();
         getSigns();
         fillBackground();
         drawCenter();
