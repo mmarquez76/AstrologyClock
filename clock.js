@@ -8,12 +8,10 @@ var USE_LIVE_LOCATION = true;
 var LATITUDE = 25;
 var LONGITUDE = -80;
 
-// Update rate in milliseconds 
-// Lowering this number will cause the clock to move more smoothly,
-// but will consume more system resources
-// To simulate a regular clock that ticks every second, set this to 1000
-// For a clock that moves smoothly at 60fps, set this to 16.67
-var UPDATE_RATE = 16.67;
+// Setting this to true will cause the clock to tick every second,
+// like a real clock, and also save some CPU load.
+// Leaving this false allows the second hand to move smoothly.
+var TICK_EVERY_SECOND = false;
 
 // Amount of time in seconds to wait between
 // updating the ephemeris (an expensive operation)
@@ -92,7 +90,7 @@ window.addEventListener('load', function load() {
         signFortune,
         retroMerc, retroVenus, retroMars,
         retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron,
-        isNight = false;
+        isNight = false, updateRate = (TICK_EVERY_SECOND) ? 1000 : 16.67; // ms delay for 60fps
 
     var first = true; // initialized to true and set to false after the first ephemeris generation
 
@@ -102,8 +100,9 @@ window.addEventListener('load', function load() {
 
     window.wallpaperPropertyListener = {
         applyUserProperties: function(properties) {
-            if (properties.fps) {
-                UPDATE_RATE = 1000.0 / properties.fps;
+            if (properties.tick_every_second) {
+                TICK_EVERY_SECOND = properties.tick_every_second.value;
+                updateRate = (TICK_EVERY_SECOND) ? 1000 : 16.67;
             }
     
             if (properties.size_ratio) {
@@ -172,12 +171,18 @@ window.addEventListener('load', function load() {
                 DARK_MODE = properties.dark_mode.value;
                 redraw();
             }
+        },
+        applyGeneralProperties: function(properties) {
+            if (properties.fps) {
+                if (!TICK_EVERY_SECOND)
+                    updateRate = 1000.0 / properties.fps;
+            }
         }
     };
 
     (function drawFrame() {
         // Only draw a frame once every time 
-        // period specified in UPDATE_RATE
+        // period specified in updateRate
         setTimeout(function () {
             requestAnimationFrame(drawFrame);
             date = new Date();
@@ -200,7 +205,7 @@ window.addEventListener('load', function load() {
                 clearCanvas(innerCanvas);
                 drawNumerals();
             }
-        }, UPDATE_RATE);
+        }, updateRate);
     })();
 
     function redraw() {
@@ -219,10 +224,11 @@ window.addEventListener('load', function load() {
         drawCenter();
         drawOuterFace();
         drawNumerals();
-        drawSignHands();
         drawInnerFace();
         drawInnerSigns();
         drawMoonPhase();
+        drawSignHands();
+        drawTimeHands();
     }
 
     // Invert a hex color string (i.e. #FFFFFF -> #000000)
@@ -498,7 +504,7 @@ window.addEventListener('load', function load() {
             (millisec * Math.PI / (30 * 60000));
         drawHand(ctx, minute, radius * 0.9, radius * 0.003);
         // Draw second hand; if update rate is 1000, snap the second hand to edges
-        if (UPDATE_RATE == 1000)
+        if (TICK_EVERY_SECOND)
             second = ((second) * Math.PI / 30);
         else
             second = ((second) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));

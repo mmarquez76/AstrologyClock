@@ -26,26 +26,26 @@
 				"fraction" : false,
 				"max" : 300,
 				"min" : 1,
-				"order" : 104,
+				"order" : 103,
 				"text" : "Ephemeris Refresh Rate",
 				"type" : "slider",
 				"value" : 20
 			},
 			"latitude" : 
 			{
-				"condition" : "!use_live_location.value",
-				"order" : 101,
+				"condition" : "",
+				"order" : 100,
 				"text" : "Latitude",
 				"type" : "textinput",
 				"value" : "25"
 			},
 			"longitude" : 
 			{
-				"condition" : "!use_live_location.value",
-				"order" : 102,
+				"condition" : "",
+				"order" : 101,
 				"text" : "Longitude",
 				"type" : "textinput",
-				"value" : "80"
+				"value" : "-80"
 			},
 			"schemecolor" : 
 			{
@@ -108,19 +108,19 @@
 				"fraction" : true,
 				"max" : 1,
 				"min" : 0,
-				"order" : 103,
+				"order" : 102,
 				"precision" : 2,
 				"step" : 0.05000000000000001,
 				"text" : "Size Ratio",
 				"type" : "slider",
-				"value" : 1
+				"value" : 0.94999999999999996
 			},
-			"use_live_location" : 
+			"tick_every_second" : 
 			{
-				"order" : 100,
-				"text" : "Use Live Location",
+				"order" : 104,
+				"text" : "Tick Every Second",
 				"type" : "bool",
-				"value" : true
+				"value" : false
 			}
 		}
 	},

@@ -7,7 +7,7 @@ Positions are displayed with the x-axis as the horizon, with the ascendant degre
 The following options can be modified by editing their values in `clock.js`:
 
 * Longitude and latitude
-* Update rate
+* Update rate (smooth second hand motion or ticking second hand)
 * Toggle indicators for:
     * Inner bodies (Sun, Mercury, Venus, Mars)
     * Outer bodies (Saturn, Jupiter, Uranus, Neptune, Pluto, Chiron)
@@ -22,7 +22,3 @@ Uses Astro font type by Cosmorama, as well as the Moshier Ephemeris JS fork by @
     git clone git@github.com:mtaylor76/AstrologyClock.git
 
 >**demo** [https://mtaylor76.github.io/AstrologyClock/](https://mtaylor76.github.io/AstrologyClock/)
-
-## TODO
-
-* Move the config values from `clock.js` to their own config file
