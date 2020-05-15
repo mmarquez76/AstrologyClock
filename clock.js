@@ -69,8 +69,8 @@ window.addEventListener('load', function load() {
     window.removeEventListener('load', load, false);
 
     // bgCanvas and outerCanvas are for things that should never be redrawn (background, borders for outer clock face)
-    // innerCanvas is for things that should be redrawn every minute or so (numerals on clock face, inner clock face borders, moon phase)
-    // signCanvas redraws at the same rate as innerCanvas, but for things layered on top (sign hands, horizon)
+    // innerCanvas is for things that should be redrawn every minute or so (numerals on clock face, inner clock face borders)
+    // signCanvas redraws every time a new ephemeris is fetched (sign hands, moon phase, horizon)
     // timeCanvas is for things that should be redrawn every frame (second/minute/hour hands)
     var bgCanvas = document.getElementById('background-layer'), 
     outerCanvas = document.getElementById('outer-face-layer'),
@@ -91,7 +91,8 @@ window.addEventListener('load', function load() {
         signMidheaven, signAscendant,
         signFortune,
         retroMerc, retroVenus, retroMars,
-        retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron;
+        retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron,
+        isNight = false;
 
     var first = true; // initialized to true and set to false after the first ephemeris generation
 
@@ -180,21 +181,24 @@ window.addEventListener('load', function load() {
         setTimeout(function () {
             requestAnimationFrame(drawFrame);
             date = new Date();
+            // Redraw time hands every tick
             clearCanvas(timeCanvas);
             drawTimeHands();
             // Only get a new ephemeris every cooldown period to save resources
+            // When a new ephemeris is fetched, redraw all resources that depend on it
             if (Math.floor(seconds / EPHEMERIS_COOLDOWN) != Math.floor(date.getSeconds() / EPHEMERIS_COOLDOWN)) {
                 getSigns();
+                clearCanvas(signCanvas);
                 seconds = date.getSeconds();
+                drawInnerFace();
+                drawInnerSigns();
+                drawMoonPhase();
+                drawSignHands();
             }
-            // Only redraw innerCanvas and signCanvas every minute
+            // Only redraw innerCanvas to highlight new numbers every minute
             if (Math.floor(seconds) % 60 == 0) {
                 clearCanvas(innerCanvas);
-                clearCanvas(signCanvas);
                 drawNumerals();
-                drawSignHands();
-                drawInnerFace();
-                drawMoonPhase();
             }
         }, UPDATE_RATE);
     })();
@@ -202,6 +206,7 @@ window.addEventListener('load', function load() {
     function redraw() {
         date = new Date();
         radius = getCircleRadius(20) * SIZE_RATIO;
+        // Clear all canvases for a complete redraw
         let canvases = [bgCanvas, innerCanvas, outerCanvas, timeCanvas, signCanvas];
         for (let canvas of canvases) {
             let ctx = canvas.getContext('2d');
@@ -216,6 +221,7 @@ window.addEventListener('load', function load() {
         drawNumerals();
         drawSignHands();
         drawInnerFace();
+        drawInnerSigns();
         drawMoonPhase();
     }
 
@@ -290,7 +296,7 @@ window.addEventListener('load', function load() {
 
     // If enabled, drawn over the inner concentric rings
     function drawMoonPhase() {
-        let ctx = innerCanvas.getContext('2d');
+        let ctx = signCanvas.getContext('2d');
         let gradient = ctx.createRadialGradient(0, 0, radius * .1, 0, 0, radius * .4)
         // Stellated dodecahedron inner circle fill
         gradient.addColorStop(0, darkify('#cccccc'));
@@ -304,7 +310,7 @@ window.addEventListener('load', function load() {
             // Normalize moon phase just in case it gets passed some weird value
             illumFraction = Math.abs(illumFraction % 1);
             // Dark mode requires us to draw the moon differently, so that there's proper
-            // contrast between the light and dark parts of the moon, meaning we don't use darkify here
+            // contrast between the light and dark parts of the moon, meaning we don't use darkify for the moon
             if (DARK_MODE) {
                 ctx.fillStyle = darkify('#ffffff');
                 ctx.arc(0, 0, radius * .143, 0, 2 * Math.PI);
@@ -312,19 +318,20 @@ window.addEventListener('load', function load() {
                 ctx.beginPath();
                 // Draw phase of moon inverted, for dark mode
                 if (illumFraction >= 0.5) {
-                    // Fill with light-blue tinge on full moon, which gets inverted to yellow
-                    ctx.fillStyle = (illumFraction >= 0.99) ? '#bbf' : gradient;
-                    ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
-                    ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2);
+                    // Fill with light-yellow tinge on full moon
+                    ctx.fillStyle = (illumFraction >= 0.99) ? '#ffb' : gradient;
+                    ctx.ellipse(0, 0, radius * .145, radius * .145, 0, -Math.PI / 2, Math.PI / 2, true);
+                    ctx.ellipse(0, 0, radius * (.145 * ((illumFraction - 0.5) / 0.5)), radius * .145, 0, -Math.PI / 2, Math.PI / 2);
                     ctx.fill();
                 } else if (illumFraction < 0.5) {
                     ctx.fillStyle = gradient;
                     ctx.arc(0, 0, radius * .143, 0, 2 * Math.PI);
                     ctx.fill();
-                    ctx.fillStyle = (illumFraction <= 0.01) ? '#eee' : '#fff';
+                    // Fill with slight dark blue tinge on new moon
+                    ctx.fillStyle = (illumFraction <= 0.01) ? '#001' : '#000';
                     ctx.beginPath();
-                    ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2);
-                    ctx.ellipse(0, 0, radius * (.143 * ((0.5 - illumFraction) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
+                    ctx.ellipse(0, 0, radius * .145, radius * .145, 0, -Math.PI / 2, Math.PI / 2);
+                    ctx.ellipse(0, 0, radius * (.145 * ((0.5 - illumFraction) / 0.5)), radius * .145, 0, -Math.PI / 2, Math.PI / 2, true);
                     ctx.fill();
                 }
             } else {
@@ -333,8 +340,8 @@ window.addEventListener('load', function load() {
                 if (illumFraction >= 0.5) {
                     // Fill with light-yellow tinge on full moon
                     ctx.fillStyle = (illumFraction >= 0.99) ? '#ffb' : '#fff';
-                    ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
-                    ctx.ellipse(0, 0, radius * (.143 * ((illumFraction - 0.5) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2);
+                    ctx.ellipse(0, 0, radius * .145, radius * .145, 0, -Math.PI / 2, Math.PI / 2, true);
+                    ctx.ellipse(0, 0, radius * (.145 * ((illumFraction - 0.5) / 0.5)), radius * .145, 0, -Math.PI / 2, Math.PI / 2);
                     ctx.fill();
                 } else if (illumFraction < 0.5) {
                     ctx.fillStyle = '#fff';
@@ -342,8 +349,8 @@ window.addEventListener('load', function load() {
                     ctx.fill();
                     ctx.fillStyle = (illumFraction <= 0.01) ? '#888' : gradient;
                     ctx.beginPath();
-                    ctx.ellipse(0, 0, radius * .143, radius * .143, 0, -Math.PI / 2, Math.PI / 2);
-                    ctx.ellipse(0, 0, radius * (.143 * ((0.5 - illumFraction) / 0.5)), radius * .143, 0, -Math.PI / 2, Math.PI / 2, true);
+                    ctx.ellipse(0, 0, radius * .145, radius * .145, 0, -Math.PI / 2, Math.PI / 2);
+                    ctx.ellipse(0, 0, radius * (.145 * ((0.5 - illumFraction) / 0.5)), radius * .145, 0, -Math.PI / 2, Math.PI / 2, true);
                     ctx.fill();
                 }
             }
@@ -374,7 +381,7 @@ window.addEventListener('load', function load() {
     // Draw outlines of cells in inner clock face (surrounding the signs).
     function drawInnerFace() {
         // Indices for signs
-        let signctx = innerCanvas.getContext('2d');
+        let signctx = signCanvas.getContext('2d');
         signctx.strokeStyle = darkify('#cccccc');
         signctx.lineWidth = radius * .005;
         signctx.beginPath();
@@ -413,7 +420,7 @@ window.addEventListener('load', function load() {
         }
         // Indices for minutes / seconds
         for (let i = 0; i < 60; i++) {
-            angle = (i + .5) * Math.PI / 30;
+            angle = i * Math.PI / 30;
             ctx.rotate(angle);
             ctx.moveTo(radius * .9, 0);
             ctx.lineTo(radius, 0);
@@ -422,59 +429,54 @@ window.addEventListener('load', function load() {
         ctx.stroke();
     }
 
+    function drawInnerSigns() {
+        let currentSign = Math.floor(signSun);
+        let ctx = signCanvas.getContext('2d');
+        let main = darkify('#333333');
+        let alternateMain = darkify('#777777');
+        let other = darkify('#aaaaaa');
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        // 12 signs
+        ctx.font = radius * 0.12 + 'px Astro';
+        for (let i = 1; i < 13; i++) {
+            angle = (i - 3 + offsetAscendant) * Math.PI / 6;
+            if (i == currentSign) {
+                ctx.fillStyle = main;
+            } else if (currentSign % 2 == i % 2) {
+                ctx.fillStyle = alternateMain;
+            } else {
+                ctx.fillStyle = other;
+            }
+            let length = radius * 0.55;
+            ctx.fillText(signs[i - 1], length * Math.cos(angle), length * Math.sin(angle));
+        }
+    }
+
     function drawNumerals() {
-        let currentSign = Math.floor(signSun),
-            hour = date.getHours(),
+        let hour = date.getHours(),
             minute = date.getMinutes(),
             ctx = innerCanvas.getContext('2d'),
             angle;
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#ddd';
-        // 12 signs
-        ctx.font = radius * 0.12 + 'px Astro';
-        for (let i = 1; i < 13; i++) {
-            angle = (i + offsetAscendant) * Math.PI / 6;
-            if (i == currentSign) {
-                ctx.fillStyle = darkify('#333333');
-            } else if (currentSign % 2 == i % 2) {
-                ctx.fillStyle = darkify('#777777');
-            } else {
-                ctx.fillStyle = darkify('#aaaaaa');
-            }
-            ctx.rotate(angle);
-            ctx.translate(0, -radius * 0.55);
-            ctx.rotate(-angle);
-            ctx.fillText(signs[i - 1], 0, 0);
-            ctx.rotate(angle);
-            ctx.translate(0, radius * 0.55);
-            ctx.rotate(-angle);
-        }
+        let main = darkify('#333333');
+        let other = darkify('#aaaaaa');
         // 12 hours
         ctx.font = radius * 0.1 + 'px Astro';
         for (let i = 1; i < 13; i++) {
-            angle = (i + .5) * Math.PI / 6;
-            ctx.fillStyle = (i === ((hour === 0 || hour === 12) ? 12 : hour % 12)) ? darkify('#333333') : darkify('#bbbbbb');
-            ctx.rotate(angle);
-            ctx.translate(0, -radius * 0.8);
-            ctx.rotate(-angle);
-            ctx.fillText(i, 0, 0);
-            ctx.rotate(angle);
-            ctx.translate(0, radius * 0.8);
-            ctx.rotate(-angle);
+            angle = (i - 2.5) * Math.PI / 6;
+            ctx.fillStyle = (i === ((hour === 0 || hour === 12) ? 12 : hour % 12)) ? main : other;
+            let length = radius * 0.8;
+            ctx.fillText(i, length * Math.cos(angle), length * Math.sin(angle));
         }
         // 60 minutes / seconds
         ctx.font = radius * 0.04 + 'px arial';
-        for (let i = 1; i < 61; i++) {
-            angle = i * Math.PI / 30;
-            ctx.fillStyle = (i === ((minute === 0) ? 60 : minute)) ? darkify('#333333') : darkify('#bbbbbb');
-            ctx.rotate(angle);
-            ctx.translate(0, -radius * 0.95);
-            ctx.rotate(-angle);
-            ctx.fillText((i < 10) ? '0' + i : i, 0, 0);
-            ctx.rotate(angle);
-            ctx.translate(0, radius * 0.95);
-            ctx.rotate(-angle);
+        for (let i = 0; i < 60; i++) {
+            angle = (i - 14.5) * Math.PI / 30;
+            ctx.fillStyle = (i === (minute)) ? main : other;
+            let length = radius * 0.95;
+            ctx.fillText((i < 10) ? '0' + i : i, length * Math.cos(angle), length * Math.sin(angle));
         }
     }
 
@@ -491,12 +493,15 @@ window.addEventListener('load', function load() {
             (second * Math.PI / (360 * 60));
         drawHand(ctx, hour, radius * 0.7, radius * 0.0035);
         // Draw minute hand
-        minute = ((minute - 0.5) * Math.PI / 30) +
+        minute = ((minute) * Math.PI / 30) +
             (second * Math.PI / (30 * 60)) +
             (millisec * Math.PI / (30 * 60000));
         drawHand(ctx, minute, radius * 0.9, radius * 0.003);
-        // Draw second hand
-        second = ((second - 0.5) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
+        // Draw second hand; if update rate is 1000, snap the second hand to edges
+        if (UPDATE_RATE == 1000)
+            second = ((second) * Math.PI / 30);
+        else
+            second = ((second) * Math.PI / 30) + (millisec * Math.PI / (30 * 1000));
         drawHand(ctx, second, radius, radius * 0.002);
         // Draw center dot
         ctx.fillStyle = darkify('#bbbbbb');
@@ -672,7 +677,7 @@ window.addEventListener('load', function load() {
     // Returns true if the sun is below the horizon as defined by the ascendant degree
     // Returns false otherwise (i.e. if the sun is above the horizon
     function isNightChart(sun, ascendant) {
-        let isNight = false;
+        let prevIsNight = isNight;
         let lower = ascendant;
         let upper = (ascendant + 180) % 360;
         // Handles the case where the upper bound wraps around 360 degrees
@@ -682,6 +687,10 @@ window.addEventListener('load', function load() {
         } else if (upper > lower) {
             if (sun > lower && sun < upper)
                 isNight = true;
+        }
+        // Re-render the entire scene if switching from day to night, to handle auto dark mode
+        if (prevIsNight != isNight) {
+            redraw();
         }
         return isNight;
     }
