@@ -526,7 +526,7 @@ window.addEventListener('load', function load() {
 
     function drawSignHands() {
         let ctx = signCanvas.getContext('2d'),
-            drawSign;
+            drawSign, allSigns = [];
         ctx.strokeStyle = darkify('#bbbbbb');        
         // Horizon line
         if (SHOW_HORIZON) {
@@ -539,96 +539,135 @@ window.addEventListener('load', function load() {
         if (SHOW_SUN) {
             // Draw sun sign hand
             drawSign = ((signSun + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.sun);
+            allSigns.push({pos: drawSign, symbol: symbols.sun});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_MOON) {
             // Draw moon sign hand
             drawSign = ((signMoon + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.moon);
+            allSigns.push({pos: drawSign, symbol: symbols.moon});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
+        console.log(allSigns);
         if (SHOW_MERCURY) {
             // Draw mercury sign hand
             drawSign = ((signMercury + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mercury, retroMerc);
+            allSigns.push({pos: drawSign, symbol: symbols.mercury, retro: retroMerc});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_VENUS) {
             // Draw venus sign hand
             drawSign = ((signVenus + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.venus, retroVenus);
+            allSigns.push({pos: drawSign, symbol: symbols.venus, retro: retroVenus});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_MARS) {
             // Draw mars sign hand
             drawSign = ((signMars + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mars, retroMars);
+            allSigns.push({pos: drawSign, symbol: symbols.mars, retro: retroMars});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_JUPITER) {
             // Draw jupiter sign hand
             drawSign = ((signJupiter + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.jupiter, retroJupiter);
+            allSigns.push({pos: drawSign, symbol: symbols.jupiter, retro: retroJupiter});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_SATURN) {
             // Draw saturn sign hand
             drawSign = ((signSaturn + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.saturn, retroSaturn);
+            allSigns.push({pos: drawSign, symbol: symbols.saturn, retro: retroSaturn});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_URANUS) {
             // Draw uranus sign hand
             drawSign = ((signUranus + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.uranus, retroUranus);
+            allSigns.push({pos: drawSign, symbol: symbols.uranus, retro: retroUranus});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_NEPTUNE) {
             // Draw neptune sign hand
             drawSign = ((signNeptune + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.neptune, retroNeptune);
+            allSigns.push({pos: drawSign, symbol: symbols.neptune, retro: retroNeptune});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_PLUTO) {
             // Draw pluto sign hand
             drawSign = ((signPluto + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.pluto, retroPluto);
+            allSigns.push({pos: drawSign, symbol: symbols.pluto, retro: retroPluto});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_CHIRON) {
             // Draw chiron sign hand
             drawSign = ((signChiron + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.chiron, retroChiron);
+            allSigns.push({pos: drawSign, symbol: symbols.chiron, retro: retroChiron});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_ASC_NODE) {
             // Draw ascending node sign hand
             drawSign = ((signAscNode + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascNode);
+            allSigns.push({pos: drawSign, symbol: symbols.ascNode});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_LILITH) {
             // Draw lilith sign hand
             drawSign = ((signLilith + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.lilith);
+            allSigns.push({pos: drawSign, symbol: symbols.lilith});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_ASCENDANT) {
             // Draw ascendant sign hand
             drawSign = ((signAscendant + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascendant);
+            allSigns.push({pos: drawSign, symbol: symbols.ascendant});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_MIDHEAVEN) {
             // Draw midheaven sign hand
             drawSign = ((signMidheaven + offsetAscendant - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.midheaven);
+            allSigns.push({pos: drawSign, symbol: symbols.midheaven});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
         if (SHOW_PART_FORTUNE) {
             // Draw part of fortune sign hand
             drawSign = ((signFortune - .5) * Math.PI / 6);
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.fortune);
+            allSigns.push({pos: drawSign, symbol: symbols.fortune});
+            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
+        }
+
+        // Sort by ascending order of position
+        allSigns.sort(function(a, b) {
+            return a.pos - b.pos;
+        });
+
+        let dirty = true;
+        while (dirty) {
+            console.log("foo");
+            // Assumes allSigns is now sorted in ascending order of position
+            dirty = false;
+            // Go through each sign, check if it's too close to the next sign, 
+            // and separate them slightly if so
+            for (let i = 0; i < allSigns.length - 1; i++) {
+                if (allSigns[i+1].pos - allSigns[i].pos < .15) {
+                    console.log(allSigns[i].symbol + " and " + allSigns[i+1].symbol + " are too close!");
+                    allSigns[i].pos -= .01;
+                    allSigns[i+1].pos += .01;
+                    dirty = true; // Run the loop once more if a position was changed
+                }
+            }
+        }
+
+        // Draw the symbols for each hand.
+        for (let i = 0; i < allSigns.length; i++) {
+            drawSymbol(ctx, allSigns[i].pos, radius * 0.4, allSigns[i].symbol, allSigns[i].retro);
         }
     }
 
-    function drawHand(ctx, pos, length, width, symbol = "", isRetro = false) {
-        ctx.lineWidth = width;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
+    function drawSymbol(ctx, pos, length, symbol = "", isRetro = false) {
         ctx.moveTo(0, 0);
         ctx.rotate(pos);
         ctx.lineTo(0, -length);
-        ctx.stroke();
         ctx.textBaseline = 'middle';
         ctx.textAlign = "center";
-        // Draw the given symbol at the end of the hand
         if (symbol) {
             ctx.font = radius * 0.10 + 'px Astro';
             ctx.fillStyle = darkify('#666666');
@@ -640,6 +679,19 @@ window.addEventListener('load', function load() {
             ctx.fillStyle = '#c66'
             ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
         }
+        ctx.rotate(-pos);
+    }
+
+    function drawHand(ctx, pos, length, width) {
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.rotate(pos);
+        ctx.lineTo(0, -length);
+        ctx.stroke();
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = "center";
         ctx.rotate(-pos);
     }
 
