@@ -5,31 +5,13 @@
 	"general" : 
 	{
 		"properties" : 
-		{
-			"auto_dark_mode" : 
+		{	
+			"schemecolor" : 
 			{
-				"order" : 112,
-				"text" : "Auto Dark Mode",
-				"type" : "bool",
-				"value" : false
-			},
-			"dark_mode" : 
-			{
-				"condition" : "!auto_dark_mode.value",
-				"order" : 113,
-				"text" : "Dark Mode",
-				"type" : "bool",
-				"value" : true
-			},
-			"ephemeris_refresh_rate" : 
-			{
-				"fraction" : false,
-				"max" : 300,
-				"min" : 1,
-				"order" : 103,
-				"text" : "Ephemeris Refresh Rate",
-				"type" : "slider",
-				"value" : 20
+				"order" : 0,
+				"text" : "ui_browse_properties_scheme_color",
+				"type" : "color",
+				"value" : "0.25882352941176473 0.25882352941176473 0.25882352941176473"
 			},
 			"latitude" : 
 			{
@@ -47,62 +29,6 @@
 				"type" : "textinput",
 				"value" : "-80"
 			},
-			"schemecolor" : 
-			{
-				"order" : 0,
-				"text" : "ui_browse_properties_scheme_color",
-				"type" : "color",
-				"value" : "0.25882352941176473 0.25882352941176473 0.25882352941176473"
-			},
-			"show_arabic_parts" : 
-			{
-				"order" : 109,
-				"text" : "Show Arabic Parts",
-				"type" : "bool",
-				"value" : false
-			},
-			"show_horizon" : 
-			{
-				"order" : 111,
-				"text" : "Show Horizon",
-				"type" : "bool",
-				"value" : true
-			},
-			"show_inner_bodies" : 
-			{
-				"order" : 105,
-				"text" : "Show Inner Bodies",
-				"type" : "bool",
-				"value" : true
-			},
-			"show_lunar_points" : 
-			{
-				"order" : 107,
-				"text" : "Show Lunar Points",
-				"type" : "bool",
-				"value" : false
-			},
-			"show_major_angles" : 
-			{
-				"order" : 108,
-				"text" : "Show Major Angles",
-				"type" : "bool",
-				"value" : false
-			},
-			"show_moon_phases" : 
-			{
-				"order" : 110,
-				"text" : "Show Moon Phases",
-				"type" : "bool",
-				"value" : true
-			},
-			"show_outer_bodies" : 
-			{
-				"order" : 106,
-				"text" : "Show Outer Bodies",
-				"type" : "bool",
-				"value" : false
-			},
 			"size_ratio" : 
 			{
 				"fraction" : true,
@@ -115,12 +41,149 @@
 				"type" : "slider",
 				"value" : 0.94999999999999996
 			},
+			"ephemeris_refresh_rate" : 
+			{
+				"fraction" : false,
+				"max" : 300,
+				"min" : 1,
+				"order" : 103,
+				"text" : "Ephemeris Refresh Rate",
+				"type" : "slider",
+				"value" : 20
+			},
 			"tick_every_second" : 
 			{
 				"order" : 104,
 				"text" : "Tick Every Second",
 				"type" : "bool",
 				"value" : false
+			},
+			"show_horizon" : 
+			{
+				"order" : 105,
+				"text" : "Show Horizon",
+				"type" : "bool",
+				"value" : true
+			},
+			"show_mercury" : 
+			{
+				"order" : 106,
+				"text" : "Show Mercury",
+				"type" : "bool",
+				"value" : true
+			},
+			"show_venus" : 
+			{
+				"order" : 107,
+				"text" : "Show Venus",
+				"type" : "bool",
+				"value" : true
+			},
+			"show_mars" : 
+			{
+				"order" : 108,
+				"text" : "Show Mars",
+				"type" : "bool",
+				"value" : true
+			},
+			"show_saturn" : 
+			{
+				"order" : 109,
+				"text" : "Show Saturn",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_jupiter" : 
+			{
+				"order" : 110,
+				"text" : "Show Jupiter",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_uranus" : 
+			{
+				"order" : 111,
+				"text" : "Show Uranus",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_neptune" : 
+			{
+				"order" : 112,
+				"text" : "Show Neptune",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_pluto" : 
+			{
+				"order" : 113,
+				"text" : "Show Pluto",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_chiron" : 
+			{
+				"order" : 114,
+				"text" : "Show Chiron ",
+				"type" : "bool",
+				"value" : true
+			},
+			"show_lilith" : 
+			{
+				"order" : 115,
+				"text" : "Show Dark Moon Lilith",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_asc_node" : 
+			{
+				"order" : 116,
+				"text" : "Show Ascending Lunar Node",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_midheaven" : 
+			{
+				"order" : 117,
+				"text" : "Show Midheaven",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_ascendant" : 
+			{
+				"order" : 118,
+				"text" : "Show Ascendant Degree",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_part_fortune" : 
+			{
+				"order" : 119,
+				"text" : "Show Part of Fortune",
+				"type" : "bool",
+				"value" : false
+			},
+			"show_moon_phases" : 
+			{
+				"order" : 120,
+				"text" : "Show Moon Phases",
+				"type" : "bool",
+				"value" : true
+			},
+			"auto_dark_mode" : 
+			{
+				"order" : 121,
+				"text" : "Auto Dark Mode",
+				"type" : "bool",
+				"value" : false
+			},
+			"dark_mode" : 
+			{
+				"condition" : "!auto_dark_mode.value",
+				"order" : 122,
+				"text" : "Dark Mode",
+				"type" : "bool",
+				"value" : true
 			}
 		}
 	},
