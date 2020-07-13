@@ -25,17 +25,25 @@ var EPHEMERIS_COOLDOWN = 20;
 // when used as a background for desktops
 var SIZE_RATIO = 1;
 
-// Display sun, moon, mercury, venus, and mars
-var SHOW_INNER_BODIES = true;
-// Display saturn, jupiter, uranus, neptune, pluto, and chiron
-var SHOW_OUTER_BODIES = false;
-// Display dark moon lilith and ascending lunar node
-var SHOW_LUNAR_POINTS = false;
-// Display angles (midheaven, ascendant)
-var SHOW_MAJOR_ANGLES = false;
-// Display parts (part of fortune)
-var SHOW_ARABIC_PARTS = false;
-// Display phases of the moon
+var SHOW_SUN = true;
+var SHOW_MOON = true;
+var SHOW_MERCURY = true;
+var SHOW_VENUS = true;
+var SHOW_MARS = true;
+var SHOW_SATURN = false;
+var SHOW_JUPITER = false;
+var SHOW_URANUS = false;
+var SHOW_NEPTUNE = false;
+var SHOW_PLUTO = false;
+var SHOW_CHIRON = true;
+// Display dark moon lilith
+var SHOW_LILITH = false;
+// Display ascending lunar node
+var SHOW_ASC_NODE = false;
+var SHOW_MIDHEAVEN = false;
+var SHOW_ASCENDANT = false;
+// Display arabic part of fortune
+var SHOW_PART_FORTUNE = false;
 var SHOW_MOON_PHASES = true;
 // Display horizontal line representing the horizon
 var SHOW_HORIZON = true;
@@ -528,60 +536,82 @@ window.addEventListener('load', function load() {
             ctx.lineTo(radius * .4, 0);
             ctx.stroke();
         }
-        if (SHOW_INNER_BODIES) {
+        if (SHOW_SUN) {
             // Draw sun sign hand
             drawSign = ((signSun + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.sun);
+        }
+        if (SHOW_MOON) {
             // Draw moon sign hand
             drawSign = ((signMoon + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.moon);
+        }
+        if (SHOW_MERCURY) {
             // Draw mercury sign hand
             drawSign = ((signMercury + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mercury, retroMerc);
+        }
+        if (SHOW_VENUS) {
             // Draw venus sign hand
             drawSign = ((signVenus + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.venus, retroVenus);
+        }
+        if (SHOW_MARS) {
             // Draw mars sign hand
             drawSign = ((signMars + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.mars, retroMars);
         }
-        if (SHOW_OUTER_BODIES) {
+        if (SHOW_JUPITER) {
             // Draw jupiter sign hand
             drawSign = ((signJupiter + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.jupiter, retroJupiter);
+        }
+        if (SHOW_SATURN) {
             // Draw saturn sign hand
             drawSign = ((signSaturn + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.saturn, retroSaturn);
+        }
+        if (SHOW_URANUS) {
             // Draw uranus sign hand
             drawSign = ((signUranus + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.uranus, retroUranus);
+        }
+        if (SHOW_NEPTUNE) {
             // Draw neptune sign hand
             drawSign = ((signNeptune + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.neptune, retroNeptune);
+        }
+        if (SHOW_PLUTO) {
             // Draw pluto sign hand
             drawSign = ((signPluto + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.pluto, retroPluto);
+        }
+        if (SHOW_CHIRON) {
             // Draw chiron sign hand
             drawSign = ((signChiron + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.chiron, retroChiron);
         }
-        if (SHOW_LUNAR_POINTS) {
+        if (SHOW_ASC_NODE) {
             // Draw ascending node sign hand
             drawSign = ((signAscNode + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascNode);
+        }
+        if (SHOW_LILITH) {
             // Draw lilith sign hand
             drawSign = ((signLilith + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.lilith);
         }
-        if (SHOW_MAJOR_ANGLES) {
+        if (SHOW_ASCENDANT) {
             // Draw ascendant sign hand
             drawSign = ((signAscendant + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.ascendant);
+        }
+        if (SHOW_MIDHEAVEN) {
             // Draw midheaven sign hand
             drawSign = ((signMidheaven + offsetAscendant - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.midheaven);
         }
-        if (SHOW_ARABIC_PARTS) {
+        if (SHOW_PART_FORTUNE) {
             // Draw part of fortune sign hand
             drawSign = ((signFortune - .5) * Math.PI / 6);
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004, symbols.fortune);
@@ -616,49 +646,70 @@ window.addEventListener('load', function load() {
     function getSigns() {
         let ephemeris = getEphemeris();
 
-        // This part is done independently of the SHOW_MAJOR_ANGLES if-statement, because
+        // This part is done independently of any if-statement, because
         // offsetAscendant is necessary to display every other indicator
         ascendantDeg = getAscendant();
         signAscendant = (Math.abs(ascendantDeg - 360) / 30) + 1;
         offsetAscendant = 9.5 - signAscendant;
 
-        if (SHOW_INNER_BODIES || first) {
-            // For each sign index, we calculate the abs of the inverse of the longitude to effectively
-            // mirror the position, so that the signs progress properly over the ascendant.
+        // For each sign index, we calculate the abs of the inverse of the longitude to effectively
+        // mirror the position, so that the signs progress properly over the ascendant.
+        if (SHOW_SUN || first) {
+            
             signSun = (Math.abs(ephemeris.sun.position.apparentLongitude - 360) / 30) + 1;
+        }
+        if (SHOW_MOON || first) {
             signMoon = (Math.abs(ephemeris.moon.position.apparentLongitude - 360) / 30) + 1;
+        }
+        if (SHOW_MERCURY || first) {
             signMercury = (Math.abs(ephemeris.mercury.position.apparentLongitude - 360) / 30) + 1;
-            signVenus = (Math.abs(ephemeris.venus.position.apparentLongitude - 360) / 30) + 1;
-            signMars = (Math.abs(ephemeris.mars.position.apparentLongitude - 360) / 30) + 1;
             retroMerc = ephemeris.mercury.motion.isRetrograde;
+        }
+        if (SHOW_VENUS || first) {
+            signVenus = (Math.abs(ephemeris.venus.position.apparentLongitude - 360) / 30) + 1;
             retroVenus = ephemeris.venus.motion.isRetrograde;
+        }
+        if (SHOW_MARS || first) {
+            signMars = (Math.abs(ephemeris.mars.position.apparentLongitude - 360) / 30) + 1;
             retroMars = ephemeris.mars.motion.isRetrograde;
         }
-        if (SHOW_OUTER_BODIES || first) {
+        if (SHOW_JUPITER|| first) {
             signJupiter = (Math.abs(ephemeris.jupiter.position.apparentLongitude - 360) / 30) + 1;
-            signSaturn = (Math.abs(ephemeris.saturn.position.apparentLongitude - 360) / 30) + 1;
-            signUranus = (Math.abs(ephemeris.uranus.position.apparentLongitude - 360) / 30) + 1;
-            signNeptune = (Math.abs(ephemeris.neptune.position.apparentLongitude - 360) / 30) + 1;
-            signPluto = (Math.abs(ephemeris.pluto.position.apparentLongitude - 360) / 30) + 1;
-            signChiron = (Math.abs(ephemeris.chiron.position.apparentLongitude - 360) / 30) + 1;
             retroJupiter = ephemeris.jupiter.motion.isRetrograde;
+        }
+        if (SHOW_SATURN || first) {
+            signSaturn = (Math.abs(ephemeris.saturn.position.apparentLongitude - 360) / 30) + 1;
             retroSaturn = ephemeris.saturn.motion.isRetrograde;
+        }
+        if (SHOW_URANUS || first) {
+            signUranus = (Math.abs(ephemeris.uranus.position.apparentLongitude - 360) / 30) + 1;
             retroUranus = ephemeris.uranus.motion.isRetrograde;
+        }
+        if (SHOW_NEPTUNE || first) {
+            signNeptune = (Math.abs(ephemeris.neptune.position.apparentLongitude - 360) / 30) + 1;
             retroNeptune = ephemeris.neptune.motion.isRetrograde;
+        }
+        if (SHOW_PLUTO || first) {
+            signPluto = (Math.abs(ephemeris.pluto.position.apparentLongitude - 360) / 30) + 1;
             retroPluto = ephemeris.pluto.motion.isRetrograde;
+        }
+        if (SHOW_CHIRON || first) {
+            signChiron = (Math.abs(ephemeris.chiron.position.apparentLongitude - 360) / 30) + 1;
             retroChiron = ephemeris.chiron.motion.isRetrograde;
         }
-        if (SHOW_LUNAR_POINTS || first) {
+        if (SHOW_ASC_NODE || first) {
             signAscNode = (Math.abs(ephemeris.moon.orbit.meanAscendingNode.apparentLongitude - 360) / 30) + 1;
+        }
+        if (SHOW_LILITH || first) {
             signLilith = (Math.abs(ephemeris.moon.orbit.meanApogee.apparentLongitude - 360) / 30) + 1;
         }
         if (SHOW_MOON_PHASES || first) {
             illumFraction = ephemeris.moon.position.illuminatedFraction;
         }
-        if (SHOW_MAJOR_ANGLES || first) {
+        if (SHOW_MIDHEAVEN || first) {
             signMidheaven = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
         }
-        if (SHOW_ARABIC_PARTS || first) {
+        if (SHOW_PART_FORTUNE || first) {
             // As per https://cafeastrology.com/partoffortune.html, the part of fortune
             // is calculated different depending on whether we are currently in a day
             // or night chart. 
