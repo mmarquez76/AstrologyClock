@@ -641,14 +641,12 @@ window.addEventListener('load', function load() {
 
         let dirty = true;
         while (dirty) {
-            console.log("foo");
             // Assumes allSigns is now sorted in ascending order of position
             dirty = false;
             // Go through each sign, check if it's too close to the next sign, 
             // and separate them slightly if so
             for (let i = 0; i < allSigns.length - 1; i++) {
                 if (allSigns[i+1].pos - allSigns[i].pos < .15) {
-                    console.log(allSigns[i].symbol + " and " + allSigns[i+1].symbol + " are too close!");
                     allSigns[i].pos -= .01;
                     allSigns[i+1].pos += .01;
                     dirty = true; // Run the loop once more if a position was changed
