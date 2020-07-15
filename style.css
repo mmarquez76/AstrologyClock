@@ -13,6 +13,41 @@ html, body, canvas {
     display           : block;
 }
 
+::-mox-selection {
+    color: inherit;
+    background: inherit;
+}
+
+::selection {
+    color: inherit;
+    background: inherit;
+}
+
+.menu {
+    visibility: hidden;
+    border-radius: 4px;
+    z-index: 10;
+    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    opacity: 0;
+    transition: opacity 0.218s ease-out 0s
+}
+
+.menu .menu-options {
+    list-style: none;
+    padding: 10px 0;
+    z-index: 10;
+}
+
+.menu .menu-options .menu-option {
+    font-weight: 500;
+    font-family: Arial, Helvetica, sans-serif;
+    z-index: 10;
+    font-size:1.7vh;
+    padding: 0.5vh 4vh 0.5vh 2vh;
+    cursor: pointer;
+}
+
 canvas {
     -webkit-animation : fadein 1s; /* Safari, Chrome and Opera > 12.1 */
        -moz-animation : fadein 1s; /* Firefox < 16 */

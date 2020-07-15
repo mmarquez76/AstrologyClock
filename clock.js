@@ -74,6 +74,99 @@ if (USE_LIVE_LOCATION) {
 window.addEventListener('load', function load() {
     window.removeEventListener('load', load, false);
 
+    window.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+        let menu = document.getElementById("menu");
+        menu.style.color = darkify('#333333');
+        menu.style.backgroundColor = darkify('#e4e4e4');
+        // Boundary logic
+        if (event.pageX + menu.offsetWidth > window.innerWidth) {
+            menu.style.left = (window.innerWidth - menu.offsetWidth) + 'px';
+        }
+        else {
+            menu.style.left = event.pageX + 'px';
+        }
+        if (event.pageY + menu.offsetHeight > window.innerHeight) {
+            menu.style.top = (window.innerHeight - menu.offsetHeight) + 'px';
+        }
+        else {
+            menu.style.top = event.pageY + 'px';
+        }
+        menu.style.visibility = 'visible';
+        menu.style.opacity = 1;
+        return false;
+    }, false);
+    
+    
+    window.addEventListener('click', function(event) {
+        switch (event.target.id) {
+            case "tick-every-second":
+                TICK_EVERY_SECOND = !TICK_EVERY_SECOND;
+                break;
+            case "show-moon-phases":
+                SHOW_MOON_PHASES = !SHOW_MOON_PHASES;
+                break;
+            case "show-horizon":
+                SHOW_HORIZON = !SHOW_HORIZON;
+                break;
+            case "show-sun":
+                SHOW_SUN = !SHOW_SUN;
+                break;
+            case "show-moon":
+                SHOW_MOON = !SHOW_MOON;
+                break;
+            case "show-mercury":
+                SHOW_MERCURY = !SHOW_MERCURY;
+                break;
+            case "show-venus":
+                SHOW_VENUS = !SHOW_VENUS;
+                break;
+            case "show-mars":
+                SHOW_MARS = !SHOW_MARS;
+                break;
+            case "show-saturn":
+                SHOW_SATURN = !SHOW_SATURN;
+                break;
+            case "show-jupiter":
+                SHOW_JUPITER = !SHOW_JUPITER;
+                break;
+            case "show-uranus":
+                SHOW_URANUS = !SHOW_URANUS;
+                break;
+            case "show-neptune":
+                SHOW_NEPTUNE = !SHOW_NEPTUNE;
+                break;
+            case "show-pluto":
+                SHOW_PLUTO = !SHOW_PLUTO;
+                break;
+            case "show-chiron":
+                SHOW_CHIRON = !SHOW_CHIRON;
+                break;
+            case "show-lilith":
+                SHOW_LILITH = !SHOW_LILITH;
+                break;
+            case "show-asc-node":
+                SHOW_ASC_NODE = !SHOW_ASC_NODE;
+                break; 
+            case "show-midheaven":
+                SHOW_MIDHEAVEN = !SHOW_MIDHEAVEN;
+                break;
+            case "show-ascendant":
+                SHOW_ASCENDANT = !SHOW_ASCENDANT;
+                break;
+            case "show-part-fortune":
+                SHOW_PART_FORTUNE = !SHOW_PART_FORTUNE;
+                break;
+            default:
+                let menu = document.getElementById('menu');
+                if (menu.style.visibility == 'visible') {
+                    menu.style.visibility = 'hidden';
+                    menu.style.opacity = 0;
+                }
+        }
+        redraw();
+    });
+
     // bgCanvas and outerCanvas are for things that should never be redrawn (background, borders for outer clock face)
     // innerCanvas is for things that should be redrawn every minute or so (numerals on clock face, inner clock face borders)
     // signCanvas redraws every time a new ephemeris is fetched (sign hands, moon phase, horizon)
@@ -227,6 +320,7 @@ window.addEventListener('load', function load() {
             ctx.canvas.height = window.innerHeight;
             ctx.translate(canvas.width / 2, canvas.height / 2);
         }
+        //updateMenu();
         getSigns();
         fillBackground();
         drawCenter();
@@ -282,6 +376,11 @@ window.addEventListener('load', function load() {
         else
             return Math.round(((window.innerHeight / 2) - padding));
     }
+
+    /*// Highlights enabled options in the context menu
+    function updateMenu() {
+        Reflect.set(window, 'SHOW_SUN', false);
+    }*/
 
     // Draws the center stellated dodecahedron
     function drawCenter() {
@@ -548,7 +647,6 @@ window.addEventListener('load', function load() {
             allSigns.push({pos: drawSign, symbol: symbols.moon});
             drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
         }
-        console.log(allSigns);
         if (SHOW_MERCURY) {
             // Draw mercury sign hand
             drawSign = ((signMercury + offsetAscendant - .5) * Math.PI / 6);
