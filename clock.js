@@ -1,61 +1,3 @@
-//// THESE VALUES SHOULD BE EDITED TO MATCH YOUR PERSONAL PREFERENCES ////
-
-// Enable to use the live GPS permissions from your browser to fetch coordinates
-// This will override the manually set LATITUDE and LONGITUDE values if enabled
-var USE_LIVE_LOCATION = true;
-// Edit these to your precise latitude and longitude to get
-// the precise live chart for your area
-var LATITUDE = 25;
-var LONGITUDE = -80;
-
-// Setting this to true will cause the clock to tick every second,
-// like a real clock, and also save some CPU load.
-// Leaving this false allows the second hand to move smoothly.
-var TICK_EVERY_SECOND = false;
-
-// Amount of time in seconds to wait between
-// updating the ephemeris (an expensive operation)
-// Lower values will update more often, but take more resources
-// Higher values will update less and are lighter on system resources,
-// but the clock may appear to visually jump on each update
-var EPHEMERIS_COOLDOWN = 20;
-
-// Controls the diameter of the clock
-// Useful for shrinking the clock so that it doesn't overlap the taskbar
-// when used as a background for desktops
-var SIZE_RATIO = 1;
-
-var SHOW_SUN = true;
-var SHOW_MOON = true;
-var SHOW_MERCURY = true;
-var SHOW_VENUS = true;
-var SHOW_MARS = true;
-var SHOW_SATURN = false;
-var SHOW_JUPITER = false;
-var SHOW_URANUS = false;
-var SHOW_NEPTUNE = false;
-var SHOW_PLUTO = false;
-var SHOW_CHIRON = true;
-// Display dark moon lilith
-var SHOW_LILITH = false;
-// Display ascending lunar node
-var SHOW_ASC_NODE = false;
-var SHOW_MIDHEAVEN = false;
-var SHOW_ASCENDANT = false;
-// Display arabic part of fortune
-var SHOW_PART_FORTUNE = false;
-var SHOW_MOON_PHASES = true;
-// Display horizontal line representing the horizon
-var SHOW_HORIZON = true;
-
-// Activate dark mode on sunset (overrides DARK_MODE)
-var AUTO_DARK_MODE = false;
-// Invert colors (dark mode)
-// If AUTO_DARK_MODE is enabled, this setting is overridden
-var DARK_MODE = true;
-
-//// END OF CONFIG VALUES -- START OF SOURCE CODE ////
-
 // Adds functionality to the default Date() class to get the Julian
 // date from it as well. This is in UTC by default, since this function
 // works based off the UNIX-style "seconds since epoch" timestamp
@@ -63,15 +5,153 @@ Date.prototype.getJulian = function () {
     return (this / 86400000) + 2440587.5;
 }
 
-// Get current location to display the local chart
-if (USE_LIVE_LOCATION) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-        LATITUDE = position.coords.latitude;
-        LONGITUDE = position.coords.longitude;
-    });
-}
-
 window.addEventListener('load', function load() {
+    // Enable to use the live GPS permissions from your browser to fetch coordinates
+    // This will override the manually set LATITUDE and LONGITUDE values if enabled
+    var USE_LIVE_LOCATION = true;
+    // Edit these to your precise latitude and longitude to get
+    // the precise live chart for your area
+    var LATITUDE = 25;
+    var LONGITUDE = -80;
+
+    // Setting this to true will cause the clock to tick every second,
+    // like a real clock, and also save some CPU load.
+    // Leaving this false allows the second hand to move smoothly.
+    var TICK_EVERY_SECOND = false;
+
+    // Amount of time in seconds to wait between
+    // updating the ephemeris (an expensive operation)
+    // Lower values will update more often, but take more resources
+    // Higher values will update less and are lighter on system resources,
+    // but the clock may appear to visually jump on each update
+    var EPHEMERIS_COOLDOWN = 20;
+
+    // Controls the diameter of the clock
+    // Useful for shrinking the clock so that it doesn't overlap the taskbar
+    // when used as a background for desktops
+    var SIZE_RATIO = 1;
+
+    var RETRO_SYMBOL = 'M';
+
+    var SHOW_MOON_PHASES = true;
+    // Display horizontal line representing the horizon
+    var SHOW_HORIZON = true;
+
+    // Activate dark mode on sunset (overrides DARK_MODE)
+    var AUTO_DARK_MODE = false;
+    // Invert colors (dark mode)
+    // If AUTO_DARK_MODE is enabled, this setting is overridden
+    var DARK_MODE = true;
+
+    // bgCanvas and outerCanvas are for things that should never be redrawn (background, borders for outer clock face)
+    // innerCanvas is for things that should be redrawn every minute or so (numerals on clock face, inner clock face borders)
+    // signCanvas redraws every time a new ephemeris is fetched (sign hands, moon phase, horizon)
+    // timeCanvas is for things that should be redrawn every frame (second/minute/hour hands)
+    var bgCanvas = document.getElementById('background-layer'), 
+    outerCanvas = document.getElementById('outer-face-layer'),
+    innerCanvas = document.getElementById('inner-face-layer'),
+    signCanvas = document.getElementById('sign-layer'),
+    timeCanvas = document.getElementById('time-layer'),
+        signs = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A'],
+        radius, date, seconds, illumFraction, offsetAscendant,
+        isNight = false, updateRate = (TICK_EVERY_SECOND) ? 1000 : 16.67; // ms delay for 60fps
+
+    var indicators = {
+        sun: {
+            visible: true,
+            degree: 0,
+            retro: false,
+            symbol: 'Q'
+        },
+        moon: {
+            visible: true,
+            degree: 0,
+            retro: false,
+            symbol: 'R'
+        },
+        mercury: {
+            visible: true,
+            degree: 0,
+            retro: false,
+            symbol: 'S'
+        },
+        venus: {
+            visible: true,
+            degree: 0,
+            retro: false,
+            symbol: 'T'
+        },
+        mars: {
+            visible: true,
+            degree: 0,
+            retro: false,
+            symbol: 'U'
+        },
+        saturn: {
+            visible: false,
+            degree: 0,
+            retro: false,
+            symbol: 'V'
+        },
+        jupiter: {
+            visible: false,
+            degree: 0,
+            retro: false,
+            symbol: 'W'
+        },
+        uranus: {
+            visible: false,
+            degree: 0,
+            retro: false,
+            symbol: 'X'
+        },
+        neptune: {
+            visible: false,
+            degree: 0,
+            retro: false,
+            symbol: 'Y'
+        },
+        pluto: {
+            visible: false,
+            degree: 0,
+            retro: false,
+            symbol: 'Z'
+        },
+        chiron: {
+            visible: false,
+            degree: 0,
+            retro: false,
+            symbol: 't'
+        },
+        'asc-node': {
+            visible: false,
+            degree: 0,
+            symbol: '<'
+        },
+        lilith: {
+            visible: false,
+            degree: 0,
+            symbol: '⚸'
+        },
+        ascendant: {
+            visible: false,
+            degree: 0,
+            symbol: 'a'
+        },
+        midheaven: {
+            visible: false,
+            degree: 0,
+            symbol: 'b'
+        },
+        'part-fortune': {
+            visible: false,
+            degree: 0,
+            symbol: '?'
+        }
+    }
+
+    var first = true; // initialized to true and set to false after the first ephemeris generation
+
     window.removeEventListener('load', load, false);
 
     window.addEventListener('contextmenu', function(event) {
@@ -97,6 +177,7 @@ window.addEventListener('load', function load() {
         return false;
     }, false);
     
+    window.addEventListener('resize', redraw);
     
     window.addEventListener('click', function(event) {
         switch (event.target.id) {
@@ -109,93 +190,29 @@ window.addEventListener('load', function load() {
             case "show-horizon":
                 SHOW_HORIZON = !SHOW_HORIZON;
                 break;
-            case "show-sun":
-                SHOW_SUN = !SHOW_SUN;
-                break;
-            case "show-moon":
-                SHOW_MOON = !SHOW_MOON;
-                break;
-            case "show-mercury":
-                SHOW_MERCURY = !SHOW_MERCURY;
-                break;
-            case "show-venus":
-                SHOW_VENUS = !SHOW_VENUS;
-                break;
-            case "show-mars":
-                SHOW_MARS = !SHOW_MARS;
-                break;
-            case "show-saturn":
-                SHOW_SATURN = !SHOW_SATURN;
-                break;
-            case "show-jupiter":
-                SHOW_JUPITER = !SHOW_JUPITER;
-                break;
-            case "show-uranus":
-                SHOW_URANUS = !SHOW_URANUS;
-                break;
-            case "show-neptune":
-                SHOW_NEPTUNE = !SHOW_NEPTUNE;
-                break;
-            case "show-pluto":
-                SHOW_PLUTO = !SHOW_PLUTO;
-                break;
-            case "show-chiron":
-                SHOW_CHIRON = !SHOW_CHIRON;
-                break;
-            case "show-lilith":
-                SHOW_LILITH = !SHOW_LILITH;
-                break;
-            case "show-asc-node":
-                SHOW_ASC_NODE = !SHOW_ASC_NODE;
-                break; 
-            case "show-midheaven":
-                SHOW_MIDHEAVEN = !SHOW_MIDHEAVEN;
-                break;
-            case "show-ascendant":
-                SHOW_ASCENDANT = !SHOW_ASCENDANT;
-                break;
-            case "show-part-fortune":
-                SHOW_PART_FORTUNE = !SHOW_PART_FORTUNE;
-                break;
             default:
-                let menu = document.getElementById('menu');
-                if (menu.style.visibility == 'visible') {
-                    menu.style.visibility = 'hidden';
-                    menu.style.opacity = 0;
+                if (indicators.hasOwnProperty(event.target.id)) {
+                    // Toggle visibility
+                    indicators[event.target.id].visible = !indicators[event.target.id].visible
+                }
+                else {
+                    let menu = document.getElementById('menu');
+                    if (menu.style.visibility == 'visible') {
+                        menu.style.visibility = 'hidden';
+                        menu.style.opacity = 0;
+                    }
                 }
         }
         redraw();
     });
 
-    // bgCanvas and outerCanvas are for things that should never be redrawn (background, borders for outer clock face)
-    // innerCanvas is for things that should be redrawn every minute or so (numerals on clock face, inner clock face borders)
-    // signCanvas redraws every time a new ephemeris is fetched (sign hands, moon phase, horizon)
-    // timeCanvas is for things that should be redrawn every frame (second/minute/hour hands)
-    var bgCanvas = document.getElementById('background-layer'), 
-    outerCanvas = document.getElementById('outer-face-layer'),
-    innerCanvas = document.getElementById('inner-face-layer'),
-    signCanvas = document.getElementById('sign-layer'),
-    timeCanvas = document.getElementById('time-layer'),
-        signs = ['L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A'],
-        symbols = {
-            sun: 'Q', moon: 'R', mercury: 'S', venus: 'T', mars: 'U',
-            saturn: 'V', jupiter: 'W', uranus: 'X', neptune: 'Y', pluto: 'Z',
-            chiron: 't', ascNode: '<', lilith: '⚸',
-            ascendant: 'a', midheaven: 'b', retro: 'M', fortune: '?'
-        },
-        radius, date, seconds, illumFraction, offsetAscendant,
-        signSun, signMercury, signVenus, signMars, signMoon,
-        signJupiter, signSaturn, signUranus, signNeptune, signPluto, signChiron,
-        signAscNode, signLilith,
-        signMidheaven, signAscendant,
-        signFortune,
-        retroMerc, retroVenus, retroMars,
-        retroJupiter, retroSaturn, retroUranus, retroNeptune, retroPluto, retroChiron,
-        isNight = false, updateRate = (TICK_EVERY_SECOND) ? 1000 : 16.67; // ms delay for 60fps
-
-    var first = true; // initialized to true and set to false after the first ephemeris generation
-
-    window.addEventListener('resize', redraw);
+    // Get current location to display the local chart
+    if (USE_LIVE_LOCATION) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            LATITUDE = position.coords.latitude;
+            LONGITUDE = position.coords.longitude;
+        });
+    }
     
     redraw();
 
@@ -422,10 +439,10 @@ window.addEventListener('load', function load() {
             return Math.round(((window.innerHeight / 2) - padding));
     }
 
-    /*// Highlights enabled options in the context menu
+    // Highlights enabled options in the context menu
     function updateMenu() {
-        Reflect.set(window, 'SHOW_SUN', false);
-    }*/
+        let vars = []
+    }
 
     // Draws the center stellated dodecahedron
     function drawCenter() {
@@ -588,7 +605,7 @@ window.addEventListener('load', function load() {
     }
 
     function drawInnerSigns() {
-        let currentSign = Math.floor(signSun);
+        let currentSign = Math.floor(indicators.sun.degree);
         let ctx = signCanvas.getContext('2d');
         let main = darkify('#333333');
         let alternateMain = darkify('#777777');
@@ -671,7 +688,8 @@ window.addEventListener('load', function load() {
     function drawSignHands() {
         let ctx = signCanvas.getContext('2d'),
             drawSign, allSigns = [];
-        ctx.strokeStyle = darkify('#bbbbbb');        
+        ctx.strokeStyle = darkify('#bbbbbb'); 
+
         // Horizon line
         if (SHOW_HORIZON) {
             ctx.lineWidth = radius * 0.005
@@ -680,101 +698,13 @@ window.addEventListener('load', function load() {
             ctx.lineTo(radius * .4, 0);
             ctx.stroke();
         }
-        if (SHOW_SUN) {
-            // Draw sun sign hand
-            drawSign = ((signSun + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.sun});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_MOON) {
-            // Draw moon sign hand
-            drawSign = ((signMoon + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.moon});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_MERCURY) {
-            // Draw mercury sign hand
-            drawSign = ((signMercury + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.mercury, retro: retroMerc});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_VENUS) {
-            // Draw venus sign hand
-            drawSign = ((signVenus + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.venus, retro: retroVenus});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_MARS) {
-            // Draw mars sign hand
-            drawSign = ((signMars + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.mars, retro: retroMars});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_JUPITER) {
-            // Draw jupiter sign hand
-            drawSign = ((signJupiter + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.jupiter, retro: retroJupiter});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_SATURN) {
-            // Draw saturn sign hand
-            drawSign = ((signSaturn + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.saturn, retro: retroSaturn});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_URANUS) {
-            // Draw uranus sign hand
-            drawSign = ((signUranus + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.uranus, retro: retroUranus});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_NEPTUNE) {
-            // Draw neptune sign hand
-            drawSign = ((signNeptune + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.neptune, retro: retroNeptune});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_PLUTO) {
-            // Draw pluto sign hand
-            drawSign = ((signPluto + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.pluto, retro: retroPluto});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_CHIRON) {
-            // Draw chiron sign hand
-            drawSign = ((signChiron + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.chiron, retro: retroChiron});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_ASC_NODE) {
-            // Draw ascending node sign hand
-            drawSign = ((signAscNode + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.ascNode});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_LILITH) {
-            // Draw lilith sign hand
-            drawSign = ((signLilith + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.lilith});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_ASCENDANT) {
-            // Draw ascendant sign hand
-            drawSign = ((signAscendant + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.ascendant});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_MIDHEAVEN) {
-            // Draw midheaven sign hand
-            drawSign = ((signMidheaven + offsetAscendant - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.midheaven});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
-        }
-        if (SHOW_PART_FORTUNE) {
-            // Draw part of fortune sign hand
-            drawSign = ((signFortune - .5) * Math.PI / 6);
-            allSigns.push({pos: drawSign, symbol: symbols.fortune});
-            drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
+
+        for (body in indicators) {
+            if (indicators[body].visible) {
+                drawSign = ((indicators[body].degree + offsetAscendant - .5) * Math.PI / 6);
+                allSigns.push({pos: drawSign, symbol: indicators[body].symbol, retro: indicators[body].retro});
+                drawHand(ctx, drawSign, radius * 0.4, radius * 0.004);
+            }
         }
 
         // Sort by ascending order of position
@@ -818,7 +748,7 @@ window.addEventListener('load', function load() {
         if (isRetro) {
             ctx.font = radius * 0.08 + 'px Astro';
             ctx.fillStyle = '#c66'
-            ctx.fillText(symbols.retro, 0, -length + (radius * 0.07));
+            ctx.fillText(RETRO_SYMBOL, 0, -length + (radius * 0.07));
         }
         ctx.rotate(-pos);
     }
@@ -841,81 +771,51 @@ window.addEventListener('load', function load() {
 
         // This part is done independently of any if-statement, because
         // offsetAscendant is necessary to display every other indicator
-        ascendantDeg = getAscendant();
-        signAscendant = (Math.abs(ascendantDeg - 360) / 30) + 1;
-        offsetAscendant = 9.5 - signAscendant;
+        // The actual ascendant degree, used in calculations
+        let ascendantDeg = getAscendant(); 
+        // The degree of the indicator hand for the ascendant, 
+        // used only for displaying
+        indicators.ascendant.degree = (Math.abs(ascendantDeg - 360) / 30) + 1; 
+        offsetAscendant = 9.5 - indicators.ascendant.degree;
 
         // For each sign index, we calculate the abs of the inverse of the longitude to effectively
         // mirror the position, so that the signs progress properly over the ascendant.
-        if (SHOW_SUN || first) {
-            
-            signSun = (Math.abs(ephemeris.sun.position.apparentLongitude - 360) / 30) + 1;
-        }
-        if (SHOW_MOON || first) {
-            signMoon = (Math.abs(ephemeris.moon.position.apparentLongitude - 360) / 30) + 1;
-        }
-        if (SHOW_MERCURY || first) {
-            signMercury = (Math.abs(ephemeris.mercury.position.apparentLongitude - 360) / 30) + 1;
-            retroMerc = ephemeris.mercury.motion.isRetrograde;
-        }
-        if (SHOW_VENUS || first) {
-            signVenus = (Math.abs(ephemeris.venus.position.apparentLongitude - 360) / 30) + 1;
-            retroVenus = ephemeris.venus.motion.isRetrograde;
-        }
-        if (SHOW_MARS || first) {
-            signMars = (Math.abs(ephemeris.mars.position.apparentLongitude - 360) / 30) + 1;
-            retroMars = ephemeris.mars.motion.isRetrograde;
-        }
-        if (SHOW_JUPITER|| first) {
-            signJupiter = (Math.abs(ephemeris.jupiter.position.apparentLongitude - 360) / 30) + 1;
-            retroJupiter = ephemeris.jupiter.motion.isRetrograde;
-        }
-        if (SHOW_SATURN || first) {
-            signSaturn = (Math.abs(ephemeris.saturn.position.apparentLongitude - 360) / 30) + 1;
-            retroSaturn = ephemeris.saturn.motion.isRetrograde;
-        }
-        if (SHOW_URANUS || first) {
-            signUranus = (Math.abs(ephemeris.uranus.position.apparentLongitude - 360) / 30) + 1;
-            retroUranus = ephemeris.uranus.motion.isRetrograde;
-        }
-        if (SHOW_NEPTUNE || first) {
-            signNeptune = (Math.abs(ephemeris.neptune.position.apparentLongitude - 360) / 30) + 1;
-            retroNeptune = ephemeris.neptune.motion.isRetrograde;
-        }
-        if (SHOW_PLUTO || first) {
-            signPluto = (Math.abs(ephemeris.pluto.position.apparentLongitude - 360) / 30) + 1;
-            retroPluto = ephemeris.pluto.motion.isRetrograde;
-        }
-        if (SHOW_CHIRON || first) {
-            signChiron = (Math.abs(ephemeris.chiron.position.apparentLongitude - 360) / 30) + 1;
-            retroChiron = ephemeris.chiron.motion.isRetrograde;
-        }
-        if (SHOW_ASC_NODE || first) {
-            signAscNode = (Math.abs(ephemeris.moon.orbit.meanAscendingNode.apparentLongitude - 360) / 30) + 1;
-        }
-        if (SHOW_LILITH || first) {
-            signLilith = (Math.abs(ephemeris.moon.orbit.meanApogee.apparentLongitude - 360) / 30) + 1;
+        for (body in indicators) {
+            if (indicators[body].visible || first) {
+                if (body == 'asc-node') {
+                    indicators[body].degree = (Math.abs(ephemeris.moon.orbit.meanAscendingNode.apparentLongitude - 360) / 30) + 1;
+                } 
+                else if (body == 'lilith') {
+                    indicators[body].degree = (Math.abs(ephemeris.moon.orbit.meanApogee.apparentLongitude - 360) / 30) + 1;
+                } 
+                else if (body == 'midheaven') {
+                    indicators[body].degree = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
+                }
+                else if (body == 'part-fortune') {
+                    // As per https://cafeastrology.com/partoffortune.html, the part of fortune
+                    // is calculated different depending on whether we are currently in a day
+                    // or night chart. 
+                    //
+                    // At night, the part of fortune's longitude is equal to Ascendant + Sun - Moon
+                    // In the day, it's equal to Ascendant + Moon - Sun
+                    let sunDeg = ephemeris.sun.position.apparentLongitude,
+                        moonDeg = ephemeris.moon.position.apparentLongitude,
+                        night = isNightChart(sunDeg, ascendantDeg);
+                    if (night)
+                        indicators[body].degree = (Math.abs(ascendantDeg + sunDeg - moonDeg - 360) / 30) + 1;
+                    else
+                        indicators[body].degree = (Math.abs(ascendantDeg + moonDeg - sunDeg - 360) / 30) + 1;
+                }
+                else if (body != 'ascendant') {
+                    indicators[body].degree = (Math.abs(ephemeris[body].position.apparentLongitude - 360) / 30) + 1;
+                    if ((ephemeris[body].motion.hasOwnProperty('isRetrograde'))) {
+                        indicators[body].retro = ephemeris[body].motion.isRetrograde;
+                    }
+                }
+            }
         }
         if (SHOW_MOON_PHASES || first) {
             illumFraction = ephemeris.moon.position.illuminatedFraction;
-        }
-        if (SHOW_MIDHEAVEN || first) {
-            signMidheaven = (Math.abs(getMidheavenSun() - 360) / 30) + 1;
-        }
-        if (SHOW_PART_FORTUNE || first) {
-            // As per https://cafeastrology.com/partoffortune.html, the part of fortune
-            // is calculated different depending on whether we are currently in a day
-            // or night chart. 
-            //
-            // At night, the part of fortune's longitude is equal to Ascendant + Sun - Moon
-            // In the day, it's equal to Ascendant + Moon - Sun
-            let sunDeg = ephemeris.sun.position.apparentLongitude,
-                moonDeg = ephemeris.moon.position.apparentLongitude,
-                night = isNightChart(sunDeg, ascendantDeg);
-            if (night)
-                signFortune = (Math.abs(ascendantDeg + sunDeg - moonDeg - 360) / 30) + 1;
-            else
-                signFortune = (Math.abs(ascendantDeg + moonDeg - sunDeg - 360) / 30) + 1;
         }
         if (AUTO_DARK_MODE) {
             // Enable dark mode at night, disable it in the day.
@@ -984,7 +884,7 @@ window.addEventListener('load', function load() {
 
     function getAscendant(obliquityEcliptic = 23.4367) {
         latitude = LATITUDE;
-        localSiderealTime = getLocalSiderealTime();
+        const localSiderealTime = getLocalSiderealTime();
 
         const a = -Math.cos(toRadians(localSiderealTime));
         const b = Math.sin(toRadians(obliquityEcliptic)) * Math.tan(toRadians(latitude));
