@@ -43,12 +43,30 @@ canvas {
 }
 
 .menu .menu-options .menu-option {
-  font-weight: 500;
   font-family: Arial, Helvetica, sans-serif;
   z-index: 10;
   font-size: 1.7vh;
   padding: 0.5vh 4vh 0.5vh 2vh;
   cursor: pointer;
+}
+
+.info {
+  position: fixed;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 3vh;
+  z-index: 8;
+  top: 50%;
+  left: 50%;
+  padding: 10px;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  -webkit-animation: fadeinthenout 10s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadeinthenout 10s; /* Firefox < 16 */
+  -ms-animation: fadeinthenout 10s; /* Internet Explorer */
+  -o-animation: fadeinthenout 10s; /* Opera < 12.1 */
+  animation: fadeinthenout 10s;
 }
 
 canvas {
@@ -85,5 +103,52 @@ canvas {
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes fadeinthenout {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadeinthenout {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadeinthenout {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

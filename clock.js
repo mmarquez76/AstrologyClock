@@ -159,6 +159,9 @@ window.addEventListener(
 
     var first = true; // initialized to true and set to false after the first ephemeris generation
 
+    info.style.color = darkify("#333333");
+    info.style.backgroundColor = darkify("#e4e4e4");
+
     window.removeEventListener("load", load, false);
 
     window.addEventListener(
@@ -166,6 +169,7 @@ window.addEventListener(
       function(event) {
         event.preventDefault();
         let menu = document.getElementById("menu");
+        let info = document.getElementById("info");
         menu.style.color = darkify("#333333");
         menu.style.backgroundColor = darkify("#e4e4e4");
         // Boundary logic
@@ -399,7 +403,7 @@ window.addEventListener(
         ctx.canvas.height = window.innerHeight;
         ctx.translate(canvas.width / 2, canvas.height / 2);
       }
-      //updateMenu();
+      updateMenu();
       getSigns();
       fillBackground();
       drawCenter();
@@ -459,7 +463,24 @@ window.addEventListener(
 
     // Highlights enabled options in the context menu
     function updateMenu() {
-      let vars = [];
+      let bodies = [
+        "sun", "moon", "mercury", "venus", "mars", "saturn", "jupiter",
+        "uranus", "neptune", "pluto", "chiron" , "lilith" , "asc-node",
+        "midheaven", "ascendant", "part-fortune",
+      ];
+      (TICK_EVERY_SECOND) ? document.getElementById("tick-every-second").style.fontWeight = '900' : 
+        document.getElementById("tick-every-second").style.fontWeight = '400';
+      (SHOW_MOON_PHASES) ? document.getElementById("show-moon-phases").style.fontWeight = '900' : 
+        document.getElementById("show-moon-phases").style.fontWeight = '400';
+      (SHOW_HORIZON) ? document.getElementById("show-horizon").style.fontWeight = '900' : 
+        document.getElementById("show-horizon").style.fontWeight = '400';
+      for (let i = 0; i < bodies.length; i++) {
+        let item = document.getElementById(bodies[i]);
+        if (indicators[bodies[i]].visible)
+          item.style.fontWeight = '900';
+        else
+          item.style.fontWeight = '400';
+      }
     }
 
     // Draws the center stellated dodecahedron
