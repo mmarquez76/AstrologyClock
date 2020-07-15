@@ -203,6 +203,12 @@ window.addEventListener(
         case "show-horizon":
           SHOW_HORIZON = !SHOW_HORIZON;
           break;
+        case "auto-dark-mode":
+          AUTO_DARK_MODE = !AUTO_DARK_MODE;
+          break;
+        case "dark-mode":
+          DARK_MODE = !DARK_MODE;
+          break;
         default:
           if (indicators.hasOwnProperty(event.target.id)) {
             // Toggle visibility
@@ -464,22 +470,49 @@ window.addEventListener(
     // Highlights enabled options in the context menu
     function updateMenu() {
       let bodies = [
-        "sun", "moon", "mercury", "venus", "mars", "saturn", "jupiter",
-        "uranus", "neptune", "pluto", "chiron" , "lilith" , "asc-node",
-        "midheaven", "ascendant", "part-fortune",
+        "sun",
+        "moon",
+        "mercury",
+        "venus",
+        "mars",
+        "saturn",
+        "jupiter",
+        "uranus",
+        "neptune",
+        "pluto",
+        "chiron",
+        "lilith",
+        "asc-node",
+        "midheaven",
+        "ascendant",
+        "part-fortune"
       ];
-      (TICK_EVERY_SECOND) ? document.getElementById("tick-every-second").style.fontWeight = '900' : 
-        document.getElementById("tick-every-second").style.fontWeight = '400';
-      (SHOW_MOON_PHASES) ? document.getElementById("show-moon-phases").style.fontWeight = '900' : 
-        document.getElementById("show-moon-phases").style.fontWeight = '400';
-      (SHOW_HORIZON) ? document.getElementById("show-horizon").style.fontWeight = '900' : 
-        document.getElementById("show-horizon").style.fontWeight = '400';
+      TICK_EVERY_SECOND
+        ? (document.getElementById("tick-every-second").style.fontWeight =
+            "900")
+        : (document.getElementById("tick-every-second").style.fontWeight =
+            "400");
+      SHOW_MOON_PHASES
+        ? (document.getElementById("show-moon-phases").style.fontWeight = "900")
+        : (document.getElementById("show-moon-phases").style.fontWeight =
+            "400");
+      SHOW_HORIZON
+        ? (document.getElementById("show-horizon").style.fontWeight = "900")
+        : (document.getElementById("show-horizon").style.fontWeight = "400");
+      DARK_MODE
+        ? (document.getElementById("dark-mode").style.fontWeight = "900")
+        : (document.getElementById("dark-mode").style.fontWeight = "400");
+      if (AUTO_DARK_MODE) {
+        document.getElementById("auto-dark-mode").style.fontWeight = "900";
+        document.getElementById("dark-mode").style.display = "none";
+      } else {
+        document.getElementById("auto-dark-mode").style.fontWeight = "400";
+        document.getElementById("dark-mode").style.display = "inherit";
+      }
       for (let i = 0; i < bodies.length; i++) {
         let item = document.getElementById(bodies[i]);
-        if (indicators[bodies[i]].visible)
-          item.style.fontWeight = '900';
-        else
-          item.style.fontWeight = '400';
+        if (indicators[bodies[i]].visible) item.style.fontWeight = "900";
+        else item.style.fontWeight = "400";
       }
     }
 

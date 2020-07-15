@@ -62,11 +62,11 @@ canvas {
   transform: translate(-50%, -50%);
   box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
   border-radius: 12px;
-  -webkit-animation: fadeinthenout 10s; /* Safari, Chrome and Opera > 12.1 */
-  -moz-animation: fadeinthenout 10s; /* Firefox < 16 */
-  -ms-animation: fadeinthenout 10s; /* Internet Explorer */
-  -o-animation: fadeinthenout 10s; /* Opera < 12.1 */
-  animation: fadeinthenout 10s;
+  -webkit-animation: fadeinthenout 7s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadeinthenout 7s; /* Firefox < 16 */
+  -ms-animation: fadeinthenout 7s; /* Internet Explorer */
+  -o-animation: fadeinthenout 7s; /* Opera < 12.1 */
+  animation: fadeinthenout 7s;
 }
 
 canvas {
