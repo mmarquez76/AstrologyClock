@@ -1,39 +1,154 @@
 @font-face {
-    font-family       : Astro; src: url('Astro.TTF');
+  font-family: Astro;
+  src: url("Astro.TTF");
 }
 
 * {
-    margin            : 0;
-    padding           : 0;
+  margin: 0;
+  padding: 0;
 }
 
-html, body, canvas {
-    width             : 100%;
-    height            : 100%;
-    display           : block;
+html,
+body,
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+::-mox-selection {
+  color: inherit;
+  background: inherit;
+}
+
+::selection {
+  color: inherit;
+  background: inherit;
+}
+
+.menu {
+  visibility: hidden;
+  border-radius: 4px;
+  z-index: 10;
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  opacity: 0;
+  transition: opacity 0.218s ease-out 0s;
+}
+
+.menu .menu-options {
+  list-style: none;
+  padding: 10px 0;
+  z-index: 10;
+}
+
+.menu .menu-options .menu-option {
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 10;
+  font-size: 1.7vh;
+  padding: 0.5vh 4vh 0.5vh 2vh;
+  cursor: pointer;
+}
+
+.info {
+  position: fixed;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 3vh;
+  z-index: 8;
+  top: 50%;
+  left: 50%;
+  padding: 10px;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  -webkit-animation: fadeinthenout 7s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadeinthenout 7s; /* Firefox < 16 */
+  -ms-animation: fadeinthenout 7s; /* Internet Explorer */
+  -o-animation: fadeinthenout 7s; /* Opera < 12.1 */
+  animation: fadeinthenout 7s;
 }
 
 canvas {
-    -webkit-animation : fadein 1s; /* Safari, Chrome and Opera > 12.1 */
-       -moz-animation : fadein 1s; /* Firefox < 16 */
-        -ms-animation : fadein 1s; /* Internet Explorer */
-         -o-animation : fadein 1s; /* Opera < 12.1 */
-            animation : fadein 1s;
+  -webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 1s; /* Firefox < 16 */
+  -ms-animation: fadein 1s; /* Internet Explorer */
+  -o-animation: fadein 1s; /* Opera < 12.1 */
+  animation: fadein 1s;
 }
 
 @keyframes fadein {
-    from { opacity    : 0; }
-    to   { opacity    : 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Firefox < 16 */
 @-moz-keyframes fadein {
-    from { opacity    : 0; }
-    to   { opacity    : 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Safari, Chrome and Opera > 12.1 */
 @-webkit-keyframes fadein {
-    from { opacity    : 0; }
-    to   { opacity    : 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeinthenout {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadeinthenout {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadeinthenout {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

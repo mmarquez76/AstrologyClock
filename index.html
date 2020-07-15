@@ -1,22 +1,64 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Astrology Clock</title>
-    <meta charset="utf-8"/>
-    <link rel="preload" type="font/ttf" href="Astro.TTF" as="font"/>
-    <link rel="stylesheet" type="text/css" href="style.css"/>
-</head>
-<style> 
-    canvas { position: absolute; }
-    #time-layer { z-index: 5; }
-    #sign-layer { z-index: 4; }
-    #inner-face-layer { z-index: 3; }
-    #outer-face-layer { z-index: 2; }
-    #background-layer { z-index: 1; }
-</style>
-<body>    
+    <meta charset="utf-8" />
+    <link rel="preload" type="font/ttf" href="Astro.TTF" as="font" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <style>
+    canvas {
+      position: absolute;
+    }
+    #time-layer {
+      z-index: 5;
+    }
+    #sign-layer {
+      z-index: 4;
+    }
+    #inner-face-layer {
+      z-index: 3;
+    }
+    #outer-face-layer {
+      z-index: 2;
+    }
+    #background-layer {
+      z-index: 1;
+    }
+  </style>
+  <body id="main-body">
+    <!-- initially hidden right-click menu -->
+    <div id="menu" class="menu">
+      <ul class="menu-options">
+        <li id="tick-every-second" class="menu-option">Tick Every Second</li>
+        <li id="show-moon-phases" class="menu-option">Show Moon Phases</li>
+        <li id="show-horizon" class="menu-option">Show Horizon</li>
+        <li id="auto-dark-mode" class="menu-option">Auto Dark Mode</li>
+        <li id="dark-mode" class="menu-option">Dark Mode</li>
+        <hr />
+        <li id="sun" class="menu-option">Show Sun</li>
+        <li id="moon" class="menu-option">Show Moon</li>
+        <li id="mercury" class="menu-option">Show Mercury</li>
+        <li id="venus" class="menu-option">Show Venus</li>
+        <li id="mars" class="menu-option">Show Mars</li>
+        <li id="saturn" class="menu-option">Show Saturn</li>
+        <li id="jupiter" class="menu-option">Show Jupiter</li>
+        <li id="uranus" class="menu-option">Show Uranus</li>
+        <li id="neptune" class="menu-option">Show Neptune</li>
+        <li id="pluto" class="menu-option">Show Pluto</li>
+        <li id="chiron" class="menu-option">Show Chiron</li>
+        <li id="lilith" class="menu-option">Show Lilith</li>
+        <li id="asc-node" class="menu-option">Show Ascending Lunar Node</li>
+        <li id="midheaven" class="menu-option">Show Midheaven</li>
+        <li id="ascendant" class="menu-option">Show Ascendant</li>
+        <li id="part-fortune" class="menu-option">Show Part of Fortune</li>
+      </ul>
+    </div>
+    <div id="info" class="info">
+      Right-click for options
+    </div>
     <div class="font_preload" style="opacity: 0">
-        <span style="font-family: Astro, Arial, sans-serif;"></span>
+      <span style="font-family: Astro, Arial, sans-serif;"></span>
     </div>
     <canvas id="time-layer"></canvas>
     <canvas id="sign-layer"></canvas>
@@ -25,5 +67,5 @@
     <canvas id="background-layer"></canvas>
     <script src="ephemeris-1.2.1.bundle.js" type="text/javascript"></script>
     <script src="clock.js" type="text/javascript"></script>
-</body>
+  </body>
 </html>
