@@ -125,7 +125,7 @@ window.addEventListener(
         symbol: "Z"
       },
       chiron: {
-        visible: false,
+        visible: true,
         degree: 0,
         retro: false,
         symbol: "t"
