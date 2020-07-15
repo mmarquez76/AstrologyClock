@@ -228,28 +228,73 @@ window.addEventListener('load', function load() {
                 redraw();
             }
     
-            if (properties.show_inner_bodies) {
-                SHOW_INNER_BODIES = properties.show_inner_bodies.value;
+            if (properties.show_mercury) {
+                SHOW_MERCURY = properties.show_mercury.value;
+                redraw();
+            }
+
+            if (properties.show_venus) {
+                SHOW_VENUS = properties.show_venus.value;
+                redraw();
+            }
+
+            if (properties.show_mars) {
+                SHOW_MARS = properties.show_mars.value;
+                redraw();
+            }
+
+            if (properties.show_saturn) {
+                SHOW_SATURN = properties.show_saturn.value;
+                redraw();
+            }
+
+            if (properties.show_jupiter) {
+                SHOW_JUPITER = properties.show_jupiter.value;
+                redraw();
+            }
+
+            if (properties.show_uranus) {
+                SHOW_URANUS = properties.show_uranus.value;
                 redraw();
             }
     
-            if (properties.show_outer_bodies) {
-                SHOW_OUTER_BODIES = properties.show_outer_bodies.value;
+            if (properties.show_neptune) {
+                SHOW_NEPTUNE = properties.show_neptune.value;
+                redraw();
+            }
+
+            if (properties.show_pluto) {
+                SHOW_PLUTO = properties.show_pluto.value;
+                redraw();
+            }
+
+            if (properties.show_chiron) {
+                SHOW_CHIRON = properties.show_chiron.value;
                 redraw();
             }
     
-            if (properties.show_lunar_points) {
-                SHOW_LUNAR_POINTS = properties.show_lunar_points.value;
+            if (properties.show_lilith) {
+                SHOW_LILITH = properties.show_lilith.value;
+                redraw();
+            }
+
+            if (properties.show_asc_node) {
+                SHOW_ASC_NODE = properties.show_asc_node.value;
                 redraw();
             }
     
-            if (properties.show_major_angles) {
-                SHOW_MAJOR_ANGLES = properties.show_major_angles.value;
+            if (properties.show_midheaven) {
+                SHOW_MIDHEAVEN = properties.show_midheaven.value;
+                redraw();
+            }
+
+            if (properties.show_ascendant) {
+                SHOW_ASCENDANT = properties.show_ascendant.value;
                 redraw();
             }
     
-            if (properties.show_arabic_parts) {
-                SHOW_ARABIC_PARTS = properties.show_arabic_parts.value;
+            if (properties.show_part_fortune) {
+                SHOW_PART_FORTUNE = properties.show_part_fortune.value;
                 redraw();
             }
     
