@@ -29,7 +29,7 @@
 				"type" : "textinput",
 				"value" : "-80"
 			},
-			"size_ratio" : 
+			"size-ratio" : 
 			{
 				"fraction" : true,
 				"max" : 1,
@@ -41,7 +41,7 @@
 				"type" : "slider",
 				"value" : 0.94999999999999996
 			},
-			"ephemeris_refresh_rate" : 
+			"ephemeris-refresh-rate" : 
 			{
 				"fraction" : false,
 				"max" : 300,
@@ -51,136 +51,150 @@
 				"type" : "slider",
 				"value" : 20
 			},
-			"tick_every_second" : 
+			"tick-every-second" : 
 			{
 				"order" : 104,
 				"text" : "Tick Every Second",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_horizon" : 
+			"show-horizon" : 
 			{
 				"order" : 105,
 				"text" : "Show Horizon",
 				"type" : "bool",
 				"value" : true
 			},
-			"show_mercury" : 
+			"show-mercury" : 
 			{
 				"order" : 106,
 				"text" : "Show Mercury",
 				"type" : "bool",
 				"value" : true
 			},
-			"show_venus" : 
+			"show-venus" : 
 			{
 				"order" : 107,
 				"text" : "Show Venus",
 				"type" : "bool",
 				"value" : true
 			},
-			"show_mars" : 
+			"show-mars" : 
 			{
 				"order" : 108,
 				"text" : "Show Mars",
 				"type" : "bool",
 				"value" : true
 			},
-			"show_saturn" : 
+			"show-saturn" : 
 			{
 				"order" : 109,
 				"text" : "Show Saturn",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_jupiter" : 
+			"show-jupiter" : 
 			{
 				"order" : 110,
 				"text" : "Show Jupiter",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_uranus" : 
+			"show-uranus" : 
 			{
 				"order" : 111,
 				"text" : "Show Uranus",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_neptune" : 
+			"show-neptune" : 
 			{
 				"order" : 112,
 				"text" : "Show Neptune",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_pluto" : 
+			"show-pluto" : 
 			{
 				"order" : 113,
 				"text" : "Show Pluto",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_chiron" : 
+			"show-chiron" : 
 			{
 				"order" : 114,
 				"text" : "Show Chiron ",
 				"type" : "bool",
 				"value" : true
 			},
-			"show_lilith" : 
+			"show-lilith" : 
 			{
 				"order" : 115,
 				"text" : "Show Dark Moon Lilith",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_asc_node" : 
+			"show-asc-node" : 
 			{
 				"order" : 116,
 				"text" : "Show Ascending Lunar Node",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_midheaven" : 
+			"show-midheaven" : 
 			{
 				"order" : 117,
 				"text" : "Show Midheaven",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_ascendant" : 
+			"show-ascendant" : 
 			{
 				"order" : 118,
 				"text" : "Show Ascendant Degree",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_part_fortune" : 
+			"show-part-fortune" : 
 			{
 				"order" : 119,
 				"text" : "Show Part of Fortune",
 				"type" : "bool",
 				"value" : false
 			},
-			"show_moon_phases" : 
+			"show-part-spirit" : 
 			{
 				"order" : 120,
+				"text" : "Show Part of Spirit",
+				"type" : "bool",
+				"value" : false
+			},
+			"show-part-eros" : 
+			{
+				"order" : 121,
+				"text" : "Show Part of Eros",
+				"type" : "bool",
+				"value" : false
+			},
+			"show-moon-phases" : 
+			{
+				"order" : 122,
 				"text" : "Show Moon Phases",
 				"type" : "bool",
 				"value" : true
 			},
-			"auto_dark_mode" : 
+			"auto-dark-mode" : 
 			{
-				"order" : 121,
+				"order" : 123,
 				"text" : "Auto Dark Mode",
 				"type" : "bool",
 				"value" : false
 			},
-			"dark_mode" : 
+			"dark-mode" : 
 			{
 				"condition" : "!auto_dark_mode.value",
-				"order" : 122,
+				"order" : 124,
 				"text" : "Dark Mode",
 				"type" : "bool",
 				"value" : true

@@ -154,6 +154,16 @@ window.addEventListener(
         visible: false,
         degree: 0,
         symbol: "?"
+      },
+      "part-spirit": {
+        visible: false,
+        degree: 0,
+        symbol: "p"
+      },
+      "part-eros": {
+        visible: false,
+        degree: 0,
+        symbol: "q"
       }
     };
 
@@ -264,74 +274,14 @@ window.addEventListener(
           redraw();
         }
 
-        if (properties.show_mercury) {
-          SHOW_MERCURY = properties.show_mercury.value;
-          redraw();
-        }
-
-        if (properties.show_venus) {
-          SHOW_VENUS = properties.show_venus.value;
-          redraw();
-        }
-
-        if (properties.show_mars) {
-          SHOW_MARS = properties.show_mars.value;
-          redraw();
-        }
-
-        if (properties.show_saturn) {
-          SHOW_SATURN = properties.show_saturn.value;
-          redraw();
-        }
-
-        if (properties.show_jupiter) {
-          SHOW_JUPITER = properties.show_jupiter.value;
-          redraw();
-        }
-
-        if (properties.show_uranus) {
-          SHOW_URANUS = properties.show_uranus.value;
-          redraw();
-        }
-
-        if (properties.show_neptune) {
-          SHOW_NEPTUNE = properties.show_neptune.value;
-          redraw();
-        }
-
-        if (properties.show_pluto) {
-          SHOW_PLUTO = properties.show_pluto.value;
-          redraw();
-        }
-
-        if (properties.show_chiron) {
-          SHOW_CHIRON = properties.show_chiron.value;
-          redraw();
-        }
-
-        if (properties.show_lilith) {
-          SHOW_LILITH = properties.show_lilith.value;
-          redraw();
-        }
-
-        if (properties.show_asc_node) {
-          SHOW_ASC_NODE = properties.show_asc_node.value;
-          redraw();
-        }
-
-        if (properties.show_midheaven) {
-          SHOW_MIDHEAVEN = properties.show_midheaven.value;
-          redraw();
-        }
-
-        if (properties.show_ascendant) {
-          SHOW_ASCENDANT = properties.show_ascendant.value;
-          redraw();
-        }
-
-        if (properties.show_part_fortune) {
-          SHOW_PART_FORTUNE = properties.show_part_fortune.value;
-          redraw();
+        for (key in indicators) {
+          if (Reflect.get(properties, "show-" + key)) {
+            indicators[key].visible = Reflect.get(
+              properties,
+              "show-" + key
+            ).value;
+            redraw();
+          }
         }
 
         if (properties.show_moon_phases) {
@@ -469,24 +419,6 @@ window.addEventListener(
 
     // Highlights enabled options in the context menu
     function updateMenu() {
-      let bodies = [
-        "sun",
-        "moon",
-        "mercury",
-        "venus",
-        "mars",
-        "saturn",
-        "jupiter",
-        "uranus",
-        "neptune",
-        "pluto",
-        "chiron",
-        "lilith",
-        "asc-node",
-        "midheaven",
-        "ascendant",
-        "part-fortune"
-      ];
       TICK_EVERY_SECOND
         ? (document.getElementById("tick-every-second").style.fontWeight =
             "900")
@@ -509,9 +441,9 @@ window.addEventListener(
         document.getElementById("auto-dark-mode").style.fontWeight = "400";
         document.getElementById("dark-mode").style.display = "inherit";
       }
-      for (let i = 0; i < bodies.length; i++) {
-        let item = document.getElementById(bodies[i]);
-        if (indicators[bodies[i]].visible) item.style.fontWeight = "900";
+      for (key in indicators) {
+        let item = document.getElementById(key);
+        if (indicators[key].visible) item.style.fontWeight = "900";
         else item.style.fontWeight = "400";
       }
     }
@@ -1001,6 +933,40 @@ window.addEventListener(
             else
               indicators[body].degree =
                 Math.abs(ascendantDeg + moonDeg - sunDeg - 360) / 30 + 1;
+          } else if (body == "part-spirit") {
+            // Like the part of fortune, the part of spirit is different depending
+            // on whether we are currently in a day or night chart.
+            //
+            // At night, the part of fortune's longitude is equal to Ascendant + Moon - Sun
+            // In the day, it's equal to Ascendant + Sun - Moon
+            let sunDeg = ephemeris.sun.position.apparentLongitude,
+              moonDeg = ephemeris.moon.position.apparentLongitude,
+              night = isNightChart(sunDeg, ascendantDeg);
+            if (night)
+              indicators[body].degree =
+                Math.abs(ascendantDeg + moonDeg - sunDeg - 360) / 30 + 1;
+            else
+              indicators[body].degree =
+                Math.abs(ascendantDeg + sunDeg - moonDeg - 360) / 30 + 1;
+          } else if (body == "part-eros") {
+            // Like the part of fortune, the part of eros is different depending
+            // on whether we are currently in a day or night chart.
+            //
+            // At night, the part of fortune's longitude is equal to Ascendant + Spirit - Venus
+            // In the day, it's equal to Ascendant + Venus - Spirit
+            let sunDeg = ephemeris.sun.position.apparentLongitude,
+              moonDeg = ephemeris.moon.position.apparentLongitude,
+              venusDeg = ephemeris.venus.position.apparentLongitude,
+              night = isNightChart(sunDeg, ascendantDeg);
+            if (night) {
+              let spiritDeg = Math.abs(ascendantDeg + moonDeg - sunDeg);
+              indicators[body].degree =
+                Math.abs(ascendantDeg + spiritDeg - venusDeg - 360) / 30 + 1;
+            } else {
+              let spiritDeg = Math.abs(ascendantDeg + sunDeg - moonDeg);
+              indicators[body].degree =
+                Math.abs(ascendantDeg + venusDeg - spiritDeg - 360) / 30 + 1;
+            }
           } else if (body != "ascendant") {
             indicators[body].degree =
               Math.abs(ephemeris[body].position.apparentLongitude - 360) / 30 +
