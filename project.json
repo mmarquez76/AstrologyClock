@@ -1,6 +1,6 @@
 {
 	"contentrating" : "Everyone",
-	"description" : "Displays the time, moon phase, and current planetary positions and retrogrades in the zodiac, with additional optional indicators for the outer planets, major angles, lunar points, and part of fortune.\r\n\r\nPositions are displayed with the x-axis as the horizon, with the ascendant degree on the left.",
+	"description" : "Displays the time, moon phase, and current planetary positions and retrogrades in the zodiac, with additional optional indicators for the outer planets, major angles, lunar points, and arabic parts.\r\n\r\nPositions are displayed with the x-axis as the horizon, with the ascendant degree on the left.",
 	"file" : "index.html",
 	"general" : 
 	{
@@ -29,7 +29,7 @@
 				"type" : "textinput",
 				"value" : "-80"
 			},
-			"size-ratio" : 
+			"size_ratio" : 
 			{
 				"fraction" : true,
 				"max" : 1,
@@ -41,7 +41,7 @@
 				"type" : "slider",
 				"value" : 0.94999999999999996
 			},
-			"ephemeris-refresh-rate" : 
+			"ephemeris_refresh_rate" : 
 			{
 				"fraction" : false,
 				"max" : 300,
@@ -51,147 +51,147 @@
 				"type" : "slider",
 				"value" : 20
 			},
-			"tick-every-second" : 
+			"tick_every_second" : 
 			{
 				"order" : 104,
 				"text" : "Tick Every Second",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-horizon" : 
+			"show_horizon" : 
 			{
 				"order" : 105,
 				"text" : "Show Horizon",
 				"type" : "bool",
 				"value" : true
 			},
-			"show-mercury" : 
+			"show_mercury" : 
 			{
 				"order" : 106,
 				"text" : "Show Mercury",
 				"type" : "bool",
 				"value" : true
 			},
-			"show-venus" : 
+			"show_venus" : 
 			{
 				"order" : 107,
 				"text" : "Show Venus",
 				"type" : "bool",
 				"value" : true
 			},
-			"show-mars" : 
+			"show_mars" : 
 			{
 				"order" : 108,
 				"text" : "Show Mars",
 				"type" : "bool",
 				"value" : true
 			},
-			"show-saturn" : 
+			"show_saturn" : 
 			{
 				"order" : 109,
 				"text" : "Show Saturn",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-jupiter" : 
+			"show_jupiter" : 
 			{
 				"order" : 110,
 				"text" : "Show Jupiter",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-uranus" : 
+			"show_uranus" : 
 			{
 				"order" : 111,
 				"text" : "Show Uranus",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-neptune" : 
+			"show_neptune" : 
 			{
 				"order" : 112,
 				"text" : "Show Neptune",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-pluto" : 
+			"show_pluto" : 
 			{
 				"order" : 113,
 				"text" : "Show Pluto",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-chiron" : 
+			"show_chiron" : 
 			{
 				"order" : 114,
 				"text" : "Show Chiron ",
 				"type" : "bool",
 				"value" : true
 			},
-			"show-lilith" : 
+			"show_lilith" : 
 			{
 				"order" : 115,
 				"text" : "Show Dark Moon Lilith",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-asc-node" : 
+			"show_asc_node" : 
 			{
 				"order" : 116,
 				"text" : "Show Ascending Lunar Node",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-midheaven" : 
+			"show_midheaven" : 
 			{
 				"order" : 117,
 				"text" : "Show Midheaven",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-ascendant" : 
+			"show_ascendant" : 
 			{
 				"order" : 118,
 				"text" : "Show Ascendant Degree",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-part-fortune" : 
+			"show_part_fortune" : 
 			{
 				"order" : 119,
 				"text" : "Show Part of Fortune",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-part-spirit" : 
+			"show_part_spirit" : 
 			{
 				"order" : 120,
 				"text" : "Show Part of Spirit",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-part-eros" : 
+			"show_part_eros" : 
 			{
 				"order" : 121,
 				"text" : "Show Part of Eros",
 				"type" : "bool",
 				"value" : false
 			},
-			"show-moon-phases" : 
+			"show_moon_phases" : 
 			{
 				"order" : 122,
 				"text" : "Show Moon Phases",
 				"type" : "bool",
 				"value" : true
 			},
-			"auto-dark-mode" : 
+			"auto_dark_mode" : 
 			{
 				"order" : 123,
 				"text" : "Auto Dark Mode",
 				"type" : "bool",
 				"value" : false
 			},
-			"dark-mode" : 
+			"dark_mode" : 
 			{
 				"condition" : "!auto_dark_mode.value",
 				"order" : 124,

@@ -1,7 +1,7 @@
 // Adds functionality to the default Date() class to get the Julian
 // date from it as well. This is in UTC by default, since this function
 // works based off the UNIX-style "seconds since epoch" timestamp
-Date.prototype.getJulian = function() {
+Date.prototype.getJulian = function () {
   return this / 86400000 + 2440587.5;
 };
 
@@ -130,7 +130,7 @@ window.addEventListener(
         retro: false,
         symbol: "t"
       },
-      "asc-node": {
+      asc_node: {
         visible: false,
         degree: 0,
         symbol: "<"
@@ -150,17 +150,17 @@ window.addEventListener(
         degree: 0,
         symbol: "b"
       },
-      "part-fortune": {
+      part_fortune: {
         visible: false,
         degree: 0,
         symbol: "?"
       },
-      "part-spirit": {
+      part_spirit: {
         visible: false,
         degree: 0,
         symbol: "p"
       },
-      "part-eros": {
+      part_eros: {
         visible: false,
         degree: 0,
         symbol: "q"
@@ -176,7 +176,7 @@ window.addEventListener(
 
     window.addEventListener(
       "contextmenu",
-      function(event) {
+      function (event) {
         event.preventDefault();
         let menu = document.getElementById("menu");
         let info = document.getElementById("info");
@@ -202,21 +202,21 @@ window.addEventListener(
 
     window.addEventListener("resize", redraw);
 
-    window.addEventListener("click", function(event) {
+    window.addEventListener("click", function (event) {
       switch (event.target.id) {
-        case "tick-every-second":
+        case "tick_every_second":
           TICK_EVERY_SECOND = !TICK_EVERY_SECOND;
           break;
-        case "show-moon-phases":
+        case "show_moon_phases":
           SHOW_MOON_PHASES = !SHOW_MOON_PHASES;
           break;
-        case "show-horizon":
+        case "show_horizon":
           SHOW_HORIZON = !SHOW_HORIZON;
           break;
-        case "auto-dark-mode":
+        case "auto_dark_mode":
           AUTO_DARK_MODE = !AUTO_DARK_MODE;
           break;
-        case "dark-mode":
+        case "dark_mode":
           DARK_MODE = !DARK_MODE;
           break;
         default:
@@ -237,7 +237,7 @@ window.addEventListener(
 
     // Get current location to display the local chart
     if (USE_LIVE_LOCATION) {
-      navigator.geolocation.getCurrentPosition(function(position) {
+      navigator.geolocation.getCurrentPosition(function (position) {
         LATITUDE = position.coords.latitude;
         LONGITUDE = position.coords.longitude;
       });
@@ -246,7 +246,7 @@ window.addEventListener(
     redraw();
 
     window.wallpaperPropertyListener = {
-      applyUserProperties: function(properties) {
+      applyUserProperties: function (properties) {
         if (properties.tick_every_second) {
           TICK_EVERY_SECOND = properties.tick_every_second.value;
           updateRate = TICK_EVERY_SECOND ? 1000 : 16.67;
@@ -269,16 +269,16 @@ window.addEventListener(
           redraw();
         }
 
-        if (properties.ephemeris_cooldown) {
-          EPHEMERIS_COOLDOWN = properties.ephemeris_cooldown.value;
+        if (properties.ephemeris_refresh_rate) {
+          EPHEMERIS_COOLDOWN = properties.ephemeris_refresh_rate.value;
           redraw();
         }
 
         for (key in indicators) {
-          if (Reflect.get(properties, "show-" + key)) {
+          if (Reflect.get(properties, "show_" + key)) {
             indicators[key].visible = Reflect.get(
               properties,
-              "show-" + key
+              "show_" + key
             ).value;
             redraw();
           }
@@ -304,7 +304,7 @@ window.addEventListener(
           redraw();
         }
       },
-      applyGeneralProperties: function(properties) {
+      applyGeneralProperties: function (properties) {
         if (properties.fps) {
           if (!TICK_EVERY_SECOND) updateRate = 1000.0 / properties.fps;
         }
@@ -314,7 +314,7 @@ window.addEventListener(
     (function drawFrame() {
       // Only draw a frame once every time
       // period specified in updateRate
-      setTimeout(function() {
+      setTimeout(function () {
         requestAnimationFrame(drawFrame);
         date = new Date();
         // Redraw time hands every tick
@@ -420,26 +420,26 @@ window.addEventListener(
     // Highlights enabled options in the context menu
     function updateMenu() {
       TICK_EVERY_SECOND
-        ? (document.getElementById("tick-every-second").style.fontWeight =
-            "900")
-        : (document.getElementById("tick-every-second").style.fontWeight =
-            "400");
+        ? (document.getElementById("tick_every_second").style.fontWeight =
+          "900")
+        : (document.getElementById("tick_every_second").style.fontWeight =
+          "400");
       SHOW_MOON_PHASES
-        ? (document.getElementById("show-moon-phases").style.fontWeight = "900")
-        : (document.getElementById("show-moon-phases").style.fontWeight =
-            "400");
+        ? (document.getElementById("show_moon_phases").style.fontWeight = "900")
+        : (document.getElementById("show_moon_phases").style.fontWeight =
+          "400");
       SHOW_HORIZON
-        ? (document.getElementById("show-horizon").style.fontWeight = "900")
-        : (document.getElementById("show-horizon").style.fontWeight = "400");
+        ? (document.getElementById("show_horizon").style.fontWeight = "900")
+        : (document.getElementById("show_horizon").style.fontWeight = "400");
       DARK_MODE
-        ? (document.getElementById("dark-mode").style.fontWeight = "900")
-        : (document.getElementById("dark-mode").style.fontWeight = "400");
+        ? (document.getElementById("dark_mode").style.fontWeight = "900")
+        : (document.getElementById("dark_mode").style.fontWeight = "400");
       if (AUTO_DARK_MODE) {
-        document.getElementById("auto-dark-mode").style.fontWeight = "900";
-        document.getElementById("dark-mode").style.display = "none";
+        document.getElementById("auto_dark_mode").style.fontWeight = "900";
+        document.getElementById("dark_mode").style.display = "none";
       } else {
-        document.getElementById("auto-dark-mode").style.fontWeight = "400";
-        document.getElementById("dark-mode").style.display = "inherit";
+        document.getElementById("auto_dark_mode").style.fontWeight = "400";
+        document.getElementById("dark_mode").style.display = "inherit";
       }
       for (key in indicators) {
         let item = document.getElementById(key);
@@ -820,7 +820,7 @@ window.addEventListener(
       }
 
       // Sort by ascending order of position
-      allSigns.sort(function(a, b) {
+      allSigns.sort(function (a, b) {
         return a.pos - b.pos;
       });
 
@@ -900,24 +900,24 @@ window.addEventListener(
       // mirror the position, so that the signs progress properly over the ascendant.
       for (body in indicators) {
         if (indicators[body].visible || first) {
-          if (body == "asc-node") {
+          if (body == "asc_node") {
             indicators[body].degree =
               Math.abs(
                 ephemeris.moon.orbit.meanAscendingNode.apparentLongitude - 360
               ) /
-                30 +
+              30 +
               1;
           } else if (body == "lilith") {
             indicators[body].degree =
               Math.abs(
                 ephemeris.moon.orbit.meanApogee.apparentLongitude - 360
               ) /
-                30 +
+              30 +
               1;
           } else if (body == "midheaven") {
             indicators[body].degree =
               Math.abs(getMidheavenSun() - 360) / 30 + 1;
-          } else if (body == "part-fortune") {
+          } else if (body == "part_fortune") {
             // As per https://cafeastrology.com/partoffortune.html, the part of fortune
             // is calculated different depending on whether we are currently in a day
             // or night chart.
@@ -933,7 +933,7 @@ window.addEventListener(
             else
               indicators[body].degree =
                 Math.abs(ascendantDeg + moonDeg - sunDeg - 360) / 30 + 1;
-          } else if (body == "part-spirit") {
+          } else if (body == "part_spirit") {
             // Like the part of fortune, the part of spirit is different depending
             // on whether we are currently in a day or night chart.
             //
@@ -948,7 +948,7 @@ window.addEventListener(
             else
               indicators[body].degree =
                 Math.abs(ascendantDeg + sunDeg - moonDeg - 360) / 30 + 1;
-          } else if (body == "part-eros") {
+          } else if (body == "part_eros") {
             // Like the part of fortune, the part of eros is different depending
             // on whether we are currently in a day or night chart.
             //
