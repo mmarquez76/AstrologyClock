@@ -98,13 +98,13 @@ window.addEventListener(
         visible: false,
         degree: 0,
         retro: false,
-        symbol: "V"
+        symbol: "W"
       },
       jupiter: {
         visible: false,
         degree: 0,
         retro: false,
-        symbol: "W"
+        symbol: "V"
       },
       uranus: {
         visible: false,
