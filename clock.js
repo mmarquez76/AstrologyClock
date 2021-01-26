@@ -169,9 +169,6 @@ window.addEventListener(
 
     var first = true; // initialized to true and set to false after the first ephemeris generation
 
-    info.style.color = darkify("#333333");
-    info.style.backgroundColor = darkify("#e4e4e4");
-
     window.removeEventListener("load", load, false);
 
     window.addEventListener(
@@ -179,7 +176,6 @@ window.addEventListener(
       function (event) {
         event.preventDefault();
         let menu = document.getElementById("menu");
-        let info = document.getElementById("info");
         menu.style.color = darkify("#333333");
         menu.style.backgroundColor = darkify("#e4e4e4");
         // Boundary logic
