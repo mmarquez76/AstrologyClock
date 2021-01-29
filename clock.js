@@ -512,7 +512,7 @@ window.addEventListener(
           // Draw phase of moon inverted, for dark mode
           if (illumFraction >= 0.5) {
             // Fill with light-yellow tinge on full moon
-            ctx.fillStyle = illumFraction >= 0.99 ? "#ffb" : gradient;
+            ctx.fillStyle = illumFraction >= 0.995 ? "#ffb" : gradient;
             ctx.ellipse(
               0,
               0,
@@ -538,7 +538,7 @@ window.addEventListener(
             ctx.arc(0, 0, radius * 0.143, 0, 2 * Math.PI);
             ctx.fill();
             // Fill with slight dark blue tinge on new moon
-            ctx.fillStyle = illumFraction <= 0.01 ? "#001" : "#000";
+            ctx.fillStyle = illumFraction < 0.005 ? "#001" : "#000";
             ctx.beginPath();
             ctx.ellipse(
               0,
@@ -566,7 +566,7 @@ window.addEventListener(
           // Draw phase of moon
           if (illumFraction >= 0.5) {
             // Fill with light-yellow tinge on full moon
-            ctx.fillStyle = illumFraction >= 0.99 ? "#ffb" : "#fff";
+            ctx.fillStyle = illumFraction >= 0.995 ? "#ffb" : "#fff";
             ctx.ellipse(
               0,
               0,
@@ -591,7 +591,7 @@ window.addEventListener(
             ctx.fillStyle = "#fff";
             ctx.arc(0, 0, radius * 0.15, 0, 2 * Math.PI);
             ctx.fill();
-            ctx.fillStyle = illumFraction <= 0.01 ? "#888" : gradient;
+            ctx.fillStyle = illumFraction < 0.005 ? "#888" : gradient;
             ctx.beginPath();
             ctx.ellipse(
               0,
