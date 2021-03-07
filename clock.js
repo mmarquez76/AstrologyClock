@@ -259,8 +259,12 @@ window.addEventListener(
           redraw();
         }
 
-        if (properties.latitude && properties.longitude) {
+        if (properties.latitude) {
           LATITUDE = parseFloat(properties.latitude.value);
+          redraw();
+        }
+
+        if (properties.longitude) {
           LONGITUDE = parseFloat(properties.longitude.value);
           redraw();
         }
