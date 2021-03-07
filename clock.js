@@ -125,7 +125,7 @@ window.addEventListener(
         symbol: "Z"
       },
       chiron: {
-        visible: true,
+        visible: false,
         degree: 0,
         retro: false,
         symbol: "t"
@@ -263,8 +263,12 @@ window.addEventListener(
           redraw();
         }
 
-        if (properties.latitude && properties.longitude) {
+        if (properties.latitude) {
           LATITUDE = parseFloat(properties.latitude.value);
+          redraw();
+        }
+
+        if (properties.longitude) {
           LONGITUDE = parseFloat(properties.longitude.value);
           redraw();
         }
