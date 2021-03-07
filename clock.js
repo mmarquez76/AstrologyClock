@@ -125,7 +125,7 @@ window.addEventListener(
         symbol: "Z"
       },
       chiron: {
-        visible: true,
+        visible: false,
         degree: 0,
         retro: false,
         symbol: "t"
@@ -171,65 +171,7 @@ window.addEventListener(
 
     window.removeEventListener("load", load, false);
 
-    window.addEventListener(
-      "contextmenu",
-      function (event) {
-        event.preventDefault();
-        let menu = document.getElementById("menu");
-        menu.style.color = darkify("#333333");
-        menu.style.backgroundColor = darkify("#e4e4e4");
-        // Boundary logic
-        if (event.pageX + menu.offsetWidth > window.innerWidth) {
-          menu.style.left = window.innerWidth - menu.offsetWidth + "px";
-        } else {
-          menu.style.left = event.pageX + "px";
-        }
-        if (event.pageY + menu.offsetHeight > window.innerHeight) {
-          menu.style.top = window.innerHeight - menu.offsetHeight + "px";
-        } else {
-          menu.style.top = event.pageY + "px";
-        }
-        menu.style.visibility = "visible";
-        menu.style.opacity = 1;
-        return false;
-      },
-      false
-    );
-
     window.addEventListener("resize", redraw);
-
-    window.addEventListener("click", function (event) {
-      switch (event.target.id) {
-        case "tick_every_second":
-          TICK_EVERY_SECOND = !TICK_EVERY_SECOND;
-          break;
-        case "show_moon_phases":
-          SHOW_MOON_PHASES = !SHOW_MOON_PHASES;
-          break;
-        case "show_horizon":
-          SHOW_HORIZON = !SHOW_HORIZON;
-          break;
-        case "auto_dark_mode":
-          AUTO_DARK_MODE = !AUTO_DARK_MODE;
-          break;
-        case "dark_mode":
-          DARK_MODE = !DARK_MODE;
-          break;
-        default:
-          if (indicators.hasOwnProperty(event.target.id)) {
-            // Toggle visibility
-            indicators[event.target.id].visible = !indicators[event.target.id]
-              .visible;
-          } else {
-            let menu = document.getElementById("menu");
-            if (menu.style.visibility == "visible") {
-              menu.style.visibility = "hidden";
-              menu.style.opacity = 0;
-            }
-          }
-      }
-      redraw();
-    });
 
     // Get current location to display the local chart
     if (USE_LIVE_LOCATION) {
@@ -261,11 +203,19 @@ window.addEventListener(
 
         if (properties.latitude) {
           LATITUDE = parseFloat(properties.latitude.value);
+          if (isNaN(LATITUDE)) {
+            LATITUDE = 0;
+          }
+          LATITUDE %= 90;
           redraw();
         }
 
         if (properties.longitude) {
           LONGITUDE = parseFloat(properties.longitude.value);
+          if (isNaN(LONGITUDE)) {
+            LONGITUDE = 0;
+          }
+          LONGITUDE %= 180;
           redraw();
         }
 
@@ -359,7 +309,6 @@ window.addEventListener(
         ctx.canvas.height = window.innerHeight;
         ctx.translate(canvas.width / 2, canvas.height / 2);
       }
-      updateMenu();
       getSigns();
       fillBackground();
       drawCenter();
@@ -415,37 +364,6 @@ window.addEventListener(
       if (window.innerWidth < window.innerHeight)
         return Math.round(window.innerWidth / 2 - padding);
       else return Math.round(window.innerHeight / 2 - padding);
-    }
-
-    // Highlights enabled options in the context menu
-    function updateMenu() {
-      TICK_EVERY_SECOND
-        ? (document.getElementById("tick_every_second").style.fontWeight =
-          "900")
-        : (document.getElementById("tick_every_second").style.fontWeight =
-          "400");
-      SHOW_MOON_PHASES
-        ? (document.getElementById("show_moon_phases").style.fontWeight = "900")
-        : (document.getElementById("show_moon_phases").style.fontWeight =
-          "400");
-      SHOW_HORIZON
-        ? (document.getElementById("show_horizon").style.fontWeight = "900")
-        : (document.getElementById("show_horizon").style.fontWeight = "400");
-      DARK_MODE
-        ? (document.getElementById("dark_mode").style.fontWeight = "900")
-        : (document.getElementById("dark_mode").style.fontWeight = "400");
-      if (AUTO_DARK_MODE) {
-        document.getElementById("auto_dark_mode").style.fontWeight = "900";
-        document.getElementById("dark_mode").style.display = "none";
-      } else {
-        document.getElementById("auto_dark_mode").style.fontWeight = "400";
-        document.getElementById("dark_mode").style.display = "inherit";
-      }
-      for (key in indicators) {
-        let item = document.getElementById(key);
-        if (indicators[key].visible) item.style.fontWeight = "900";
-        else item.style.fontWeight = "400";
-      }
     }
 
     // Draws the center stellated dodecahedron

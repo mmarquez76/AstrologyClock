@@ -126,7 +126,7 @@
 				"order" : 114,
 				"text" : "Show Chiron ",
 				"type" : "bool",
-				"value" : true
+				"value" : false
 			},
 			"show_lilith" : 
 			{
