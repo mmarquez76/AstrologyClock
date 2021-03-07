@@ -265,11 +265,19 @@ window.addEventListener(
 
         if (properties.latitude) {
           LATITUDE = parseFloat(properties.latitude.value);
+          if (isNaN(LATITUDE)) {
+            LATITUDE = 0;
+          }
+          LATITUDE %= 90;
           redraw();
         }
 
         if (properties.longitude) {
           LONGITUDE = parseFloat(properties.longitude.value);
+          if (isNaN(LONGITUDE)) {
+            LONGITUDE = 0;
+          }
+          LONGITUDE %= 180;
           redraw();
         }
 
