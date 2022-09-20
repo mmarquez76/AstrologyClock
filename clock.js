@@ -176,27 +176,7 @@ window.addEventListener(
 
     window.addEventListener(
       "contextmenu",
-      function (event) {
-        event.preventDefault();
-        let menu = document.getElementById("menu");
-        let info = document.getElementById("info");
-        menu.style.color = darkify("#333333");
-        menu.style.backgroundColor = darkify("#e4e4e4");
-        // Boundary logic
-        if (event.pageX + menu.offsetWidth > window.innerWidth) {
-          menu.style.left = window.innerWidth - menu.offsetWidth + "px";
-        } else {
-          menu.style.left = event.pageX + "px";
-        }
-        if (event.pageY + menu.offsetHeight > window.innerHeight) {
-          menu.style.top = window.innerHeight - menu.offsetHeight + "px";
-        } else {
-          menu.style.top = event.pageY + "px";
-        }
-        menu.style.visibility = "visible";
-        menu.style.opacity = 1;
-        return false;
-      },
+      contextMenuHandler,
       false
     );
 
@@ -234,6 +214,29 @@ window.addEventListener(
       }
       redraw();
     });
+
+    function contextMenuHandler(event) {
+      event.preventDefault();
+      let menu = document.getElementById("menu");
+      menu.style.color = darkify("#333333");
+      menu.style.backgroundColor = darkify("#e4e4e4");
+      // Boundary logic
+      if (event.pageX + menu.offsetWidth > window.innerWidth) {
+        menu.style.left = window.innerWidth - menu.offsetWidth + "px";
+      } else {
+        menu.style.left = event.pageX + "px";
+      }
+      if (event.pageY + menu.offsetHeight > window.innerHeight) {
+        menu.style.top = window.innerHeight - menu.offsetHeight + "px";
+      } else {
+        menu.style.top = event.pageY + "px";
+      }
+      menu.style.visibility = "visible";
+      menu.style.opacity = 1;
+      return false;
+    }
+
+    $("#menu").longclick(250, contextMenuHandler);
 
     // Get current location to display the local chart
     if (USE_LIVE_LOCATION) {
