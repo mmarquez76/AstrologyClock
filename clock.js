@@ -236,7 +236,7 @@ window.addEventListener(
       return false;
     }
 
-    $("#menu").longclick(250, contextMenuHandler);
+    $("#main-body").longclick(250, contextMenuHandler);
 
     // Get current location to display the local chart
     if (USE_LIVE_LOCATION) {
