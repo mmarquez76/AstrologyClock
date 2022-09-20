@@ -174,15 +174,11 @@ window.addEventListener(
 
     window.removeEventListener("load", load, false);
 
-    window.addEventListener(
-      "contextmenu",
-      contextMenuHandler,
-      false
-    );
-
     window.addEventListener("resize", redraw);
+    
+    $("#main-body").contextmenu(contextMenuHandler);
 
-    $("#main-body").longclick(250, contextMenuHandler);
+    $("#main-body").longclick(contextMenuHandler);
 
     $("#main-body").dblclick(contextMenuHandler);  
 
