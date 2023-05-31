@@ -47,7 +47,7 @@
 				"max" : 300,
 				"min" : 1,
 				"order" : 103,
-				"text" : "Ephemeris Refresh Rate",
+				"text" : "Seconds Between Position Updates",
 				"type" : "slider",
 				"value" : 20
 			},
