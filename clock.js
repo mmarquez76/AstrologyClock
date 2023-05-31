@@ -57,7 +57,7 @@ window.addEventListener(
       signs = ["L", "K", "J", "I", "H", "G", "F", "E", "D", "C", "B", "A"],
       radius,
       date,
-      seconds,
+      lastUpdateTime,
       illumFraction,
       offsetAscendant,
       isNight = false,
@@ -338,19 +338,19 @@ window.addEventListener(
         // Only get a new ephemeris every cooldown period to save resources
         // When a new ephemeris is fetched, redraw all resources that depend on it
         if (
-          Math.floor(seconds / EPHEMERIS_COOLDOWN) !=
+          Math.floor(lastUpdateTime / EPHEMERIS_COOLDOWN) !=
           Math.floor(date.getSeconds() / EPHEMERIS_COOLDOWN)
         ) {
           getSigns();
           clearCanvas(signCanvas);
-          seconds = date.getSeconds();
+          lastUpdateTime = date.getSeconds();
           drawInnerFace();
           drawInnerSigns();
           drawMoonPhase();
           drawSignHands();
         }
         // Only redraw innerCanvas to highlight new numbers every minute
-        if (Math.floor(seconds) % 60 == 0) {
+        if (Math.floor(date.getSeconds()) % 60 == 0) {
           clearCanvas(innerCanvas);
           drawNumerals();
         }
