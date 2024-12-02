@@ -1,0 +1,80 @@
+body {
+	overflow: hidden;
+}
+
+#webring {
+	position: absolute;
+	z-index: 10;
+	bottom: 0;
+	right: 0;
+	width: 100vw;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	transition: all 350ms, opacity 5s;
+}
+
+#webring > * {
+	transition: all 350ms;
+}
+
+
+#webring > button {
+	transform-origin: 50% 50%;
+	background-color: transparent;
+	border: none;
+	padding: 16px 0;
+	
+}
+
+#webring > button > img {
+	filter: invert();
+	scale: 1.5;
+	rotate: 180deg;
+}
+
+#webring > iframe {
+	border: 0;
+	position: fixed;
+	transform: translateY(100%);
+}
+
+@keyframes bounce {
+	0% {transform: translateY(0%);}
+	75% {transform: translateY(10%);}
+	100% {transform: translateY(0%);}
+}
+
+
+#webring.disabled {
+	pointer-events: none;
+	opacity: 0;
+}
+
+#webring.nudge > button {
+	animation: bounce 1s ease-in-out infinite;
+}
+
+#webring.enabled {
+	bottom: 2rem;
+}
+
+#webring.enabled > button > img {
+	rotate: 0deg;
+}
+
+#webring.enabled > button {
+	transform: translateY(-125%);
+}
+
+#webring.enabled > iframe {
+	transform: translateY(0%);
+}
+
+@media (min-width: 600px) {
+	#webring {
+		width: 30%;
+	}
+}
