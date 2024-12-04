@@ -174,15 +174,15 @@ window.addEventListener(
 
     window.removeEventListener("load", load, false);
 
-    window.addEventListener(
-      "contextmenu",
-      contextMenuHandler,
-      false
-    );
-
     window.addEventListener("resize", redraw);
+    
+    $("#main-body").contextmenu(contextMenuHandler);
 
-    window.addEventListener("click", function (event) {
+    $("#main-body").longclick(contextMenuHandler);
+
+    $("#main-body").dblclick(contextMenuHandler);  
+
+    $("#main-body").click(function (event) {
       switch (event.target.id) {
         case "tick_every_second":
           TICK_EVERY_SECOND = !TICK_EVERY_SECOND;
@@ -235,8 +235,6 @@ window.addEventListener(
       menu.style.opacity = 1;
       return false;
     }
-
-    $("#main-body").longclick(250, contextMenuHandler);
 
     // Get current location to display the local chart
     if (USE_LIVE_LOCATION) {
