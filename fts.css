@@ -40,7 +40,7 @@ body {
 }
 
 #webring > button > img {
-	filter: invert();
+	filter: invert(57%) sepia(0%) saturate(2%) hue-rotate(337deg) brightness(88%) contrast(92%); /* don't even ask. */
 	scale: 1.5;
 	rotate: 180deg;
 }
