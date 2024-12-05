@@ -29,6 +29,16 @@ body {
 	
 }
 
+#webring.idle > button {
+	opacity: 0;
+	transition: opacity 2s;
+}
+
+#webring.idle > button:hover {
+	opacity: 1;
+	transition: opacity 1s;
+}
+
 #webring > button > img {
 	filter: invert();
 	scale: 1.5;
@@ -55,6 +65,13 @@ body {
 
 #webring.nudge > button {
 	animation: bounce 1s ease-in-out infinite;
+	opacity: 0;
+	transition: opacity 6s;
+}
+
+#webring.nudge > button:hover {
+	opacity: 1;
+	transition: opacity 1s;
 }
 
 #webring.enabled {
