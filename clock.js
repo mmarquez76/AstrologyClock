@@ -762,7 +762,7 @@ window.addEventListener(
         ctx.fillText(i, length * Math.cos(angle), length * Math.sin(angle));
       }
       // 60 minutes / seconds
-      ctx.font = radius * 0.04 + "px arial";
+      ctx.font = radius * 0.04 + "px sans-serif";
       for (let i = 0; i < 60; i++) {
         angle = ((i - 14.5) * Math.PI) / 30;
         ctx.fillStyle = i === minute ? main : other;

@@ -5,22 +5,7 @@
 	<title>Astrology Clock</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<link rel="preload" type="font/ttf" href="Astro.TTF" as="font" />
 	<link rel="stylesheet" type="text/css" href="style.css" />
-	<link rel="stylesheet" type="text/css" href="fts.css" />
-	
-	<script data-ad-client="ca-pub-3634678835900463" async
-		src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-	<!-- Google tag (gtag.js) -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=G-M7LNKLRXP3"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag() { dataLayer.push(arguments); }
-		gtag('js', new Date());
-
-		gtag('config', 'G-M7LNKLRXP3');
-	</script>
 </head>
 <style>
 	canvas {
@@ -87,12 +72,6 @@
 	<div class="font_preload" style="opacity: 0">
 		<span style="font-family: Astro, Arial, sans-serif;"></span>
 	</div>
-	<div id="webring" class="disabled">
-		<button>
-			<img src="chevrons-down.svg" height="30" alt="Two chevrons pointing down.">
-		</button>
-		<iframe src="https://fromthesuperhighway.com/webring/source" width="240" height="80"></iframe>
-	</div>
 	<canvas id="time-layer"></canvas>
 	<canvas id="sign-layer"></canvas>
 	<canvas id="inner-face-layer"></canvas>
@@ -101,7 +80,6 @@
 	<script src='https://code.jquery.com/jquery-latest.min.js' type='text/javascript'></script>
 	<script src='jquery.longclick-min.js' type='text/javascript'></script>
 	<script src="ephemeris-1.2.1.bundle.js" type="text/javascript"></script>
-	<script src="fts.js" type="text/javascript"></script>
 	<script src="clock.js" type="text/javascript"></script>
 </body>
 
